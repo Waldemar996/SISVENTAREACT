@@ -22,12 +22,12 @@ export default {
                     200: '#BFDBFE',
                     300: '#93C5FD',
                     400: '#60A5FA',
-                    500: 'var(--color-primary)', // Using variable for main shades
-                    600: 'var(--color-primary)',
-                    700: 'var(--color-primary)',
-                    800: 'var(--color-primary)',
+                    500: '#3B82F6', // Blue 500
+                    600: '#2563EB', // Blue 600
+                    700: '#1D4ED8', // Blue 700
+                    800: '#1E40AF', // Blue 800
                     900: '#172554',
-                    DEFAULT: 'var(--color-primary)',
+                    DEFAULT: '#3B82F6',
                 },
                 secondary: {
                     50: '#F8FAFC',
@@ -35,12 +35,12 @@ export default {
                     200: '#E2E8F0',
                     300: '#CBD5E1',
                     400: '#94A3B8',
-                    500: '#64748B',
-                    600: 'var(--color-secondary)',
-                    700: 'var(--color-secondary)',
-                    800: 'var(--color-secondary)',
+                    500: '#64748B', // Slate 500
+                    600: '#475569', // Slate 600
+                    700: '#334155', // Slate 700
+                    800: '#1E293B', // Slate 800
                     900: '#0F172A',
-                    DEFAULT: 'var(--color-secondary)',
+                    DEFAULT: '#64748B',
                 },
                 success: {
                     50: '#ECFDF5',

@@ -11,24 +11,25 @@ use App\Services\AuditService;
 use App\EventSourcing\EventStore;
 use App\EventSourcing\Events\Ventas\VentaCreadaEvent;
 use App\EventSourcing\Events\Ventas\VentaAnuladaEvent;
+use App\CQRS\Projectors\VentaProjector;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
 /**
- * Service Layer para Ventas con Event Sourcing
+ * Service Layer para Ventas con Event Sourcing + CQRS
  * 
- * NUEVO: Ahora con Event Sourcing - nivel Google/Netflix
- * - Auditoría perfecta automática
- * - Time travel (ver estado en cualquier momento)
- * - Analytics avanzado
+ * NUEVO: Event Sourcing + CQRS - nivel Google/Netflix/Amazon
+ * - Event Sourcing: Auditoría perfecta + Time travel
+ * - CQRS: Queries ultra-rápidas desde read model
  */
 class VentaService
 {
     public function __construct(
         private KardexService $kardexService,
         private AuditService $auditService,
-        private EventStore $eventStore  // ✅ NUEVO: Event Store
+        private EventStore $eventStore,
+        private VentaProjector $projector  // ✅ NUEVO: CQRS Projector
     ) {}
 
     public function crear(CrearVentaDTO $dto): OperVenta
@@ -48,7 +49,7 @@ class VentaService
             // 3. Crear detalles y actualizar stock
             $this->procesarDetalles($venta, $dto);
 
-            // 4. ✅ NUEVO: Emitir Domain Event (Event Sourcing)
+            // 4. ✅ Event Sourcing: Emitir Domain Event
             $event = new VentaCreadaEvent(
                 ventaId: $venta->id,
                 clienteId: $venta->cliente_id,
@@ -66,14 +67,17 @@ class VentaService
             );
             $this->eventStore->append($event);
 
-            // 5. Auditoría (legacy - ahora tenemos Event Sourcing)
+            // 5. ✅ CQRS: Proyectar al Read Model
+            $this->projector->onVentaCreada($event);
+
+            // 6. Auditoría (legacy - ahora tenemos Event Sourcing)
             $this->auditService->log('VENTAS', 'CREAR', $venta->id, [
                 'numero' => $venta->numero_comprobante,
                 'cliente_id' => $venta->cliente_id,
                 'total' => $venta->total_venta
             ]);
 
-            // 6. Limpiar cache del dashboard
+            // 7. Limpiar cache del dashboard
             $this->limpiarCache($dto->usuarioId);
 
             return $venta->load(['detalles', 'cliente']);

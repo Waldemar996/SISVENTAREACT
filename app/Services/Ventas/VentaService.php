@@ -8,37 +8,29 @@ use App\Models\Operaciones\OperVentaDet;
 use App\Models\Tesoreria\TesSesionCaja;
 use App\Services\KardexService;
 use App\Services\AuditService;
+use App\EventSourcing\EventStore;
+use App\EventSourcing\Events\Ventas\VentaCreadaEvent;
+use App\EventSourcing\Events\Ventas\VentaAnuladaEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
 /**
- * Service Layer para Ventas
+ * Service Layer para Ventas con Event Sourcing
  * 
- * Responsabilidades:
- * - Lógica de negocio de ventas
- * - Validaciones de negocio
- * - Coordinación entre servicios
- * - Transacciones
- * 
- * Ventajas:
- * - Testeable (no depende de HTTP)
- * - Reutilizable
- * - Single Responsibility
- * - Fácil de mantener
+ * NUEVO: Ahora con Event Sourcing - nivel Google/Netflix
+ * - Auditoría perfecta automática
+ * - Time travel (ver estado en cualquier momento)
+ * - Analytics avanzado
  */
 class VentaService
 {
     public function __construct(
         private KardexService $kardexService,
-        private AuditService $auditService
+        private AuditService $auditService,
+        private EventStore $eventStore  // ✅ NUEVO: Event Store
     ) {}
 
-    /**
-     * Crea una nueva venta
-     * 
-     * @throws Exception
-     */
     public function crear(CrearVentaDTO $dto): OperVenta
     {
         // Validaciones de negocio ANTES de la transacción
@@ -56,25 +48,38 @@ class VentaService
             // 3. Crear detalles y actualizar stock
             $this->procesarDetalles($venta, $dto);
 
-            // 4. Auditoría
+            // 4. ✅ NUEVO: Emitir Domain Event (Event Sourcing)
+            $event = new VentaCreadaEvent(
+                ventaId: $venta->id,
+                clienteId: $venta->cliente_id,
+                usuarioId: $venta->usuario_id,
+                bodegaId: $venta->bodega_id,
+                tipoComprobante: $venta->tipo_comprobante,
+                numeroComprobante: $venta->numero_comprobante,
+                formaPago: $venta->forma_pago,
+                subtotal: $venta->subtotal_venta,
+                descuentoTotal: $venta->descuento_total,
+                impuestoTotal: $venta->impuesto_total,
+                total: $venta->total_venta,
+                detalles: $dto->detalles,
+                observaciones: $venta->observaciones
+            );
+            $this->eventStore->append($event);
+
+            // 5. Auditoría (legacy - ahora tenemos Event Sourcing)
             $this->auditService->log('VENTAS', 'CREAR', $venta->id, [
                 'numero' => $venta->numero_comprobante,
                 'cliente_id' => $venta->cliente_id,
                 'total' => $venta->total_venta
             ]);
 
-            // 5. Limpiar cache del dashboard
+            // 6. Limpiar cache del dashboard
             $this->limpiarCache($dto->usuarioId);
 
             return $venta->load(['detalles', 'cliente']);
         });
     }
 
-    /**
-     * Anula una venta existente
-     * 
-     * @throws Exception
-     */
     public function anular(int $ventaId, ?string $motivo = null): OperVenta
     {
         $venta = OperVenta::findOrFail($ventaId);
@@ -94,13 +99,22 @@ class VentaService
             $venta->motivo_anulacion = $motivo;
             $venta->save();
 
-            // 3. Auditoría
+            // 3. ✅ NUEVO: Emitir Domain Event
+            $event = new VentaAnuladaEvent(
+                ventaId: $venta->id,
+                numeroComprobante: $venta->numero_comprobante,
+                motivo: $motivo,
+                anuladoPorUsuarioId: auth()->id()
+            );
+            $this->eventStore->append($event);
+
+            // 4. Auditoría (legacy)
             $this->auditService->log('VENTAS', 'ANULAR', $venta->id, [
                 'numero' => $venta->numero_comprobante,
                 'motivo' => $motivo
             ]);
 
-            // 4. Limpiar cache
+            // 5. Limpiar cache
             $this->limpiarCache($venta->usuario_id);
 
             return $venta;

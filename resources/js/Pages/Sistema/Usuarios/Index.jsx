@@ -130,7 +130,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Está seguro de eliminar este usuario? Esta acción no se puede deshacer.')) return;
+        if (!confirm('¿Está seguro de desactivar este usuario? Podrá reactivarlo después.')) return;
 
         try {
             await axios.delete(`/api/usuarios/${id}`);
@@ -348,7 +348,7 @@ export default function Index({ auth }) {
                                                 <button
                                                     onClick={() => handleDelete(usuario.id)}
                                                     className="text-danger-600 hover:text-danger-900"
-                                                    title="Eliminar"
+                                                    title="Desactivar"
                                                     disabled={usuario.id === auth.user.id}
                                                 >
                                                     <TrashIcon className="h-5 w-5" />

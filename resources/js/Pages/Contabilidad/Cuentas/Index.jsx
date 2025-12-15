@@ -224,7 +224,7 @@ export default function Index({ auth }) {
                         <button
                             onClick={() => handleDelete(cuenta.id)}
                             className="p-2 text-danger-600 hover:bg-danger-50 rounded"
-                            title="Eliminar"
+                            title="Inactivar"
                         >
                             <TrashIcon className="h-4 w-4" />
                         </button>

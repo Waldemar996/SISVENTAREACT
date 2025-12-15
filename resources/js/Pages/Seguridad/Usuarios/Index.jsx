@@ -38,7 +38,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Seguro de eliminar este usuario?')) return;
+        if (!confirm('¿Desactivar este usuario? Podrá reactivarlo después.')) return;
         try {
             await axios.delete(`/api/seguridad/usuarios/${id}`);
             fetchUsuarios();
@@ -118,7 +118,7 @@ export default function Index({ auth }) {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button onClick={() => handleEdit(u)} className="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
-                                        <button onClick={() => handleDelete(u.id)} className="text-red-600 hover:text-red-900">Eliminar</button>
+                                        <button onClick={() => handleDelete(u.id)} className="text-red-600 hover:text-red-900">Desactivar</button>
                                     </td>
                                 </tr>
                             ))}

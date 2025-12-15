@@ -116,14 +116,14 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Está seguro de eliminar esta cuenta? Se eliminarán también las subcuentas.')) return;
+        if (!confirm('¿Inactivar esta cuenta? Se marcarán también las subcuentas como inactivas.')) return;
 
         try {
             await axios.delete(`/api/contabilidad/cuentas/${id}`);
             toast.success('Cuenta eliminada correctamente');
             fetchData();
         } catch (error) {
-            toast.error('Error al eliminar cuenta');
+            toast.error('Error al inactivar cuenta');
         }
     };
 

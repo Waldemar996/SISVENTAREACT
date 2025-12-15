@@ -104,10 +104,10 @@ export default function Index({ auth }) {
 
         try {
             await axios.delete(`/api/rrhh/puestos/${id}`);
-            toast.success('Puesto eliminado');
+            toast.success('Puesto inactivado');
             fetchData();
         } catch (error) {
-            toast.error('Error al eliminar');
+            toast.error('Error al inactivar');
         }
     };
 

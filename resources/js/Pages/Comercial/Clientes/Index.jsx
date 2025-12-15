@@ -108,14 +108,14 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Está seguro de eliminar este cliente?')) return;
+        if (!confirm('¿Dar de baja este cliente? Se marcará como inactivo.')) return;
 
         try {
             await axios.delete(`/api/comercial/clientes/${id}`);
-            toast.success('Cliente eliminado correctamente');
+            toast.success('Cliente dado de baja correctamente');
             fetchData();
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Error al eliminar cliente');
+            toast.error(error.response?.data?.message || 'Error al dar de baja cliente');
         }
     };
 

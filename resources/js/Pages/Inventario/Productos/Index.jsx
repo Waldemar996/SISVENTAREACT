@@ -149,10 +149,10 @@ export default function Index({ auth }) {
 
         try {
             await axios.delete(`/api/inventario/productos/${id}`);
-            toast.success('Producto eliminado');
+            toast.success('Producto dado de baja');
             fetchData();
         } catch (error) {
-            toast.error('Error al eliminar');
+            toast.error('Error al dar de baja');
         }
     };
 

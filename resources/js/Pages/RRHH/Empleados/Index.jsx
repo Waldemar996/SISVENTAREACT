@@ -113,14 +113,14 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Está seguro de eliminar este empleado?')) return;
+        if (!confirm('¿Dar de baja este empleado? Se marcará como inactivo.')) return;
 
         try {
             await axios.delete(`/api/rrhh/empleados/${id}`);
-            toast.success('Empleado eliminado correctamente');
+            toast.success('Empleado dado de baja correctamente');
             fetchData();
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Error al eliminar empleado');
+            toast.error(error.response?.data?.message || 'Error al dar de baja empleado');
         }
     };
 

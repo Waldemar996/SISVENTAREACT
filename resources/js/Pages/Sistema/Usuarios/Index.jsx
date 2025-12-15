@@ -134,10 +134,10 @@ export default function Index({ auth }) {
 
         try {
             await axios.delete(`/api/usuarios/${id}`);
-            toast.success('Usuario eliminado correctamente');
+            toast.success('Usuario desactivado correctamente');
             fetchData();
         } catch (error) {
-            toast.error('Error al eliminar usuario');
+            toast.error('Error al desactivar usuario');
         }
     };
 

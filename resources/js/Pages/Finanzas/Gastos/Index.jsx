@@ -106,10 +106,10 @@ export default function Index({ auth }) {
         if (!confirm('¿Anular este gasto? Esta acción no se puede deshacer.')) return;
         try {
             await axios.delete(`/api/finanzas/gastos/${id}`);
-            toast.success('Gasto eliminado');
+            toast.success('Gasto anulado');
             fetchData();
         } catch (error) {
-            toast.error('Error al eliminar');
+            toast.error('Error al anular');
         }
     };
 

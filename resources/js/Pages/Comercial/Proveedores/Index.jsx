@@ -108,10 +108,10 @@ export default function Index({ auth }) {
 
         try {
             await axios.delete(`/api/comercial/proveedores/${id}`);
-            toast.success('Proveedor eliminado');
+            toast.success('Proveedor dado de baja');
             fetchData();
         } catch (error) {
-            toast.error('Error al eliminar');
+            toast.error('Error al dar de baja');
         }
     };
 

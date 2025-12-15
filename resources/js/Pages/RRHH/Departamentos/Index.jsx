@@ -89,10 +89,10 @@ export default function Index({ auth }) {
 
         try {
             await axios.delete(`/api/rrhh/departamentos/${id}`);
-            toast.success('Departamento eliminado');
+            toast.success('Departamento inactivado');
             fetchData();
         } catch (error) {
-            toast.error('Error al eliminar');
+            toast.error('Error al inactivar');
         }
     };
 

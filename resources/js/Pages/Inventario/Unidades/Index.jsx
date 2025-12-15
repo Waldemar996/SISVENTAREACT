@@ -71,7 +71,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar esta unidad?')) return;
+        if (!confirm('¿Inactivar esta unidad?')) return;
         try {
             await axios.delete(`/api/inventario/unidades/${id}`);
             toast.success('Unidad eliminada');

@@ -98,7 +98,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar esta bodega?')) return;
+        if (!confirm('¿Inactivar esta bodega?')) return;
         try {
             await axios.delete(`/api/logistica/bodegas/${id}`);
             toast.success('Bodega eliminada');

@@ -93,7 +93,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar esta caja?')) return;
+        if (!confirm('¿Inactivar esta caja?')) return;
         try {
             await axios.delete(`/api/tesoreria/cajas/${id}`);
             toast.success('Caja eliminada');

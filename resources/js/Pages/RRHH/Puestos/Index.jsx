@@ -100,7 +100,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar este puesto?')) return;
+        if (!confirm('¿Inactivar este puesto?')) return;
 
         try {
             await axios.delete(`/api/rrhh/puestos/${id}`);

@@ -103,7 +103,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar este gasto?')) return;
+        if (!confirm('¿Anular este gasto? Esta acción no se puede deshacer.')) return;
         try {
             await axios.delete(`/api/finanzas/gastos/${id}`);
             toast.success('Gasto eliminado');

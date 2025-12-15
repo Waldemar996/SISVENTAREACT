@@ -71,7 +71,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar esta marca?')) return;
+        if (!confirm('¿Inactivar esta marca?')) return;
         try {
             await axios.delete(`/api/inventario/marcas/${id}`);
             toast.success('Marca eliminada');

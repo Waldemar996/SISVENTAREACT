@@ -79,7 +79,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar esta fórmula?')) return;
+        if (!confirm('¿Inactivar esta fórmula?')) return;
         try {
             await axios.delete(`/api/produccion/formulas/${id}`);
             toast.success('Fórmula eliminada');

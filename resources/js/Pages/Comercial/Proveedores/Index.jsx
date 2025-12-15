@@ -104,7 +104,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar este proveedor?')) return;
+        if (!confirm('¿Dar de baja este proveedor? Se marcará como inactivo.')) return;
 
         try {
             await axios.delete(`/api/comercial/proveedores/${id}`);

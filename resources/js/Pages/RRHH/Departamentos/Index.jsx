@@ -85,7 +85,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar este departamento?')) return;
+        if (!confirm('¿Inactivar este departamento?')) return;
 
         try {
             await axios.delete(`/api/rrhh/departamentos/${id}`);

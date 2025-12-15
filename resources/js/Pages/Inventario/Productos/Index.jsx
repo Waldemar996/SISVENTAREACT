@@ -145,7 +145,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar este producto?')) return;
+        if (!confirm('¿Dar de baja este producto? Se marcará como inactivo y no se podrá vender.')) return;
 
         try {
             await axios.delete(`/api/inventario/productos/${id}`);

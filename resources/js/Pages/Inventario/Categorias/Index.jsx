@@ -86,7 +86,7 @@ export default function Index({ auth }) {
     };
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar esta categoría?')) return;
+        if (!confirm('¿Inactivar esta categoría?')) return;
         try {
             await axios.delete(`/api/inventario/categorias/${id}`);
             toast.success('Categoría eliminada');

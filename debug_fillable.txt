@@ -1,0 +1,18 @@
+Array
+(
+    [0] => cliente_id
+    [1] => usuario_id
+    [2] => bodega_id
+    [3] => sesion_caja_id
+    [4] => tipo_comprobante
+    [5] => numero_comprobante
+    [6] => fecha_emision
+    [7] => fel_uuid
+    [8] => fel_serie
+    [9] => fel_numero
+    [10] => subtotal
+    [11] => total_impuestos
+    [12] => descuento
+    [13] => total_venta
+    [14] => estado
+)

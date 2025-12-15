@@ -1,0 +1,62 @@
+# Environment & Sensitive Files
+.env
+.env.backup
+.env.production
+.env.local
+
+# Database
+*.sql
+*.sqlite
+*.db
+database/*.sqlite
+database/*.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# Build files
+/public/build
+/public/mix-manifest.json
+
+# Logs
+*.log
+storage/logs/*.log
+
+# Cache
+bootstrap/cache/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Uploaded files (optional - uncomment if you don't want to track uploads)
+# storage/app/public/*
+
+# Testing
+coverage/
+.phpunit.cache
+
+# Credentials (IMPORTANT!)
+*.pem
+*.key
+*.crt
+auth.json

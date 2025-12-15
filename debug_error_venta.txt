@@ -1,0 +1,1 @@
+SQLSTATE[HY000]: General error: 1364 Field 'costo_unitario_historico' doesn't have a default value (Connection: mysql, SQL: insert into `oper_ventas_det` (`producto_id`, `cantidad`, `precio_unitario`, `subtotal`, `venta_id`) values (1, 3, 200, 600, 1))

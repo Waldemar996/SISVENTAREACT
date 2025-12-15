@@ -1,0 +1,417 @@
+openapi: 3.0.0
+info:
+  title: SISVENTAREACT API
+  description: API Documentation for Sistema de Ventas ERP
+  version: 1.0.0
+  contact:
+    name: Development Team
+    email: dev@sisventareact.com
+
+servers:
+  - url: http://localhost:8000/api
+    description: Development server
+  - url: https://api.sisventareact.com
+    description: Production server
+
+tags:
+  - name: Dashboard
+    description: Dashboard statistics and metrics
+  - name: Ventas
+    description: Sales operations
+  - name: Compras
+    description: Purchase operations
+  - name: Productos
+    description: Product management
+  - name: Clientes
+    description: Client management
+
+paths:
+  /reportes/dashboard:
+    get:
+      tags:
+        - Dashboard
+      summary: Get dashboard statistics
+      description: Returns comprehensive dashboard data including KPIs, charts, and alerts
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resumen:
+                    $ref: '#/components/schemas/ResumenFinanciero'
+                  graficaVentas:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GraficaData'
+                  topProductos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TopProducto'
+                  ventasPorCategoria:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VentaCategoria'
+                  productosCriticos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductoCritico'
+                  actividadReciente:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Actividad'
+                  alertas:
+                    $ref: '#/components/schemas/Alertas'
+
+  /operaciones/ventas:
+    get:
+      tags:
+        - Ventas
+      summary: List all sales
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Venta'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+    post:
+      tags:
+        - Ventas
+      summary: Create a new sale
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VentaCreate'
+      responses:
+        '201':
+          description: Sale created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Venta'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+  /operaciones/ventas/{id}/anular:
+    post:
+      tags:
+        - Ventas
+      summary: Annul a sale
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Sale annulled successfully
+        '404':
+          description: Sale not found
+        '422':
+          description: Cannot annul sale
+
+  /inventario/productos:
+    get:
+      tags:
+        - Productos
+      summary: List all products
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: categoria_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
+
+    post:
+      tags:
+        - Productos
+      summary: Create a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoCreate'
+      responses:
+        '201':
+          description: Product created
+        '422':
+          description: Validation error
+
+components:
+  schemas:
+    ResumenFinanciero:
+      type: object
+      properties:
+        ventas_mes:
+          type: number
+          format: float
+        ventas_hoy:
+          type: number
+          format: float
+        valor_inventario:
+          type: number
+          format: float
+        compras_mes:
+          type: number
+          format: float
+        margen_mes:
+          type: number
+          format: float
+        ticket_promedio:
+          type: number
+          format: float
+        tendencia_ventas:
+          $ref: '#/components/schemas/Tendencia'
+        sparkline_ventas:
+          type: array
+          items:
+            type: number
+
+    Tendencia:
+      type: object
+      properties:
+        porcentaje:
+          type: number
+          format: float
+        direccion:
+          type: string
+          enum: [up, down, neutral]
+
+    GraficaData:
+      type: object
+      properties:
+        name:
+          type: string
+        ventas:
+          type: number
+        compras:
+          type: number
+
+    TopProducto:
+      type: object
+      properties:
+        nombre:
+          type: string
+        cantidad_vendida:
+          type: integer
+        total_vendido:
+          type: number
+
+    VentaCategoria:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: number
+
+    ProductoCritico:
+      type: object
+      properties:
+        nombre:
+          type: string
+        categoria:
+          type: string
+        stock_actual:
+          type: integer
+        stock_minimo:
+          type: integer
+        porcentaje:
+          type: number
+
+    Actividad:
+      type: object
+      properties:
+        id:
+          type: integer
+        tipo:
+          type: string
+          enum: [venta, compra]
+        titulo:
+          type: string
+        mensaje:
+          type: string
+        monto:
+          type: number
+        fecha:
+          type: string
+          format: date-time
+
+    Alertas:
+      type: object
+      properties:
+        stock_bajo:
+          type: integer
+        compras_pendientes:
+          type: integer
+
+    Venta:
+      type: object
+      properties:
+        id:
+          type: integer
+        cliente_id:
+          type: integer
+        fecha_emision:
+          type: string
+          format: date
+        total_venta:
+          type: number
+        estado:
+          type: string
+          enum: [COMPLETADO, ANULADA]
+        detalles:
+          type: array
+          items:
+            $ref: '#/components/schemas/VentaDetalle'
+
+    VentaDetalle:
+      type: object
+      properties:
+        producto_id:
+          type: integer
+        cantidad:
+          type: integer
+        precio_unitario:
+          type: number
+        subtotal:
+          type: number
+
+    VentaCreate:
+      type: object
+      required:
+        - cliente_id
+        - detalles
+      properties:
+        cliente_id:
+          type: integer
+        bodega_id:
+          type: integer
+        sesion_caja_id:
+          type: integer
+        tipo_comprobante:
+          type: string
+        detalles:
+          type: array
+          items:
+            type: object
+            properties:
+              producto_id:
+                type: integer
+              cantidad:
+                type: integer
+              precio_unitario:
+                type: number
+
+    Producto:
+      type: object
+      properties:
+        id:
+          type: integer
+        sku:
+          type: string
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        precio_venta_base:
+          type: number
+        costo_promedio:
+          type: number
+        stock_minimo:
+          type: integer
+        categoria_id:
+          type: integer
+
+    ProductoCreate:
+      type: object
+      required:
+        - sku
+        - nombre
+        - precio_venta_base
+      properties:
+        sku:
+          type: string
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        precio_venta_base:
+          type: number
+        categoria_id:
+          type: integer
+        marca_id:
+          type: integer
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        total:
+          type: integer
+        per_page:
+          type: integer
+        last_page:
+          type: integer
+
+    ValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+  securitySchemes:
+    sanctum:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - sanctum: []

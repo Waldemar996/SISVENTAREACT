@@ -210,8 +210,7 @@ Este proyecto es privado y confidencial.
 ## 👨‍💻 Autor
 
 **Waldemar López**
-- Email: bolvitoolopez@gmail.com
-- GitHub: [@tuusuario](https://github.com/tuusuario)
+- GitHub: [@WaldemarLopez](https://github.com/WaldemarLopez)
 
 ## 🙏 Agradecimientos
 

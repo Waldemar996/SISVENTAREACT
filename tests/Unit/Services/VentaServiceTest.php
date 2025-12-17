@@ -2,24 +2,24 @@
 
 namespace Tests\Unit\Services;
 
-use Tests\TestCase;
-use App\Services\Ventas\VentaService;
-use App\Services\KardexService;
-use App\Services\AuditService;
 use App\DTOs\Ventas\CrearVentaDTO;
-use App\Models\Operaciones\OperVenta;
-use App\Models\Inventario\InvProducto;
-use App\Models\Inventario\InvBodegaProducto;
 use App\Models\Comercial\ComCliente;
+use App\Models\Inventario\InvBodegaProducto;
+use App\Models\Inventario\InvProducto;
 use App\Models\Logistica\LogBodega;
+use App\Models\Operaciones\OperVenta;
 use App\Models\Sistema\SysUsuario;
 use App\Models\Tesoreria\TesSesionCaja;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Services\AuditService;
+use App\Services\KardexService;
+use App\Services\Ventas\VentaService;
 use Exception;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * Tests para VentaService
- * 
+ *
  * IMPORTANCIA: Este service maneja ventas - errores = pérdidas económicas
  */
 class VentaServiceTest extends TestCase
@@ -27,64 +27,69 @@ class VentaServiceTest extends TestCase
     use RefreshDatabase;
 
     private VentaService $ventaService;
+
     private InvProducto $producto;
+
     private ComCliente $cliente;
+
     private LogBodega $bodega;
+
     private SysUsuario $usuario;
+
     private TesSesionCaja $sesionCaja;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Crear servicios
-        $kardexService = new KardexService();
+        $kardexService = new KardexService;
         $auditService = $this->createMock(AuditService::class);
         $this->ventaService = new VentaService($kardexService, $auditService);
-        
+
         // Crear datos de prueba
         $this->bodega = LogBodega::create([
             'nombre' => 'Bodega Test',
             'codigo' => 'BOD-TEST',
-            'activo' => true
+            'activo' => true,
         ]);
-        
+
         $this->cliente = ComCliente::create([
             'razon_social' => 'Cliente Test',
             'nit' => 'CF',
-            'activo' => true
+            'activo' => true,
         ]);
-        
+
         $this->usuario = SysUsuario::create([
             'username' => 'testuser',
             'email' => 'test@test.com',
             'password' => bcrypt('password'),
             'rol' => 'vendedor',
-            'activo' => true
+            'activo' => true,
         ]);
-        
+
         $this->producto = InvProducto::create([
             'nombre' => 'Producto Test',
             'codigo_sku' => 'TEST-001',
             'precio_venta_base' => 100.00,
             'costo_promedio' => 50.00,
             'stock_minimo' => 5,
-            'activo' => true
+            'activo' => true,
         ]);
-        
+
         // Crear stock inicial
         InvBodegaProducto::create([
             'bodega_id' => $this->bodega->id,
             'producto_id' => $this->producto->id,
-            'existencia' => 100
+            'existencia' => 100,
         ]);
-        
+
         // Crear sesión de caja
         $this->sesionCaja = TesSesionCaja::create([
             'usuario_id' => $this->usuario->id,
             'fecha_apertura' => now(),
             'monto_apertura' => 100.00,
-            'estado' => 'ABIERTA'
+            'estado' => 'ABIERTA',
         ]);
     }
 
@@ -106,8 +111,8 @@ class VentaServiceTest extends TestCase
                     'precio_unitario' => 100.00,
                     'descuento' => 0,
                     'impuesto' => 12,
-                    'costo_unitario' => 50.00
-                ]
+                    'costo_unitario' => 50.00,
+                ],
             ],
             usuarioId: $this->usuario->id,
             sesionCajaId: $this->sesionCaja->id
@@ -121,10 +126,10 @@ class VentaServiceTest extends TestCase
         $this->assertEquals($this->cliente->id, $venta->cliente_id);
         $this->assertEquals('COMPLETADO', $venta->estado);
         $this->assertEquals(560.00, $venta->total_venta); // 500 + 12% IVA = 560
-        
+
         // Verificar que se creó el detalle
         $this->assertCount(1, $venta->detalles);
-        
+
         // Verificar que se redujo el stock
         $stock = InvBodegaProducto::where('bodega_id', $this->bodega->id)
             ->where('producto_id', $this->producto->id)
@@ -150,8 +155,8 @@ class VentaServiceTest extends TestCase
                     'precio_unitario' => 100.00,
                     'descuento' => 10, // 10% descuento
                     'impuesto' => 12,
-                    'costo_unitario' => 50.00
-                ]
+                    'costo_unitario' => 50.00,
+                ],
             ],
             usuarioId: $this->usuario->id,
             sesionCajaId: $this->sesionCaja->id,
@@ -189,8 +194,8 @@ class VentaServiceTest extends TestCase
                     'producto_id' => $this->producto->id,
                     'cantidad' => 5,
                     'precio_unitario' => 100.00,
-                    'costo_unitario' => 50.00
-                ]
+                    'costo_unitario' => 50.00,
+                ],
             ],
             usuarioId: $this->usuario->id,
             sesionCajaId: null // Sin sesión
@@ -220,8 +225,8 @@ class VentaServiceTest extends TestCase
                     'producto_id' => $this->producto->id,
                     'cantidad' => 150, // Más de lo disponible (100)
                     'precio_unitario' => 100.00,
-                    'costo_unitario' => 50.00
-                ]
+                    'costo_unitario' => 50.00,
+                ],
             ],
             usuarioId: $this->usuario->id,
             sesionCajaId: $this->sesionCaja->id
@@ -251,15 +256,15 @@ class VentaServiceTest extends TestCase
                     'producto_id' => $this->producto->id,
                     'cantidad' => 10,
                     'precio_unitario' => 100.00,
-                    'costo_unitario' => 50.00
-                ]
+                    'costo_unitario' => 50.00,
+                ],
             ],
             usuarioId: $this->usuario->id,
             sesionCajaId: $this->sesionCaja->id
         );
 
         $venta = $this->ventaService->crear($dto);
-        
+
         // Verificar stock después de venta
         $stockDespuesVenta = InvBodegaProducto::where('bodega_id', $this->bodega->id)
             ->where('producto_id', $this->producto->id)
@@ -273,7 +278,7 @@ class VentaServiceTest extends TestCase
         $this->assertEquals('ANULADO', $ventaAnulada->estado);
         $this->assertNotNull($ventaAnulada->fecha_anulacion);
         $this->assertEquals('Venta de prueba', $ventaAnulada->motivo_anulacion);
-        
+
         // Verificar que se revirtió el stock
         $stockDespuesAnulacion = InvBodegaProducto::where('bodega_id', $this->bodega->id)
             ->where('producto_id', $this->producto->id)
@@ -297,8 +302,8 @@ class VentaServiceTest extends TestCase
                     'producto_id' => $this->producto->id,
                     'cantidad' => 5,
                     'precio_unitario' => 100.00,
-                    'costo_unitario' => 50.00
-                ]
+                    'costo_unitario' => 50.00,
+                ],
             ],
             usuarioId: $this->usuario->id,
             sesionCajaId: $this->sesionCaja->id
@@ -331,8 +336,8 @@ class VentaServiceTest extends TestCase
                     'producto_id' => $this->producto->id,
                     'cantidad' => 1,
                     'precio_unitario' => 100.00,
-                    'costo_unitario' => 50.00
-                ]
+                    'costo_unitario' => 50.00,
+                ],
             ],
             usuarioId: $this->usuario->id,
             sesionCajaId: $this->sesionCaja->id
@@ -344,6 +349,6 @@ class VentaServiceTest extends TestCase
         // Assert
         $this->assertNotNull($venta->numero_comprobante);
         $this->assertStringStartsWith('F-', $venta->numero_comprobante);
-        $this->assertStringContainsString((string)now()->year, $venta->numero_comprobante);
+        $this->assertStringContainsString((string) now()->year, $venta->numero_comprobante);
     }
 }

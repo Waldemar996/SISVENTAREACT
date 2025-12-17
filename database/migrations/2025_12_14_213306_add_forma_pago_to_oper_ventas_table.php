@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('oper_ventas', function (Blueprint $table) {
             $table->enum('forma_pago', ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA', 'CHEQUE', 'OTRO'])
-                  ->default('EFECTIVO')
-                  ->after('estado');
+                ->default('EFECTIVO')
+                ->after('estado');
         });
     }
 

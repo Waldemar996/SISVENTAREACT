@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Config;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class SysAuditoriaController extends Controller
 {
@@ -11,9 +10,9 @@ class SysAuditoriaController extends Controller
     {
         // Logs del sistema
         $logs = \App\Models\Config\SysAuditoriaLog::with('usuario')
-                    ->orderBy('id', 'desc')
-                    ->paginate(50);
-                    
+            ->orderBy('id', 'desc')
+            ->paginate(50);
+
         return response()->json($logs);
     }
 }

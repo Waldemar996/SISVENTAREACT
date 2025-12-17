@@ -14,16 +14,17 @@ class SysConfiguracionController extends Controller
     {
         // Obtener la primera configuración o crear una default
         $config = \App\Models\Config\SysConfiguracion::first();
-        if (!$config) {
+        if (! $config) {
             $config = \App\Models\Config\SysConfiguracion::create([
                 'nombre_empresa' => 'Mi Empresa',
                 'nit_empresa' => 'CF',
                 'direccion_fiscal' => 'Ciudad',
                 'moneda_simbolo' => 'Q',
                 'ruta_logo' => null,
-                'impuesto_general_iva' => 12.00
+                'impuesto_general_iva' => 12.00,
             ]);
         }
+
         return response()->json($config);
     }
 
@@ -33,9 +34,9 @@ class SysConfiguracionController extends Controller
 
         $config = \App\Models\Config\SysConfiguracion::first();
 
-        if (!$config) {
+        if (! $config) {
             \Illuminate\Support\Facades\Log::info('Creating NEW Config instance');
-            $config = new \App\Models\Config\SysConfiguracion();
+            $config = new \App\Models\Config\SysConfiguracion;
             // Defaults for fallback
             $config->nombre_empresa = 'Mi Empresa';
             $config->nit_empresa = 'CF';
@@ -70,7 +71,7 @@ class SysConfiguracionController extends Controller
             if ($config->ruta_logo && \Illuminate\Support\Facades\Storage::exists('public/'.$config->ruta_logo)) {
                 \Illuminate\Support\Facades\Storage::delete('public/'.$config->ruta_logo);
             }
-            
+
             $path = $request->file('logo')->store('logos', 'public');
             $config->ruta_logo = $path;
         }
@@ -83,7 +84,7 @@ class SysConfiguracionController extends Controller
         $config->website = $request->website;
         $config->color_primary = $request->color_primary ?? '#4F46E5';
         $config->color_secondary = $request->color_secondary ?? '#1F2937';
-        
+
         $config->save();
 
         return redirect()->back()->with('success', 'Configuración actualizada');

@@ -4,36 +4,37 @@ namespace App\Services;
 
 use App\Models\Config\SysAuditoriaLog;
 
-class AuditService
+class AuditService implements \App\Domain\Shared\AuditServiceInterface
 {
     /**
      * Registra una acción en la bitácora del sistema.
-     *
-     * @param string $modulo (Ej: INVENTARIO, VENTAS, SEGURIDAD)
-     * @param string $accion (Ej: CREAR, EDITAR, ELIMINAR, LOGIN)
-     * @param string $tabla (Ej: inv_productos)
-     * @param int|string|null $registro_id ID del registro afectado
-     * @param array|null $datos_anteriores Snapshot antes del cambio
-     * @param array|null $datos_nuevos Snapshot después del cambio
+     * En MODO ESTRICTO: Si falla la auditoría, falla la transacción completa.
      */
-    public static function log($modulo, $accion, $tabla, $registro_id = null, $datos_anteriores = null, $datos_nuevos = null)
+    public function log(string $modulo, string $accion, string $tabla, $registroId = null, $datosAnteriores = null, $datosNuevos = null): void
     {
-        try {
-            SysAuditoriaLog::create([
-                'usuario_id' => auth()->id() ?? null, // Null si es acción de sistema o login fallido
-                'modulo' => strtoupper($modulo),
-                'accion' => strtoupper($accion),
-                'tabla_afectada' => strtolower($tabla),
-                'registro_id' => $registro_id,
-                'datos_anteriores' => $datos_anteriores, // Cast automático a JSON por el Modelo
-                'datos_nuevos' => $datos_nuevos,
-                'ip_usuario' => request()->ip(),
-                'navegador_info' => substr(request()->userAgent(), 0, 250),
-                'fecha' => now()
-            ]);
-        } catch (\Exception $e) {
-            // Silenciar error de auditoría para no detener la operación principal
-            // Log::error("Error registrando auditoría: " . $e->getMessage());
-        }
+        // Static facade forwarder if needed, or direct implementation.
+        // The interface defines instance method, but legacy code uses static.
+        // We will keep static for legacy but implement instance method for interface.
+        self::staticLog($modulo, $accion, $tabla, $registroId, $datosAnteriores, $datosNuevos);
+    }
+
+    public static function staticLog($modulo, $accion, $tabla, $registro_id = null, $datos_anteriores = null, $datos_nuevos = null)
+    {
+        // STRICT MODE: No Try-Catch. Let DB exceptions bubble up to TransactionMiddleware.
+
+        SysAuditoriaLog::create([
+            'usuario_id' => auth()->id() ?? null,
+            'modulo' => strtoupper($modulo),
+            'accion' => strtoupper($accion),
+            'tabla_afectada' => strtolower($tabla),
+            'registro_id' => $registro_id,
+            'datos_anteriores' => $datos_anteriores,
+            'datos_nuevos' => $datos_nuevos,
+            'ip_usuario' => request()->ip(),
+            'navegador_info' => substr(request()->userAgent(), 0, 250),
+            'fecha' => now(),
+        ]);
+
+        // If SysAuditoriaLog::create fails, Exception is thrown -> Rollback occurs.
     }
 }

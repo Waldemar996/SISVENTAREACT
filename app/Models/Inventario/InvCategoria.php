@@ -11,6 +11,7 @@ class InvCategoria extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'inv_categorias';
+
     public $timestamps = false; // No timestamps in SQL script for this table
 
     protected $fillable = [

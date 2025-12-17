@@ -14,8 +14,9 @@ class InvLoteController extends Controller
     {
         // Traer lotes con producto y estado, ordenados por vencimiento más próximo
         $lotes = \App\Models\Inventario\InvLote::with('producto')
-                    ->orderBy('fecha_vencimiento', 'asc')
-                    ->get();
+            ->orderBy('fecha_vencimiento', 'asc')
+            ->get();
+
         return response()->json($lotes);
     }
 
@@ -33,7 +34,7 @@ class InvLoteController extends Controller
             'codigo_lote' => $validated['codigo_lote'],
             'fecha_fabricacion' => $validated['fecha_fabricacion'],
             'fecha_vencimiento' => $validated['fecha_vencimiento'],
-            'estado' => 'activo'
+            'estado' => 'activo',
         ]);
 
         return response()->json(['message' => 'Lote registrado correctamente', 'data' => $lote], 201);
@@ -47,13 +48,14 @@ class InvLoteController extends Controller
     public function update(Request $request, string $id)
     {
         $lote = \App\Models\Inventario\InvLote::findOrFail($id);
-        
+
         $validated = $request->validate([
             'fecha_vencimiento' => 'sometimes|required|date',
-            'estado' => 'sometimes|required|in:activo,inactivo,vencido,agotado'
+            'estado' => 'sometimes|required|in:activo,inactivo,vencido,agotado',
         ]);
 
         $lote->update($validated);
+
         return response()->json(['message' => 'Lote actualizado', 'data' => $lote]);
     }
 
@@ -61,7 +63,8 @@ class InvLoteController extends Controller
     {
         $lote = \App\Models\Inventario\InvLote::findOrFail($id);
         // Validar si tiene stock asociado antes de borrar (complejo, por ahora soft-ish delete o check simple)
-        $lote->delete(); 
+        $lote->delete();
+
         return response()->json(['message' => 'Lote eliminado']);
     }
 }

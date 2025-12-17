@@ -4,18 +4,18 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Advanced API Rate Limiting
- * 
+ *
  * Protección contra:
  * - Brute force attacks
  * - API abuse
  * - DDoS
- * 
+ *
  * Nivel: Enterprise
  */
 class AdvancedRateLimiter
@@ -34,28 +34,29 @@ class AdvancedRateLimiter
         $executed = RateLimiter::attempt(
             $key,
             $limits['maxAttempts'],
-            function() use ($next, $request) {
+            function () use ($next, $request) {
                 return $next($request);
             },
             $limits['decaySeconds']
         );
 
-        if (!$executed) {
+        if (! $executed) {
             // Log intento de abuso
             $this->logAbuse($request, $key);
 
             // Bloqueo temporal si hay muchos intentos
             if ($this->shouldBlockTemporarily($key)) {
                 $this->blockTemporarily($key);
+
                 return response()->json([
                     'error' => 'Too many requests. Your IP has been temporarily blocked.',
-                    'retry_after' => 3600
+                    'retry_after' => 3600,
                 ], 429);
             }
 
             return response()->json([
                 'error' => 'Too many requests. Please slow down.',
-                'retry_after' => RateLimiter::availableIn($key)
+                'retry_after' => RateLimiter::availableIn($key),
             ], 429);
         }
 
@@ -73,10 +74,10 @@ class AdvancedRateLimiter
     private function resolveRequestSignature(Request $request): string
     {
         if ($user = $request->user()) {
-            return 'rate-limit:user:' . $user->id;
+            return 'rate-limit:user:'.$user->id;
         }
 
-        return 'rate-limit:ip:' . $request->ip();
+        return 'rate-limit:ip:'.$request->ip();
     }
 
     /**
@@ -84,22 +85,22 @@ class AdvancedRateLimiter
      */
     private function getLimitsForTier(string $tier): array
     {
-        return match($tier) {
+        return match ($tier) {
             'strict' => [
                 'maxAttempts' => 10,
-                'decaySeconds' => 60
+                'decaySeconds' => 60,
             ],
             'api' => [
                 'maxAttempts' => 60,
-                'decaySeconds' => 60
+                'decaySeconds' => 60,
             ],
             'default' => [
                 'maxAttempts' => 100,
-                'decaySeconds' => 60
+                'decaySeconds' => 60,
             ],
             'premium' => [
                 'maxAttempts' => 1000,
-                'decaySeconds' => 60
+                'decaySeconds' => 60,
             ],
         };
     }
@@ -121,7 +122,7 @@ class AdvancedRateLimiter
             'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'path' => $request->path(),
-            'attempts' => $attempts
+            'attempts' => $attempts,
         ]);
     }
 
@@ -146,7 +147,7 @@ class AdvancedRateLimiter
 
         \Log::alert('IP/User temporarily blocked', [
             'key' => $key,
-            'duration' => '1 hour'
+            'duration' => '1 hour',
         ]);
     }
 }

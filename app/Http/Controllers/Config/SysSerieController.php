@@ -41,13 +41,14 @@ class SysSerieController extends Controller
                         'longitud' => $serie->longitud,
                         'activa' => (bool) $serie->activa,
                         'descripcion' => $serie->descripcion,
-                        'ejemplo' => $serie->prefijo . str_pad($serie->numero_actual, $serie->longitud, '0', STR_PAD_LEFT)
+                        'ejemplo' => $serie->prefijo.str_pad($serie->numero_actual, $serie->longitud, '0', STR_PAD_LEFT),
                     ];
                 });
 
             return response()->json($series);
         } catch (\Exception $e) {
-            Log::error('Error en Series index: ' . $e->getMessage());
+            Log::error('Error en Series index: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar series'], 500);
         }
     }
@@ -63,13 +64,13 @@ class SysSerieController extends Controller
             'numero_inicio' => 'required|integer|min:1',
             'numero_fin' => 'required|integer|min:1',
             'longitud' => 'required|integer|min:1|max:10',
-            'descripcion' => 'nullable|string|max:200'
+            'descripcion' => 'nullable|string|max:200',
         ]);
 
         // Validar que numero_fin > numero_inicio
         if ($request->numero_fin <= $request->numero_inicio) {
             return response()->json([
-                'error' => 'El número final debe ser mayor al número inicial'
+                'error' => 'El número final debe ser mayor al número inicial',
             ], 400);
         }
 
@@ -81,7 +82,7 @@ class SysSerieController extends Controller
 
         if ($existeActiva) {
             return response()->json([
-                'error' => 'Ya existe una serie activa para este tipo de documento'
+                'error' => 'Ya existe una serie activa para este tipo de documento',
             ], 400);
         }
 
@@ -96,15 +97,16 @@ class SysSerieController extends Controller
                 'activa' => true,
                 'descripcion' => $request->descripcion,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             return response()->json([
                 'message' => 'Serie creada correctamente',
-                'id' => $id
+                'id' => $id,
             ], 201);
         } catch (\Exception $e) {
-            Log::error('Error al crear serie: ' . $e->getMessage());
+            Log::error('Error al crear serie: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al crear serie'], 500);
         }
     }
@@ -116,14 +118,15 @@ class SysSerieController extends Controller
     {
         try {
             $serie = DB::table('sys_series')->where('id', $id)->first();
-            
-            if (!$serie) {
+
+            if (! $serie) {
                 return response()->json(['error' => 'Serie no encontrada'], 404);
             }
 
             return response()->json($serie);
         } catch (\Exception $e) {
-            Log::error('Error en Serie show: ' . $e->getMessage());
+            Log::error('Error en Serie show: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar serie'], 500);
         }
     }
@@ -139,25 +142,25 @@ class SysSerieController extends Controller
             'numero_fin' => 'required|integer|min:1',
             'longitud' => 'required|integer|min:1|max:10',
             'activa' => 'required|boolean',
-            'descripcion' => 'nullable|string|max:200'
+            'descripcion' => 'nullable|string|max:200',
         ]);
 
         try {
             $serie = DB::table('sys_series')->where('id', $id)->first();
-            
-            if (!$serie) {
+
+            if (! $serie) {
                 return response()->json(['error' => 'Serie no encontrada'], 404);
             }
 
             // Validar que numero_fin >= numero_actual
             if ($request->numero_fin < $serie->numero_actual) {
                 return response()->json([
-                    'error' => 'El número final no puede ser menor al número actual'
+                    'error' => 'El número final no puede ser menor al número actual',
                 ], 400);
             }
 
             // Si se está activando, verificar que no haya otra activa
-            if ($request->activa && !$serie->activa) {
+            if ($request->activa && ! $serie->activa) {
                 $existeActiva = DB::table('sys_series')
                     ->where('tipo_documento', $request->tipo_documento)
                     ->where('activa', true)
@@ -166,7 +169,7 @@ class SysSerieController extends Controller
 
                 if ($existeActiva) {
                     return response()->json([
-                        'error' => 'Ya existe otra serie activa para este tipo de documento'
+                        'error' => 'Ya existe otra serie activa para este tipo de documento',
                     ], 400);
                 }
             }
@@ -180,12 +183,13 @@ class SysSerieController extends Controller
                     'longitud' => $request->longitud,
                     'activa' => $request->activa,
                     'descripcion' => $request->descripcion,
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
 
             return response()->json(['message' => 'Serie actualizada correctamente']);
         } catch (\Exception $e) {
-            Log::error('Error al actualizar serie: ' . $e->getMessage());
+            Log::error('Error al actualizar serie: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al actualizar serie'], 500);
         }
     }
@@ -197,15 +201,15 @@ class SysSerieController extends Controller
     {
         try {
             $serie = DB::table('sys_series')->where('id', $id)->first();
-            
-            if (!$serie) {
+
+            if (! $serie) {
                 return response()->json(['error' => 'Serie no encontrada'], 404);
             }
 
             // Verificar si se ha usado (numero_actual > numero_inicio)
             if ($serie->numero_actual > $serie->numero_inicio) {
                 return response()->json([
-                    'error' => 'No se puede eliminar porque ya se han generado documentos con esta serie'
+                    'error' => 'No se puede eliminar porque ya se han generado documentos con esta serie',
                 ], 400);
             }
 
@@ -213,7 +217,8 @@ class SysSerieController extends Controller
 
             return response()->json(['message' => 'Serie eliminada correctamente']);
         } catch (\Exception $e) {
-            Log::error('Error al eliminar serie: ' . $e->getMessage());
+            Log::error('Error al eliminar serie: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al eliminar serie'], 500);
         }
     }
@@ -229,7 +234,7 @@ class SysSerieController extends Controller
                 ->where('activa', true)
                 ->first();
 
-            if (!$serie) {
+            if (! $serie) {
                 return response()->json(['error' => 'No hay serie activa para este tipo de documento'], 404);
             }
 
@@ -237,15 +242,16 @@ class SysSerieController extends Controller
                 return response()->json(['error' => 'La serie ha alcanzado su límite'], 400);
             }
 
-            $numeroCompleto = $serie->prefijo . str_pad($serie->numero_actual, $serie->longitud, '0', STR_PAD_LEFT);
+            $numeroCompleto = $serie->prefijo.str_pad($serie->numero_actual, $serie->longitud, '0', STR_PAD_LEFT);
 
             return response()->json([
                 'serie_id' => $serie->id,
                 'numero' => $numeroCompleto,
-                'numero_actual' => $serie->numero_actual
+                'numero_actual' => $serie->numero_actual,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error al obtener siguiente número: ' . $e->getMessage());
+            Log::error('Error al obtener siguiente número: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al obtener siguiente número'], 500);
         }
     }

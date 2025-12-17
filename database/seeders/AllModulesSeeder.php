@@ -17,37 +17,37 @@ class AllModulesSeeder extends Seeder
 
         // 1. Usuarios (si no existen)
         $this->seedUsuarios();
-        
+
         // 2. Empleados
         $this->seedEmpleados();
-        
+
         // 3. Productos y Categorías
         $this->seedProductos();
-        
+
         // 4. Clientes
         $this->seedClientes();
-        
+
         // 5. Proveedores
         $this->seedProveedores();
-        
+
         // 6. Ventas
         $this->seedVentas();
-        
+
         // 7. Compras
         $this->seedCompras();
-        
+
         // 8. Bodegas
         $this->seedBodegas();
-        
+
         // 9. Cajas
         $this->seedCajas();
-        
+
         // 10. Gastos
         $this->seedGastos();
 
         // 11. Contabilidad (Chart of Accounts)
         $this->seedContabilidad();
-        
+
         echo "\n✅ TODOS LOS MÓDULOS POBLADOS EXITOSAMENTE\n";
     }
 
@@ -56,6 +56,7 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('sys_usuarios')->count();
         if ($count > 0) {
             echo "ℹ️  Usuarios ya existen: $count\n";
+
             return;
         }
 
@@ -67,7 +68,7 @@ class AllModulesSeeder extends Seeder
                 'empleado_id' => 1,
                 'activo' => true,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ],
             [
                 'username' => 'vendedor',
@@ -76,8 +77,8 @@ class AllModulesSeeder extends Seeder
                 'empleado_id' => 2,
                 'activo' => true,
                 'created_at' => now(),
-                'updated_at' => now()
-            ]
+                'updated_at' => now(),
+            ],
         ]);
 
         echo "✅ Usuarios creados: 2\n";
@@ -88,6 +89,7 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('rrhh_empleados')->count();
         if ($count >= 5) {
             echo "ℹ️  Empleados ya existen: $count\n";
+
             return;
         }
 
@@ -124,7 +126,7 @@ class AllModulesSeeder extends Seeder
                 'salario_base' => 5000.00,
                 'activo' => true,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ],
             [
                 'codigo' => 'EMP002',
@@ -140,7 +142,7 @@ class AllModulesSeeder extends Seeder
                 'salario_base' => 3500.00,
                 'activo' => true,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ],
             [
                 'codigo' => 'EMP003',
@@ -156,8 +158,8 @@ class AllModulesSeeder extends Seeder
                 'salario_base' => 3000.00,
                 'activo' => true,
                 'created_at' => now(),
-                'updated_at' => now()
-            ]
+                'updated_at' => now(),
+            ],
         ]);
 
         echo "✅ Empleados creados: 3\n";
@@ -168,6 +170,7 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('inv_productos')->count();
         if ($count >= 10) {
             echo "ℹ️  Productos ya existen: $count\n";
+
             return;
         }
 
@@ -202,14 +205,15 @@ class AllModulesSeeder extends Seeder
         $existingCount = DB::table('inv_productos')->count();
         if ($existingCount >= 15) {
             echo "ℹ️  Productos ya suficientes: $existingCount\n";
+
             return;
         }
 
         for ($i = $existingCount + 1; $i <= 15; $i++) {
             DB::table('inv_productos')->insert([
-                'codigo_sku' => 'PROD' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'nombre' => 'Producto ' . $i,
-                'descripcion' => 'Descripción del producto ' . $i,
+                'codigo_sku' => 'PROD'.str_pad($i, 4, '0', STR_PAD_LEFT),
+                'nombre' => 'Producto '.$i,
+                'descripcion' => 'Descripción del producto '.$i,
                 'categoria_id' => (($i - 1) % 3) + 1,
                 'marca_id' => (($i - 1) % 3) + 1,
                 'unidad_id' => (($i - 1) % 3) + 1,
@@ -222,7 +226,7 @@ class AllModulesSeeder extends Seeder
                 'tipo' => 'producto',
                 'activo' => true,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
         }
 
@@ -234,28 +238,30 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('com_clientes')->count();
         if ($count >= 5) {
             echo "ℹ️  Clientes ya existen: $count\n";
+
             return;
         }
 
         $existingCount = DB::table('com_clientes')->count();
         if ($existingCount >= 10) {
             echo "ℹ️  Clientes ya suficientes: $existingCount\n";
+
             return;
         }
 
         for ($i = $existingCount + 1; $i <= 10; $i++) {
             DB::table('com_clientes')->insert([
-                'codigo' => 'CLI' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'razon_social' => 'Cliente ' . $i . ' S.A.',
-                'nombre_comercial' => 'Cliente ' . $i,
-                'nit' => '12345678' . $i,
-                'telefono' => '1234567' . $i,
-                'email' => 'cliente' . $i . '@email.com',
-                'direccion' => 'Dirección del cliente ' . $i,
+                'codigo' => 'CLI'.str_pad($i, 4, '0', STR_PAD_LEFT),
+                'razon_social' => 'Cliente '.$i.' S.A.',
+                'nombre_comercial' => 'Cliente '.$i,
+                'nit' => '12345678'.$i,
+                'telefono' => '1234567'.$i,
+                'email' => 'cliente'.$i.'@email.com',
+                'direccion' => 'Dirección del cliente '.$i,
                 'tipo' => 'empresa',
                 'activo' => true,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
         }
 
@@ -267,22 +273,23 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('com_proveedores')->count();
         if ($count >= 5) {
             echo "ℹ️  Proveedores ya existen: $count\n";
+
             return;
         }
 
         DB::table('com_proveedores')->delete();
         for ($i = 1; $i <= 8; $i++) {
             DB::table('com_proveedores')->insert([
-                'codigo' => 'PROV' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'razon_social' => 'Proveedor ' . $i . ' S.A.',
-                'nombre_comercial' => 'Proveedor ' . $i,
-                'nit' => '87654321' . $i,
-                'telefono' => '8765432' . $i,
-                'email' => 'proveedor' . $i . '@email.com',
-                'direccion' => 'Dirección del proveedor ' . $i,
+                'codigo' => 'PROV'.str_pad($i, 4, '0', STR_PAD_LEFT),
+                'razon_social' => 'Proveedor '.$i.' S.A.',
+                'nombre_comercial' => 'Proveedor '.$i,
+                'nit' => '87654321'.$i,
+                'telefono' => '8765432'.$i,
+                'email' => 'proveedor'.$i.'@email.com',
+                'direccion' => 'Dirección del proveedor '.$i,
                 'activo' => true,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
         }
 
@@ -294,6 +301,7 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('oper_ventas')->count();
         if ($count >= 5) {
             echo "ℹ️  Ventas ya existen: $count\n";
+
             return;
         }
 
@@ -302,7 +310,7 @@ class AllModulesSeeder extends Seeder
 
         for ($i = 1; $i <= 5; $i++) {
             $ventaId = DB::table('oper_ventas')->insertGetId([
-                'numero_venta' => 'VEN-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'numero_venta' => 'VEN-'.str_pad($i, 4, '0', STR_PAD_LEFT),
                 'fecha_venta' => now()->subDays(5 - $i),
                 'cliente_id' => $i,
                 'subtotal' => 500.00,
@@ -312,7 +320,7 @@ class AllModulesSeeder extends Seeder
                 'estado' => 'completada',
                 'usuario_id' => 1,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             // Detalles de venta
@@ -324,7 +332,7 @@ class AllModulesSeeder extends Seeder
                 'descuento' => 0,
                 'subtotal' => 500.00,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
         }
 
@@ -336,6 +344,7 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('oper_compras')->count();
         if ($count >= 3) {
             echo "ℹ️  Compras ya existen: $count\n";
+
             return;
         }
 
@@ -344,7 +353,7 @@ class AllModulesSeeder extends Seeder
 
         for ($i = 1; $i <= 3; $i++) {
             $compraId = DB::table('oper_compras')->insertGetId([
-                'numero_compra' => 'COM-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'numero_compra' => 'COM-'.str_pad($i, 4, '0', STR_PAD_LEFT),
                 'fecha_compra' => now()->subDays(10 - $i),
                 'proveedor_id' => $i,
                 'subtotal' => 300.00,
@@ -354,7 +363,7 @@ class AllModulesSeeder extends Seeder
                 'estado' => 'recibida',
                 'usuario_id' => 1,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             DB::table('oper_compras_det')->insert([
@@ -365,7 +374,7 @@ class AllModulesSeeder extends Seeder
                 'descuento' => 0,
                 'subtotal' => 300.00,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
         }
 
@@ -377,6 +386,7 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('log_bodegas')->count();
         if ($count >= 2) {
             echo "ℹ️  Bodegas (Logística) ya existen: $count\n";
+
             return;
         }
 
@@ -387,7 +397,7 @@ class AllModulesSeeder extends Seeder
                 'direccion' => 'Zona 10, Guatemala',
                 'telefono' => '2333-4444',
                 'tipo' => 'bodega_central',
-                'activa' => true
+                'activa' => true,
             ],
             [
                 'nombre' => 'Tienda Principal',
@@ -395,8 +405,8 @@ class AllModulesSeeder extends Seeder
                 'direccion' => 'Zona 12, Guatemala',
                 'telefono' => '2444-5555',
                 'tipo' => 'tienda',
-                'activa' => true
-            ]
+                'activa' => true,
+            ],
         ]);
 
         echo "✅ Bodegas (Logística) creadas: 2\n";
@@ -407,6 +417,7 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('tes_cajas')->count();
         if ($count >= 2) {
             echo "ℹ️  Cajas ya existen: $count\n";
+
             return;
         }
 
@@ -418,7 +429,7 @@ class AllModulesSeeder extends Seeder
                 'descripcion' => 'Caja principal de ventas',
                 'activa' => true,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ],
             [
                 'codigo' => 'CAJA002',
@@ -426,8 +437,8 @@ class AllModulesSeeder extends Seeder
                 'descripcion' => 'Caja secundaria',
                 'activa' => true,
                 'created_at' => now(),
-                'updated_at' => now()
-            ]
+                'updated_at' => now(),
+            ],
         ]);
 
         echo "✅ Cajas creadas: 2\n";
@@ -438,6 +449,7 @@ class AllModulesSeeder extends Seeder
         $count = DB::table('fin_gastos')->count();
         if ($count >= 3) {
             echo "ℹ️  Gastos ya existen: $count\n";
+
             return;
         }
 
@@ -453,15 +465,15 @@ class AllModulesSeeder extends Seeder
         DB::table('fin_gastos')->delete();
         for ($i = 1; $i <= 5; $i++) {
             DB::table('fin_gastos')->insert([
-                'numero_gasto' => 'GAS-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'numero_gasto' => 'GAS-'.str_pad($i, 4, '0', STR_PAD_LEFT),
                 'fecha' => now()->subDays(15 - $i),
                 'categoria_id' => (($i - 1) % 3) + 1,
-                'descripcion' => 'Gasto de prueba ' . $i,
+                'descripcion' => 'Gasto de prueba '.$i,
                 'monto' => 100.00 + ($i * 50),
                 'estado' => 'aprobado',
                 'usuario_id' => 1,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
         }
 
@@ -472,9 +484,10 @@ class AllModulesSeeder extends Seeder
     {
         if (DB::table('cont_cuentas')->count() > 0) {
             echo "ℹ️  Cuentas contables ya existen. Saltando.\n";
+
             return;
         }
-        
+
         echo "📊 Poblando Catálogo de Cuentas...\n";
 
         // 1. Activos
@@ -523,7 +536,7 @@ class AllModulesSeeder extends Seeder
         $this->createCuenta(null, '5', 'GASTOS', 'gasto', 1, false);
         $this->createCuenta(32, '5.1', 'COSTOS DE VENTAS', 'gasto', 2, false);
         $this->createCuenta(33, '5.1.01', 'Costo de Ventas', 'gasto', 3, true);
-        
+
         $this->createCuenta(32, '5.2', 'GASTOS DE OPERACIÓN', 'gasto', 2, false);
         $this->createCuenta(35, '5.2.01', 'Sueldos y Salarios', 'gasto', 3, true);
         $this->createCuenta(35, '5.2.02', 'Alquileres', 'gasto', 3, true);
@@ -538,17 +551,17 @@ class AllModulesSeeder extends Seeder
         if (DB::table('cont_cuentas')->where('codigo_cuenta', $codigo)->exists()) {
             return;
         }
-        
+
         $realPadreId = null;
         if ($padreId !== null) {
-             $lastDot = strrpos($codigo, '.');
-             if ($lastDot !== false) {
-                 $codigoPadre = substr($codigo, 0, $lastDot);
-                 $padre = DB::table('cont_cuentas')->where('codigo_cuenta', $codigoPadre)->first();
-                 if ($padre) {
-                     $realPadreId = $padre->id;
-                 }
-             }
+            $lastDot = strrpos($codigo, '.');
+            if ($lastDot !== false) {
+                $codigoPadre = substr($codigo, 0, $lastDot);
+                $padre = DB::table('cont_cuentas')->where('codigo_cuenta', $codigoPadre)->first();
+                if ($padre) {
+                    $realPadreId = $padre->id;
+                }
+            }
         }
 
         DB::table('cont_cuentas')->insert([
@@ -559,7 +572,7 @@ class AllModulesSeeder extends Seeder
             'cuenta_padre_id' => $realPadreId,
             'es_cuenta_movimiento' => $aceptaMovimiento,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
     }
 }

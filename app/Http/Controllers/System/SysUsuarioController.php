@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\System;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\RRHH\SysUsuario;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -28,7 +28,7 @@ class SysUsuarioController extends Controller
             'email' => 'required|email|max:100|unique:sys_usuarios,email',
             'password' => 'required|string|min:6',
             'rol' => 'required|string|in:superadmin,admin,vendedor,bodeguero,contador,rrhh',
-            'empleado_id' => 'nullable|exists:rrhh_empleados,id'
+            'empleado_id' => 'nullable|exists:rrhh_empleados,id',
         ]);
 
         $usuario = SysUsuario::create([
@@ -37,7 +37,7 @@ class SysUsuarioController extends Controller
             'password_hash' => Hash::make($validated['password']),
             'rol' => $validated['rol'],
             'empleado_id' => $validated['empleado_id'] ?? null,
-            'activo' => true
+            'activo' => true,
         ]);
 
         return response()->json(['message' => 'Usuario creado', 'data' => $usuario], 201);
@@ -52,7 +52,7 @@ class SysUsuarioController extends Controller
             'email' => ['required', 'email', 'max:100', Rule::unique('sys_usuarios')->ignore($usuario->id)],
             'rol' => 'required|string|in:superadmin,admin,vendedor,bodeguero,contador,rrhh',
             'password' => 'nullable|string|min:6', // Opcional al editar
-            'activo' => 'boolean'
+            'activo' => 'boolean',
         ]);
 
         $usuario->username = $validated['username'];
@@ -82,7 +82,7 @@ class SysUsuarioController extends Controller
         if (auth()->id() == $id) {
             return response()->json(['message' => 'No puedes eliminarte a ti mismo.'], 403);
         }
-        
+
         $usuario = SysUsuario::findOrFail($id);
         $usuario->delete();
 

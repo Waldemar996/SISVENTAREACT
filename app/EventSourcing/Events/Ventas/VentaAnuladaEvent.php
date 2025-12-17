@@ -48,6 +48,7 @@ class VentaAnuladaEvent extends DomainEvent
         );
 
         $event->metadata = $metadata;
+
         return $event;
     }
 }

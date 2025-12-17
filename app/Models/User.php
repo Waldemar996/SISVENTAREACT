@@ -10,7 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, \Illuminate\Database\Eloquent\SoftDeletes;
 
     /**
      * Map to V9 system users table
@@ -29,7 +29,7 @@ class User extends Authenticatable
         'rol',
         'activo',
         'empleado_id',
-        'ultimo_acceso'
+        'ultimo_acceso',
     ];
 
     /**

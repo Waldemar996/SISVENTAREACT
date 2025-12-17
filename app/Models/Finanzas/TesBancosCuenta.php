@@ -10,6 +10,7 @@ class TesBancosCuenta extends Model
     use HasFactory;
 
     protected $table = 'tes_bancos_cuentas';
+
     public $timestamps = false;
 
     protected $fillable = [

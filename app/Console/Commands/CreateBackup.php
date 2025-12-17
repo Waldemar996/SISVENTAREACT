@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\Backup\BackupService;
+use Illuminate\Console\Command;
 
 /**
  * Create database backup
- * 
+ *
  * Usage: php artisan backup:create
  */
 class CreateBackup extends Command
@@ -23,15 +23,16 @@ class CreateBackup extends Command
         // List backups
         if ($this->option('list')) {
             $backups = $backup->listBackups();
-            
+
             if (empty($backups)) {
                 $this->info('No backups found.');
+
                 return Command::SUCCESS;
             }
 
             $this->table(
                 ['Name', 'Size (MB)', 'Created At'],
-                array_map(fn($b) => [$b['name'], $b['size_mb'], $b['created_at']], $backups)
+                array_map(fn ($b) => [$b['name'], $b['size_mb'], $b['created_at']], $backups)
             );
 
             return Command::SUCCESS;
@@ -39,7 +40,7 @@ class CreateBackup extends Command
 
         // Restore backup
         if ($restoreFile = $this->option('restore')) {
-            if (!$this->confirm("⚠️  This will restore the database from backup. Continue?")) {
+            if (! $this->confirm('⚠️  This will restore the database from backup. Continue?')) {
                 return Command::SUCCESS;
             }
 
@@ -49,7 +50,8 @@ class CreateBackup extends Command
             if ($result['success']) {
                 $this->info('✅ Backup restored successfully!');
             } else {
-                $this->error('❌ Restore failed: ' . $result['error']);
+                $this->error('❌ Restore failed: '.$result['error']);
+
                 return Command::FAILURE;
             }
 
@@ -58,16 +60,17 @@ class CreateBackup extends Command
 
         // Create backup
         $this->info('🔄 Creating full backup...');
-        
+
         $result = $backup->createFullBackup();
 
         if ($result['success']) {
             $sizeMB = round($result['size'] / 1024 / 1024, 2);
-            $this->info("✅ Backup created successfully!");
+            $this->info('✅ Backup created successfully!');
             $this->info("📦 File: {$result['backup_name']}.zip");
             $this->info("📊 Size: {$sizeMB} MB");
         } else {
-            $this->error('❌ Backup failed: ' . $result['error']);
+            $this->error('❌ Backup failed: '.$result['error']);
+
             return Command::FAILURE;
         }
 

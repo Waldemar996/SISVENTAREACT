@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers\Operaciones;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Services\Ventas\VentaService;
 use App\DTOs\Ventas\CrearVentaDTO;
+use App\Http\Controllers\Controller;
 use App\Rules\PrecioValidoRule;
 use App\Rules\StockDisponibleRule;
+use App\Services\Ventas\VentaService;
 use Exception;
+use Illuminate\Http\Request;
 
 /**
  * Controller REFACTORIZADO con Service Layer
- * 
+ *
  * ANTES: 322 líneas, lógica de negocio mezclada
  * DESPUÉS: ~80 líneas, solo maneja HTTP
- * 
+ *
  * Responsabilidades:
  * - Validar requests
  * - Delegar a services
  * - Retornar responses
- * 
+ *
  * NO hace:
  * - Lógica de negocio
  * - Acceso directo a DB
@@ -40,13 +40,13 @@ class OperVentaControllerRefactored extends Controller
         $ventas = \App\Models\Operaciones\OperVenta::with(['cliente', 'usuario', 'detalles'])
             ->orderBy('created_at', 'desc')
             ->get();
-            
+
         return response()->json($ventas);
     }
 
     /**
      * Crea una nueva venta
-     * 
+     *
      * ANTES: 120 líneas de lógica
      * DESPUÉS: 15 líneas
      */
@@ -65,19 +65,19 @@ class OperVentaControllerRefactored extends Controller
                 'integer',
                 'min:1',
                 'max:9999',
-                new StockDisponibleRule($request->input('bodega_id', 1))
+                new StockDisponibleRule($request->input('bodega_id', 1)),
             ],
             'detalles.*.precio_unitario' => [
                 'required',
                 'numeric',
                 'min:0.01',
                 'max:999999.99',
-                new PrecioValidoRule()
+                new PrecioValidoRule,
             ],
             'detalles.*.descuento' => 'nullable|numeric|min:0|max:100',
             'detalles.*.impuesto' => 'nullable|numeric|min:0|max:100',
             'observaciones' => 'nullable|string|max:500',
-            'descuento_global' => 'nullable|numeric|min:0|max:100'
+            'descuento_global' => 'nullable|numeric|min:0|max:100',
         ]);
 
         try {
@@ -90,12 +90,12 @@ class OperVentaControllerRefactored extends Controller
             // 4. Retornar response
             return response()->json([
                 'message' => 'Venta creada exitosamente',
-                'venta' => $venta
+                'venta' => $venta,
             ], 201);
 
         } catch (Exception $e) {
             return response()->json([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 400);
         }
     }
@@ -107,20 +107,20 @@ class OperVentaControllerRefactored extends Controller
     {
         $venta = \App\Models\Operaciones\OperVenta::with(['cliente', 'usuario', 'detalles.producto'])
             ->findOrFail($id);
-            
+
         return response()->json($venta);
     }
 
     /**
      * Anula una venta
-     * 
+     *
      * ANTES: 50 líneas de lógica
      * DESPUÉS: 10 líneas
      */
     public function destroy(int $id, Request $request)
     {
         $validated = $request->validate([
-            'motivo' => 'nullable|string|max:500'
+            'motivo' => 'nullable|string|max:500',
         ]);
 
         try {
@@ -128,12 +128,12 @@ class OperVentaControllerRefactored extends Controller
 
             return response()->json([
                 'message' => 'Venta anulada exitosamente',
-                'venta' => $venta
+                'venta' => $venta,
             ]);
 
         } catch (Exception $e) {
             return response()->json([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 400);
         }
     }
@@ -144,18 +144,18 @@ class OperVentaControllerRefactored extends Controller
     public function print(int $id, Request $request)
     {
         $tipo = $request->input('tipo', 'factura'); // factura o ticket
-        
+
         $venta = \App\Models\Operaciones\OperVenta::with([
             'cliente',
             'usuario',
-            'detalles.producto'
+            'detalles.producto',
         ])->findOrFail($id);
 
         // Aquí iría la lógica de generación de PDF
         // Por ahora retornamos los datos
         return response()->json([
             'venta' => $venta,
-            'tipo' => $tipo
+            'tipo' => $tipo,
         ]);
     }
 
@@ -167,9 +167,9 @@ class OperVentaControllerRefactored extends Controller
         $query = $request->input('query');
 
         $ventas = \App\Models\Operaciones\OperVenta::with(['cliente', 'detalles.producto'])
-            ->where(function($q) use ($query) {
+            ->where(function ($q) use ($query) {
                 $q->where('id', $query)
-                  ->orWhere('numero_comprobante', 'LIKE', "%{$query}%");
+                    ->orWhere('numero_comprobante', 'LIKE', "%{$query}%");
             })
             ->where('estado', '!=', 'ANULADO')
             ->limit(10)

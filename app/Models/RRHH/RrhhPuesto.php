@@ -10,6 +10,7 @@ class RrhhPuesto extends Model
     use HasFactory;
 
     protected $table = 'rrhh_puestos';
+
     public $timestamps = false;
 
     protected $fillable = ['nombre_puesto', 'departamento_id', 'salario_base'];

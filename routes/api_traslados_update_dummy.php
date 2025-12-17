@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Operaciones\OperTrasladoController;
+use Illuminate\Support\Facades\Route;
 
 // ... other routes ...
 

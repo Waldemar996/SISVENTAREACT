@@ -10,6 +10,7 @@ class InvLote extends Model
     use HasFactory;
 
     protected $table = 'inv_lotes';
+
     public $timestamps = false; // Based on SQL
 
     protected $fillable = [

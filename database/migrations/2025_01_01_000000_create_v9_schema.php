@@ -11,8 +11,10 @@ return new class extends Migration
     public function up(): void
     {
         // SQL executed manually via MySQL CLI for stability
-        // $sql = file_get_contents(database_path('schema_v9.sql'));
-        // DB::unprepared($sql);
+        if (file_exists(database_path('schema_v9.sql'))) {
+            $sql = file_get_contents(database_path('schema_v9.sql'));
+            DB::unprepared($sql);
+        }
     }
 
     /**

@@ -10,6 +10,7 @@ class FinCategoriaGasto extends Model
     use HasFactory;
 
     protected $table = 'fin_categorias_gastos';
+
     public $timestamps = false;
 
     protected $fillable = [

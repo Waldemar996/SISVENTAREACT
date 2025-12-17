@@ -2,12 +2,12 @@
 
 namespace App\EventSourcing;
 
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Event Store - Almacena y recupera eventos
- * 
+ *
  * Patrón: Event Sourcing
  * Nivel: Google/Netflix
  */
@@ -30,7 +30,7 @@ class EventStore
             'occurred_at' => $event->occurredAt(),
             'user_id' => $event->userId(),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
     }
 
@@ -45,7 +45,7 @@ class EventStore
             ->orderBy('version')
             ->get();
 
-        return $rows->map(function($row) {
+        return $rows->map(function ($row) {
             return $this->deserializeEvent($row);
         })->all();
     }
@@ -64,13 +64,13 @@ class EventStore
 
         return $query->orderBy('occurred_at')
             ->get()
-            ->map(fn($row) => $this->deserializeEvent($row))
+            ->map(fn ($row) => $this->deserializeEvent($row))
             ->all();
     }
 
     /**
      * Replay: Reconstruye el estado desde eventos
-     * 
+     *
      * Esto es MAGIA - puedes ver el estado en cualquier momento del pasado
      */
     public function replay(string $aggregateType, string $aggregateId, ?Carbon $until = null): array
@@ -85,7 +85,7 @@ class EventStore
 
         $events = $query->orderBy('version')
             ->get()
-            ->map(fn($row) => $this->deserializeEvent($row))
+            ->map(fn ($row) => $this->deserializeEvent($row))
             ->all();
 
         return $events;

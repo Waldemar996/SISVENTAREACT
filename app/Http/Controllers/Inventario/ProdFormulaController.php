@@ -22,13 +22,13 @@ class ProdFormulaController extends Controller
                 $componentes = \App\Models\Inventario\ProdFormula::with('productoHijo')
                     ->where('producto_padre_id', $item->producto_padre_id)
                     ->get();
-                
+
                 return [
                     'id' => $item->producto_padre_id, // Usamos ID del producto como ID de la 'fórmula' visual
                     'producto' => $item->productoPadre,
                     'cantidad_producir' => 1, // Default base
                     'componentes_count' => $componentes->count(),
-                    'componentes' => $componentes
+                    'componentes' => $componentes,
                 ];
             });
 
@@ -50,17 +50,17 @@ class ProdFormulaController extends Controller
             $creados = [];
 
             // Limpiar fórmula anterior si se desea reemlazar completamente (opcional, por ahora agregamos/actualizamos)
-            // \App\Models\Inventario\ProdFormula::where('producto_padre_id', $padreId)->delete(); 
+            // \App\Models\Inventario\ProdFormula::where('producto_padre_id', $padreId)->delete();
 
             foreach ($validated['componentes'] as $comp) {
                 // Update or Create para cada ingrediente
                 $formula = \App\Models\Inventario\ProdFormula::updateOrCreate(
                     [
                         'producto_padre_id' => $padreId,
-                        'producto_hijo_id' => $comp['producto_componente_id']
+                        'producto_hijo_id' => $comp['producto_componente_id'],
                     ],
                     [
-                        'cantidad_requerida' => $comp['cantidad_necesaria']
+                        'cantidad_requerida' => $comp['cantidad_necesaria'],
                     ]
                 );
                 $creados[] = $formula;
@@ -77,14 +77,15 @@ class ProdFormulaController extends Controller
         ]);
 
         $exists = \App\Models\Inventario\ProdFormula::where('producto_padre_id', $validated['producto_padre_id'])
-                    ->where('producto_hijo_id', $validated['producto_hijo_id'])
-                    ->first();
+            ->where('producto_hijo_id', $validated['producto_hijo_id'])
+            ->first();
 
         if ($exists) {
             return response()->json(['message' => 'Este insumo ya existe en la fórmula'], 422);
         }
 
         $formula = \App\Models\Inventario\ProdFormula::create($validated);
+
         return response()->json($formula, 201);
     }
 
@@ -93,6 +94,7 @@ class ProdFormulaController extends Controller
         // El $id que recibimos es realmente el producto_padre_id (ver método index)
         // Borramos TODOS los ingredientes de esa fórmula (Soft Delete)
         \App\Models\Inventario\ProdFormula::where('producto_padre_id', $id)->delete();
+
         return response()->json(['message' => 'Fórmula eliminada correctamente']);
     }
 }

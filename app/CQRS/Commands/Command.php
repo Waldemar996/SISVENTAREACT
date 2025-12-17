@@ -4,7 +4,7 @@ namespace App\CQRS\Commands;
 
 /**
  * Base Command Interface
- * 
+ *
  * Todos los commands deben implementar esta interfaz
  */
 interface Command

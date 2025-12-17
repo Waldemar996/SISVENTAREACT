@@ -2,15 +2,16 @@
 
 namespace App\Models\Inventario;
 
+use App\Models\Logistica\LogBodega;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Logistica\LogBodega;
 
 class InvKardex extends Model
 {
     use HasFactory;
 
     protected $table = 'inv_kardex';
+
     public $timestamps = false;
 
     protected $fillable = [

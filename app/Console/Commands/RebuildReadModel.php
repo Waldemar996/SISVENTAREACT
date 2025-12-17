@@ -2,17 +2,17 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\CQRS\Projectors\VentaProjector;
+use Illuminate\Console\Command;
 
 /**
  * Reconstruye el Read Model desde Event Store
- * 
+ *
  * Útil para:
  * - Migración inicial
  * - Recuperación de desastres
  * - Cambios en schema del read model
- * 
+ *
  * Usage: php artisan cqrs:rebuild-read-model
  */
 class RebuildReadModel extends Command
@@ -24,15 +24,16 @@ class RebuildReadModel extends Command
 
     public function handle(VentaProjector $projector): int
     {
-        if (!$this->option('force')) {
-            if (!$this->confirm('This will delete and rebuild the entire read model. Continue?')) {
+        if (! $this->option('force')) {
+            if (! $this->confirm('This will delete and rebuild the entire read model. Continue?')) {
                 $this->info('Operation cancelled.');
+
                 return Command::SUCCESS;
             }
         }
 
         $this->info('Starting read model rebuild...');
-        
+
         $startTime = microtime(true);
 
         try {
@@ -42,11 +43,12 @@ class RebuildReadModel extends Command
             $duration = round((microtime(true) - $startTime), 2);
 
             $this->info("✅ Read model rebuilt successfully in {$duration} seconds!");
-            
+
             return Command::SUCCESS;
 
         } catch (\Exception $e) {
-            $this->error('❌ Error rebuilding read model: ' . $e->getMessage());
+            $this->error('❌ Error rebuilding read model: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }

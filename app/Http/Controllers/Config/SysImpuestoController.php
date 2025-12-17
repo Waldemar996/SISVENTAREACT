@@ -35,13 +35,14 @@ class SysImpuestoController extends Controller
                         'tipo' => $impuesto->tipo,
                         'porcentaje' => (float) $impuesto->porcentaje,
                         'activo' => (bool) $impuesto->activo,
-                        'descripcion' => $impuesto->descripcion
+                        'descripcion' => $impuesto->descripcion,
                     ];
                 });
 
             return response()->json($impuestos);
         } catch (\Exception $e) {
-            Log::error('Error en Impuestos index: ' . $e->getMessage());
+            Log::error('Error en Impuestos index: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar impuestos'], 500);
         }
     }
@@ -56,7 +57,7 @@ class SysImpuestoController extends Controller
             'nombre' => 'required|string|max:100',
             'tipo' => 'required|in:IVA,ISR,Timbre,Retención,Otro',
             'porcentaje' => 'required|numeric|min:0|max:100',
-            'descripcion' => 'nullable|string|max:300'
+            'descripcion' => 'nullable|string|max:300',
         ]);
 
         try {
@@ -68,15 +69,16 @@ class SysImpuestoController extends Controller
                 'activo' => true,
                 'descripcion' => $request->descripcion,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             return response()->json([
                 'message' => 'Impuesto creado correctamente',
-                'id' => $id
+                'id' => $id,
             ], 201);
         } catch (\Exception $e) {
-            Log::error('Error al crear impuesto: ' . $e->getMessage());
+            Log::error('Error al crear impuesto: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al crear impuesto'], 500);
         }
     }
@@ -88,14 +90,15 @@ class SysImpuestoController extends Controller
     {
         try {
             $impuesto = DB::table('sys_impuestos')->where('id', $id)->first();
-            
-            if (!$impuesto) {
+
+            if (! $impuesto) {
                 return response()->json(['error' => 'Impuesto no encontrado'], 404);
             }
 
             return response()->json($impuesto);
         } catch (\Exception $e) {
-            Log::error('Error en Impuesto show: ' . $e->getMessage());
+            Log::error('Error en Impuesto show: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar impuesto'], 500);
         }
     }
@@ -106,12 +109,12 @@ class SysImpuestoController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'codigo' => 'required|string|max:10|unique:sys_impuestos,codigo,' . $id,
+            'codigo' => 'required|string|max:10|unique:sys_impuestos,codigo,'.$id,
             'nombre' => 'required|string|max:100',
             'tipo' => 'required|in:IVA,ISR,Timbre,Retención,Otro',
             'porcentaje' => 'required|numeric|min:0|max:100',
             'activo' => 'required|boolean',
-            'descripcion' => 'nullable|string|max:300'
+            'descripcion' => 'nullable|string|max:300',
         ]);
 
         try {
@@ -124,12 +127,13 @@ class SysImpuestoController extends Controller
                     'porcentaje' => $request->porcentaje,
                     'activo' => $request->activo,
                     'descripcion' => $request->descripcion,
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
 
             return response()->json(['message' => 'Impuesto actualizado correctamente']);
         } catch (\Exception $e) {
-            Log::error('Error al actualizar impuesto: ' . $e->getMessage());
+            Log::error('Error al actualizar impuesto: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al actualizar impuesto'], 500);
         }
     }
@@ -147,7 +151,7 @@ class SysImpuestoController extends Controller
 
             if ($enUso) {
                 return response()->json([
-                    'error' => 'No se puede eliminar porque está siendo utilizado por productos'
+                    'error' => 'No se puede eliminar porque está siendo utilizado por productos',
                 ], 400);
             }
 
@@ -155,7 +159,8 @@ class SysImpuestoController extends Controller
 
             return response()->json(['message' => 'Impuesto eliminado correctamente']);
         } catch (\Exception $e) {
-            Log::error('Error al eliminar impuesto: ' . $e->getMessage());
+            Log::error('Error al eliminar impuesto: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al eliminar impuesto'], 500);
         }
     }

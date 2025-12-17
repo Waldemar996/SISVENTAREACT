@@ -25,6 +25,7 @@ class SysConfiguracion extends Model
     ];
 
     public $timestamps = false; // Solo tiene actualizado_en via DB trigger/default definition o manual
+
     protected $casts = [
         'actualizado_en' => 'datetime',
         'impuesto_general_iva' => 'decimal:2',

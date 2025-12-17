@@ -21,8 +21,9 @@ class OperTrasladoController extends Controller
     {
         // Mostrar traslados recientes
         $traslados = \App\Models\Operaciones\OperTraslado::with(['bodegaOrigen', 'bodegaDestino', 'usuarioSolicita'])
-                        ->orderBy('id', 'desc')
-                        ->paginate(20);
+            ->orderBy('id', 'desc')
+            ->paginate(20);
+
         return response()->json($traslados);
     }
 
@@ -34,14 +35,14 @@ class OperTrasladoController extends Controller
             'detalles' => 'required|array|min:1',
             'detalles.*.producto_id' => 'required|exists:inv_productos,id',
             'detalles.*.cantidad' => 'required|integer|min:1',
-            'observaciones' => 'nullable|string'
+            'observaciones' => 'nullable|string',
         ]);
 
-        return \Illuminate\Support\Facades\DB::transaction(function() use ($validated, $request) {
-            
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $request) {
+
             // Generar número correlativo
             $lastId = \App\Models\Operaciones\OperTraslado::max('id') ?? 0;
-            $numero = 'TR-' . str_pad($lastId + 1, 6, '0', STR_PAD_LEFT);
+            $numero = 'TR-'.str_pad($lastId + 1, 6, '0', STR_PAD_LEFT);
 
             // 1. Crear Cabecera de Traslado
             $traslado = \App\Models\Operaciones\OperTraslado::create([
@@ -51,14 +52,14 @@ class OperTrasladoController extends Controller
                 'usuario_solicita_id' => auth()->id(),
                 'fecha_solicitud' => now(),
                 'estado' => 'pendiente',
-                'observaciones' => $request->observaciones
+                'observaciones' => $request->observaciones,
             ]);
 
             foreach ($validated['detalles'] as $detalle) {
                 $traslado->detalles()->create([
                     'producto_id' => $detalle['producto_id'],
                     'cantidad_enviada' => $detalle['cantidad'],
-                    'cantidad_recibida' => 0 // Aún no recibido
+                    'cantidad_recibida' => 0, // Aún no recibido
                 ]);
             }
 
@@ -68,7 +69,7 @@ class OperTrasladoController extends Controller
 
     public function aprobar(Request $request, $id)
     {
-        return \Illuminate\Support\Facades\DB::transaction(function() use ($id) {
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($id) {
             $traslado = \App\Models\Operaciones\OperTraslado::with('detalles.producto')->findOrFail($id);
 
             if ($traslado->estado !== 'pendiente') {
@@ -78,11 +79,11 @@ class OperTrasladoController extends Controller
             foreach ($traslado->detalles as $detalle) {
                 // 1. Validar Stock Origen
                 $stockOrigen = \App\Models\Inventario\InvBodegaProducto::where('bodega_id', $traslado->bodega_origen_id)
-                                ->where('producto_id', $detalle->producto_id)
-                                ->sum('existencia');
+                    ->where('producto_id', $detalle->producto_id)
+                    ->sum('existencia');
 
                 if ($stockOrigen < $detalle->cantidad_enviada) {
-                    throw new \Exception("Stock insuficiente para el producto: " . $detalle->producto->nombre);
+                    throw new \Exception('Stock insuficiente para el producto: '.$detalle->producto->nombre);
                 }
 
                 // 2. Movimiento SALIDA (Origen)
@@ -114,7 +115,7 @@ class OperTrasladoController extends Controller
             $traslado->update([
                 'estado' => 'recibido',
                 'usuario_autoriza_id' => auth()->id(),
-                'fecha_recepcion' => now()
+                'fecha_recepcion' => now(),
             ]);
 
             return response()->json(['message' => 'Traslado aprobado y procesado correctamente']);
@@ -127,12 +128,12 @@ class OperTrasladoController extends Controller
         if ($traslado->estado !== 'pendiente') {
             return response()->json(['error' => 'Solo se pueden rechazar traslados pendientes'], 400);
         }
-        
+
         $traslado->update([
             'estado' => 'rechazado',
-            'usuario_autoriza_id' => auth()->id()
+            'usuario_autoriza_id' => auth()->id(),
         ]);
-        
+
         return response()->json(['message' => 'Traslado rechazado']);
     }
 

@@ -1,0 +1,1429 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to an undefined method Illuminate\\Http\\Request\:\:validated\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/DTOs/Ventas/CrearVentaDTO.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$fecha_emision\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Domain/Accounting/Services/AccountingService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$numero_comprobante\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Domain/Accounting/Services/AccountingService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$subtotal\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Domain/Accounting/Services/AccountingService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$total_impuestos\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Domain/Accounting/Services/AccountingService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$total_venta\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Domain/Accounting/Services/AccountingService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$usuario_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Domain/Accounting/Services/AccountingService.php
+
+		-
+			message: '#^Property App\\Domain\\Inventory\\Entities\\Producto\:\:\$id \(int\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: app/Domain/Inventory/Entities/Producto.php
+
+		-
+			message: '#^Property App\\Domain\\Sales\\Entities\\Venta\:\:\$id \(int\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: app/Domain/Sales/Entities/Venta.php
+
+		-
+			message: '#^Called ''pluck'' on Laravel collection, but could have been retrieved as a query\.$#'
+			identifier: larastan.noUnnecessaryCollectionCall
+			count: 1
+			path: app/EventSourcing/EventStore.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Auth/ConfirmablePasswordController.php
+
+		-
+			message: '#^Parameter \#1 \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail, App\\Models\\RRHH\\SysUsuario\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/VerifyEmailController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\:\:\$rol\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AuthController.php
+
+		-
+			message: '#^Static call to instance method App\\Services\\AuditService\:\:log\(\)\.$#'
+			identifier: method.staticCall
+			count: 2
+			path: app/Http/Controllers/AuthController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Comercial\\ComCotizacion\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Comercial\\ComCotizacion\>\:\:\$cliente_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Comercial/ComCotizacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Comercial\\ComCotizacion\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Comercial\\ComCotizacion\>\:\:\$codigo_cotizacion\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Comercial/ComCotizacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Comercial\\ComCotizacion\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Comercial\\ComCotizacion\>\:\:\$detalles\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Comercial/ComCotizacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Comercial\\ComCotizacion\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Comercial\\ComCotizacion\>\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Http/Controllers/Comercial/ComCotizacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Comercial\\ComCotizacion\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Comercial\\ComCotizacion\>\:\:\$notas\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Comercial/ComCotizacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Comercial\\ComCotizacion\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Comercial\\ComCotizacion\>\:\:\$total\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Comercial/ComCotizacionController.php
+
+		-
+			message: '#^Relation ''cliente'' is not found in App\\Models\\Comercial\\ComCotizacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Comercial/ComCotizacionController.php
+
+		-
+			message: '#^Relation ''detalles'' is not found in App\\Models\\Comercial\\ComCotizacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Http/Controllers/Comercial/ComCotizacionController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Comercial\\ComCotizacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Comercial/ComCotizacionController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Config\\SysAuditoriaLog model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Config/SysAuditoriaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$color_primary\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$color_secondary\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$direccion_fiscal\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$email_contacto\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$impuesto_general_iva\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$moneda_simbolo\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$nit_empresa\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$nombre_empresa\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$ruta_logo\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Config\\SysConfiguracion\:\:\$website\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Config/SysConfiguracionController.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Contabilidad/ContPartidaController.php
+
+		-
+			message: '#^Called ''count'' on Laravel collection, but could have been retrieved as a query\.$#'
+			identifier: larastan.noUnnecessaryCollectionCall
+			count: 1
+			path: app/Http/Controllers/DashboardController.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Controllers\\DashboardController\:\:getActividadReciente\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardControllerWithCache.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Controllers\\DashboardController\:\:getAlertas\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardControllerWithCache.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Controllers\\DashboardController\:\:getDatosGrafica\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardControllerWithCache.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Controllers\\DashboardController\:\:getProductosCriticos\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardControllerWithCache.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Controllers\\DashboardController\:\:getTopProductos\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardControllerWithCache.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Controllers\\DashboardController\:\:getVentasPorCategoria\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardControllerWithCache.php
+
+		-
+			message: '#^Relation ''categoria'' is not found in App\\Models\\Finanzas\\FinGasto model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Finanzas/FinGastoController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Finanzas\\FinGasto model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Finanzas/FinGastoController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$saldo_pendiente\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Finanzas/FinPagoClienteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$total_venta\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Finanzas/FinPagoClienteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$total_venta\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Finanzas/FinPagoClienteController.php
+
+		-
+			message: '#^Relation ''cliente'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Finanzas/FinPagoClienteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperCompra\:\:\$saldo_pendiente\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Finanzas/FinPagoProveedorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperCompra\:\:\$total_compra\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Finanzas/FinPagoProveedorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperCompra\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperCompra\>\:\:\$total_compra\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Finanzas/FinPagoProveedorController.php
+
+		-
+			message: '#^Relation ''proveedor'' is not found in App\\Models\\Operaciones\\OperCompra model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Finanzas/FinPagoProveedorController.php
+
+		-
+			message: '#^Relation ''bodega'' is not found in App\\Models\\Inventario\\InvKardex model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Inventario/InvKardexController.php
+
+		-
+			message: '#^Relation ''producto'' is not found in App\\Models\\Inventario\\InvKardex model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Inventario/InvKardexController.php
+
+		-
+			message: '#^Relation ''producto'' is not found in App\\Models\\Inventario\\InvLote model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/InvLoteController.php
+
+		-
+			message: '#^Relation ''bodegaProductos'' is not found in App\\Models\\Inventario\\InvProducto model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Inventario/InvProductoController.php
+
+		-
+			message: '#^Relation ''categoria'' is not found in App\\Models\\Inventario\\InvProducto model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/InvProductoController.php
+
+		-
+			message: '#^Relation ''marca'' is not found in App\\Models\\Inventario\\InvProducto model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/InvProductoController.php
+
+		-
+			message: '#^Relation ''unidad'' is not found in App\\Models\\Inventario\\InvProducto model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/InvProductoController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvSerie\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/InvSerieController.php
+
+		-
+			message: '#^Relation ''bodega'' is not found in App\\Models\\Inventario\\InvSerie model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Inventario/InvSerieController.php
+
+		-
+			message: '#^Relation ''compra'' is not found in App\\Models\\Inventario\\InvSerie model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Inventario/InvSerieController.php
+
+		-
+			message: '#^Relation ''producto'' is not found in App\\Models\\Inventario\\InvSerie model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/InvSerieController.php
+
+		-
+			message: '#^Relation ''venta'' is not found in App\\Models\\Inventario\\InvSerie model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Inventario/InvSerieController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\ProdFormula\:\:\$productoPadre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProdFormulaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\ProdFormula\:\:\$producto_padre_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Inventario/ProdFormulaController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Inventario\\ProdFormula\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Inventario/ProdFormulaController.php
+
+		-
+			message: '#^Relation ''productoHijo'' is not found in App\\Models\\Inventario\\ProdFormula model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Inventario/ProdFormulaController.php
+
+		-
+			message: '#^Relation ''productoPadre'' is not found in App\\Models\\Inventario\\ProdFormula model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Inventario/ProdFormulaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$costo_promedio\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\ProdFormula\:\:\$cantidad_requerida\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\ProdFormula\:\:\$producto_hijo_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\ProdOrden\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\ProdOrden\>\:\:\$bodega_destino_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\ProdOrden\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\ProdOrden\>\:\:\$cantidad_planeada\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\ProdOrden\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\ProdOrden\>\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\ProdOrden\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\ProdOrden\>\:\:\$numero_orden\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\ProdOrden\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\ProdOrden\>\:\:\$producto_terminado_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Relation ''bodegaDestino'' is not found in App\\Models\\Inventario\\ProdOrden model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Relation ''productoTerminado'' is not found in App\\Models\\Inventario\\ProdOrden model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Relation ''responsable'' is not found in App\\Models\\Inventario\\ProdOrden model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/ProdOrdenController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperCompra\:\:\$bodega_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperCompraController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperCompra\:\:\$detalles\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperCompraController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperCompra\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperCompraController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperCompra\:\:\$numero_comprobante\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperCompraController.php
+
+		-
+			message: '#^Relation ''detalles'' is not found in App\\Models\\Operaciones\\OperCompra model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Http/Controllers/Operaciones/OperCompraController.php
+
+		-
+			message: '#^Relation ''proveedor'' is not found in App\\Models\\Operaciones\\OperCompra model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperCompraController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Operaciones\\OperCompra model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperCompraController.php
+
+		-
+			message: '#^Static call to instance method App\\Services\\AuditService\:\:log\(\)\.$#'
+			identifier: method.staticCall
+			count: 4
+			path: app/Http/Controllers/Operaciones/OperCompraController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$costo_promedio\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVentaDet\:\:\$cantidad\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVentaDet\:\:\$precio_unitario\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$bodega_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$fecha_emision\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$numero_comprobante\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Anonymous function has an unused use \$request\.$#'
+			identifier: closure.unusedUse
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Relation ''detalles'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Relation ''devolucion'' is not found in App\\Models\\Operaciones\\OperDevolucionDet model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Relation ''venta'' is not found in App\\Models\\Operaciones\\OperDevolucion model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Static call to instance method App\\Services\\AuditService\:\:log\(\)\.$#'
+			identifier: method.staticCall
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperDevolucionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperTraslado\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperTraslado\>\:\:\$bodega_destino_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperTrasladoController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperTraslado\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperTraslado\>\:\:\$bodega_origen_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperTrasladoController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperTraslado\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperTraslado\>\:\:\$detalles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperTrasladoController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperTraslado\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperTraslado\>\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperTrasladoController.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, \(float\|int\) given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperTrasladoController.php
+
+		-
+			message: '#^Relation ''bodegaDestino'' is not found in App\\Models\\Operaciones\\OperTraslado model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperTrasladoController.php
+
+		-
+			message: '#^Relation ''bodegaOrigen'' is not found in App\\Models\\Operaciones\\OperTraslado model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperTrasladoController.php
+
+		-
+			message: '#^Relation ''detalles'' is not found in App\\Models\\Operaciones\\OperTraslado model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperTrasladoController.php
+
+		-
+			message: '#^Relation ''usuarioSolicita'' is not found in App\\Models\\Operaciones\\OperTraslado model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperTrasladoController.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Controllers\\Operaciones\\OperVentaController\:\:\$kardexService\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$bodega_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$detalles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$numero_comprobante\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$cliente\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$detalles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$devoluciones\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$fecha_emision\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$numero_comprobante\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Operaciones\\OperVenta\>\:\:\$total_venta\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Operaciones\\OperVenta\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Relation ''cliente'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Relation ''detalles'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 7
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Static call to instance method App\\Services\\AuditService\:\:log\(\)\.$#'
+			identifier: method.staticCall
+			count: 2
+			path: app/Http/Controllers/Operaciones/OperVentaController.php
+
+		-
+			message: '#^Relation ''cliente'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaControllerRefactored.php
+
+		-
+			message: '#^Relation ''detalles'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Http/Controllers/Operaciones/OperVentaControllerRefactored.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Operaciones/OperVentaControllerRefactored.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\:\:\$email_verified_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ProfileController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\RrhhEmpleado\:\:\$usuario\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/RRHH/RrhhEmpleadoController.php
+
+		-
+			message: '#^Relation ''puesto'' is not found in App\\Models\\RRHH\\RrhhEmpleado model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/RRHH/RrhhEmpleadoController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\RRHH\\RrhhEmpleado model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/RRHH/RrhhEmpleadoController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$codigo_sku\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$costo_promedio\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$fecha_emision\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$total_venta\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Inventario\\InvProducto\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Operaciones\\OperVenta\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:filter\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Relation ''bodega'' is not found in App\\Models\\Inventario\\InvKardex model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Relation ''bodegaProductos'' is not found in App\\Models\\Inventario\\InvProducto model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Relation ''caja'' is not found in App\\Models\\Tesoreria\\TesSesionCaja model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Relation ''cliente'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Relation ''proveedor'' is not found in App\\Models\\Operaciones\\OperCompra model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Operaciones\\OperCompra model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Tesoreria\\TesSesionCaja model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/PdfReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$bodegaProductos\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$codigo_sku\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$costo_promedio\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$stock_minimo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$fecha_emision\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$total_venta\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Inventario\\InvProducto\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Operaciones\\OperVenta\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:filter\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Relation ''bodega'' is not found in App\\Models\\Inventario\\InvKardex model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Relation ''bodegaProductos'' is not found in App\\Models\\Inventario\\InvProducto model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Relation ''caja'' is not found in App\\Models\\Tesoreria\\TesSesionCaja model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Relation ''cliente'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Relation ''detalles'' is not found in App\\Models\\Operaciones\\OperCompra model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Relation ''detalles'' is not found in App\\Models\\Operaciones\\OperVenta model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Relation ''producto'' is not found in App\\Models\\Inventario\\InvKardex model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Tesoreria\\TesSesionCaja model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Reportes/ReporteController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\RRHH\\SysUsuario\>\:\:\$activo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/System/SysUsuarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\RRHH\\SysUsuario\>\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/System/SysUsuarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\RRHH\\SysUsuario\>\:\:\$password_hash\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/System/SysUsuarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\RRHH\\SysUsuario\>\:\:\$rol\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/System/SysUsuarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\RRHH\\SysUsuario\>\:\:\$username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/System/SysUsuarioController.php
+
+		-
+			message: '#^Relation ''empleado'' is not found in App\\Models\\RRHH\\SysUsuario model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/System/SysUsuarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tesoreria\\TesCaja\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesCajaController.php
+
+		-
+			message: '#^Relation ''bodega'' is not found in App\\Models\\Tesoreria\\TesCaja model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesCajaController.php
+
+		-
+			message: '#^Relation ''usuarioAsignado'' is not found in App\\Models\\Tesoreria\\TesCaja model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesCajaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tesoreria\\TesCaja\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Tesoreria\\TesCaja\>\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tesoreria\\TesSesionCaja\:\:\$caja_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tesoreria\\TesSesionCaja\:\:\$monto_inicial\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tesoreria\\TesSesionCaja\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Tesoreria\\TesSesionCaja\>\:\:\$total_efectivo\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tesoreria\\TesSesionCaja\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Tesoreria\\TesSesionCaja\>\:\:\$total_otros\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tesoreria\\TesSesionCaja\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Tesoreria\\TesSesionCaja\>\:\:\$total_tarjeta\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tesoreria\\TesSesionCaja\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Tesoreria\\TesSesionCaja\>\:\:\$total_transferencia\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Relation ''caja'' is not found in App\\Models\\Tesoreria\\TesSesionCaja model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\Tesoreria\\TesSesionCaja model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Relation ''ventas'' is not found in App\\Models\\Tesoreria\\TesSesionCaja model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Tesoreria/TesSesionCajaController.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 1
+			path: app/Http/Middleware/AdvancedRateLimiter.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\:\:\$rol\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/CheckRole.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$activo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentProductoRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$codigo_sku\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentProductoRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$controla_stock\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentProductoRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$impuesto_porcentaje\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentProductoRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentProductoRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$precio_venta_base\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentProductoRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$bodega_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$cliente_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$descuento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$fecha_emision\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$numero_comprobante\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$sesion_caja_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$subtotal\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$tipo_comprobante\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$total_impuestos\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$total_venta\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$usuario_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Infrastructure/Persistence/EloquentVentaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RRHH\\SysUsuario\:\:\$password_hash\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/RRHH/SysUsuario.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\User\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\User\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Rules/PrecioValidoRule.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$precio_venta_base\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Rules/PrecioValidoRule.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Rules/StockDisponibleRule.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$activo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AI/ReplenishmentService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$costo_promedio\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AI/ReplenishmentService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AI/ReplenishmentService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventario\\InvProducto\>\:\:\$stock_minimo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AI/ReplenishmentService.php
+
+		-
+			message: '#^Method App\\Services\\Analytics\\AdvancedAnalyticsService\:\:getMonthsDifference\(\) should return int but returns float\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Analytics/AdvancedAnalyticsService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvBodegaProducto\:\:\$existencia\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/KardexService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$controla_stock\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/KardexService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\InvProducto\:\:\$costo_promedio\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/KardexService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$bodega_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$cliente_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$descuento_total\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$detalles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$fecha_anulacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$forma_pago\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$impuesto_total\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$motivo_anulacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$numero_comprobante\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$observaciones\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$subtotal_venta\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$tipo_comprobante\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$total_venta\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Operaciones\\OperVenta\:\:\$usuario_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Parameter \#3 \$tabla of method App\\Services\\AuditService\:\:log\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/Ventas/VentaService.php
+
+		-
+			message: '#^Parameter \$referenciaId of method App\\Services\\KardexService\:\:registrarMovimiento\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/Ventas/VentaService.php

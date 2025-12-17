@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Request Logger Middleware
- * 
+ *
  * Logs todas las requests para:
  * - Debugging
  * - Analytics
@@ -34,12 +34,12 @@ class RequestLogger
                 'user_id' => $request->user()?->id,
                 'status' => $response->getStatusCode(),
                 'duration_ms' => round($duration, 2),
-                'memory_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2)
+                'memory_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
             ]);
         }
 
         // Header con tiempo de respuesta
-        $response->headers->set('X-Response-Time', round($duration, 2) . 'ms');
+        $response->headers->set('X-Response-Time', round($duration, 2).'ms');
 
         return $response;
     }

@@ -11,6 +11,7 @@ class InvUnidad extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'inv_unidades';
+
     public $timestamps = false;
 
     protected $fillable = [

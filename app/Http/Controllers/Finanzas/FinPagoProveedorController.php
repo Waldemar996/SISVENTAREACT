@@ -14,14 +14,15 @@ class FinPagoProveedorController extends Controller
     {
         // Listar Compras Pendientes (CXP)
         $pendientes = \App\Models\Operaciones\OperCompra::with(['proveedor'])
-                        ->where('estado', 'PENDIENTE')
-                        ->get()
-                        ->map(function($compra) {
-                            $pagado = \App\Models\Finanzas\FinPagoProveedor::where('compra_id', $compra->id)->sum('monto_abonado');
-                            $compra->saldo_pendiente = $compra->total_compra - $pagado;
-                            return $compra;
-                        })
-                        ->filter(fn($c) => $c->saldo_pendiente > 0.01);
+            ->where('estado', 'PENDIENTE')
+            ->get()
+            ->map(function ($compra) {
+                $pagado = \App\Models\Finanzas\FinPagoProveedor::where('compra_id', $compra->id)->sum('monto_abonado');
+                $compra->saldo_pendiente = $compra->total_compra - $pagado;
+
+                return $compra;
+            })
+            ->filter(fn ($c) => $c->saldo_pendiente > 0.01);
 
         return response()->json($pendientes->values());
     }
@@ -31,11 +32,11 @@ class FinPagoProveedorController extends Controller
         $validated = $request->validate([
             'compra_id' => 'required|exists:oper_compras,id',
             'monto_abonado' => 'required|numeric|min:0.01',
-            'metodo_pago' => 'required|string'
+            'metodo_pago' => 'required|string',
         ]);
 
         $compra = \App\Models\Operaciones\OperCompra::findOrFail($validated['compra_id']);
-        
+
         // Validar saldo
         $pagadoPrev = \App\Models\Finanzas\FinPagoProveedor::where('compra_id', $compra->id)->sum('monto_abonado');
         $saldo = $compra->total_compra - $pagadoPrev;
@@ -54,7 +55,7 @@ class FinPagoProveedorController extends Controller
             'monto_abonado' => $validated['monto_abonado'],
             'metodo_pago' => $validated['metodo_pago'],
             'usuario_pagador_id' => auth()->id(),
-            'referencia' => $request->referencia
+            'referencia' => $request->referencia,
         ]);
 
         // Actualizar estado

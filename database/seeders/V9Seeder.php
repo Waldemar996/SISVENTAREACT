@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class V9Seeder extends Seeder
 {
@@ -28,13 +27,13 @@ class V9Seeder extends Seeder
         // 2. Create Departments and Roles (RRHH)
         $deptoId = DB::table('rrhh_departamentos')->insertGetId([
             'nombre' => 'Administración',
-            'descripcion' => 'Gerencia General y Administrativa'
+            'descripcion' => 'Gerencia General y Administrativa',
         ]);
 
         $puestoId = DB::table('rrhh_puestos')->insertGetId([
             'nombre_puesto' => 'Gerente General',
             'departamento_id' => $deptoId,
-            'salario_base' => 15000.00
+            'salario_base' => 15000.00,
         ]);
 
         // 3. Create Employee
@@ -45,7 +44,7 @@ class V9Seeder extends Seeder
             'email_personal' => 'admin@sistema.com',
             'puesto_id' => $puestoId,
             'fecha_contratacion' => now(),
-            'estado' => 'activo'
+            'estado' => 'activo',
         ]);
 
         // 4. Create System User (Linked to Employee)
@@ -66,14 +65,14 @@ class V9Seeder extends Seeder
             'nombre' => 'Bodega Central',
             'codigo_sucursal' => 'SUC-01',
             'tipo' => 'bodega_central',
-            'activa' => 1
+            'activa' => 1,
         ]);
 
         // 6. Create Cash Box (Caja)
         DB::table('tes_cajas')->insert([
             'nombre_caja' => 'Caja General 1',
             'bodega_id' => $bodegaId,
-            'estado' => 'disponible'
+            'estado' => 'disponible',
         ]);
 
         // 7. Create Taxes
@@ -81,17 +80,17 @@ class V9Seeder extends Seeder
             ['nombre' => 'IVA General', 'porcentaje' => 12.00, 'codigo_sat' => 'IVA'],
             ['nombre' => 'Exento', 'porcentaje' => 0.00, 'codigo_sat' => 'EXE'],
         ]);
-        
+
         // 8. Create Units
         DB::table('inv_unidades')->insert([
             ['nombre' => 'Unidad', 'abreviatura' => 'UND'],
             ['nombre' => 'Libra', 'abreviatura' => 'LB'],
             ['nombre' => 'Caja', 'abreviatura' => 'CAJA'],
         ]);
-        
+
         // 9. Create Categories
         DB::table('inv_categorias')->insert([
-           ['nombre' => 'General', 'categoria_padre_id' => null] 
+            ['nombre' => 'General', 'categoria_padre_id' => null],
         ]);
     }
 }

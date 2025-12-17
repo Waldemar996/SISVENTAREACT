@@ -2,14 +2,13 @@
 
 namespace App\Services\Backup;
 
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
 /**
  * Automated Backup Service
- * 
+ *
  * Features:
  * - Database backup
  * - File backup
@@ -25,8 +24,8 @@ class BackupService
     public function __construct()
     {
         $this->backupPath = storage_path('app/backups');
-        
-        if (!file_exists($this->backupPath)) {
+
+        if (! file_exists($this->backupPath)) {
             mkdir($this->backupPath, 0755, true);
         }
     }
@@ -47,28 +46,28 @@ class BackupService
             // 1. Backup database
             $dbFile = $this->backupDatabase($backupName);
             $files[] = $dbFile;
-            $this->log("✅ Database backup completed");
+            $this->log('✅ Database backup completed');
 
             // 2. Backup uploads
             $uploadsFile = $this->backupUploads($backupName);
             if ($uploadsFile) {
                 $files[] = $uploadsFile;
-                $this->log("✅ Uploads backup completed");
+                $this->log('✅ Uploads backup completed');
             }
 
             // 3. Create ZIP
             $zipFile = $this->createZip($backupName, $files);
-            $this->log("✅ ZIP archive created");
+            $this->log('✅ ZIP archive created');
 
             // 4. Upload to S3 (if configured)
             if (config('production.backup.destinations.s3')) {
                 $this->uploadToS3($zipFile);
-                $this->log("✅ Uploaded to S3");
+                $this->log('✅ Uploaded to S3');
             }
 
             // 5. Clean old backups
             $this->cleanOldBackups();
-            $this->log("✅ Old backups cleaned");
+            $this->log('✅ Old backups cleaned');
 
             // 6. Clean temp files
             foreach ($files as $file) {
@@ -82,15 +81,15 @@ class BackupService
                 'backup_name' => $backupName,
                 'file' => $zipFile,
                 'size' => filesize($zipFile),
-                'timestamp' => $timestamp
+                'timestamp' => $timestamp,
             ];
 
         } catch (\Exception $e) {
-            $this->log("❌ Backup failed: " . $e->getMessage());
-            
+            $this->log('❌ Backup failed: '.$e->getMessage());
+
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -132,16 +131,16 @@ class BackupService
     private function backupUploads(string $backupName): ?string
     {
         $uploadsPath = storage_path('app/public/uploads');
-        
-        if (!file_exists($uploadsPath)) {
+
+        if (! file_exists($uploadsPath)) {
             return null;
         }
 
         $filename = "{$this->backupPath}/{$backupName}_uploads.zip";
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($filename, ZipArchive::CREATE) !== true) {
-            throw new \Exception("Cannot create uploads ZIP");
+            throw new \Exception('Cannot create uploads ZIP');
         }
 
         $this->addDirectoryToZip($zip, $uploadsPath, 'uploads');
@@ -157,9 +156,9 @@ class BackupService
     {
         $zipFilename = "{$this->backupPath}/{$backupName}.zip";
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($zipFilename, ZipArchive::CREATE) !== true) {
-            throw new \Exception("Cannot create final ZIP");
+            throw new \Exception('Cannot create final ZIP');
         }
 
         foreach ($files as $file) {
@@ -171,7 +170,7 @@ class BackupService
             'created_at' => now()->toIso8601String(),
             'app_version' => config('app.version', '1.0.0'),
             'database' => config('database.connections.mysql.database'),
-            'files_count' => count($files)
+            'files_count' => count($files),
         ];
 
         $zip->addFromString('metadata.json', json_encode($metadata, JSON_PRETTY_PRINT));
@@ -185,8 +184,8 @@ class BackupService
      */
     private function uploadToS3(string $file): void
     {
-        $s3Path = 'backups/' . basename($file);
-        
+        $s3Path = 'backups/'.basename($file);
+
         Storage::disk('s3')->put(
             $s3Path,
             file_get_contents($file)
@@ -205,10 +204,10 @@ class BackupService
 
         foreach ($files as $file) {
             $fileTime = Carbon::createFromTimestamp(filemtime($file));
-            
+
             if ($fileTime->lt($cutoffDate)) {
                 unlink($file);
-                $this->log("🗑️  Deleted old backup: " . basename($file));
+                $this->log('🗑️  Deleted old backup: '.basename($file));
             }
         }
     }
@@ -224,9 +223,9 @@ class BackupService
         );
 
         foreach ($files as $file) {
-            if (!$file->isDir()) {
+            if (! $file->isDir()) {
                 $filePath = $file->getRealPath();
-                $relativePath = $zipPath . '/' . substr($filePath, strlen($dir) + 1);
+                $relativePath = $zipPath.'/'.substr($filePath, strlen($dir) + 1);
                 $zip->addFile($filePath, $relativePath);
             }
         }
@@ -246,13 +245,13 @@ class BackupService
     public function listBackups(): array
     {
         $files = glob("{$this->backupPath}/backup_*.zip");
-        
-        return array_map(function($file) {
+
+        return array_map(function ($file) {
             return [
                 'name' => basename($file),
                 'size' => filesize($file),
                 'size_mb' => round(filesize($file) / 1024 / 1024, 2),
-                'created_at' => Carbon::createFromTimestamp(filemtime($file))->toIso8601String()
+                'created_at' => Carbon::createFromTimestamp(filemtime($file))->toIso8601String(),
             ];
         }, $files);
     }
@@ -267,10 +266,10 @@ class BackupService
         try {
             // Extract ZIP
             $extractPath = "{$this->backupPath}/restore_temp";
-            
-            $zip = new ZipArchive();
+
+            $zip = new ZipArchive;
             if ($zip->open($backupFile) !== true) {
-                throw new \Exception("Cannot open backup file");
+                throw new \Exception('Cannot open backup file');
             }
 
             $zip->extractTo($extractPath);
@@ -280,7 +279,7 @@ class BackupService
             $sqlFile = glob("{$extractPath}/*_database.sql")[0] ?? null;
             if ($sqlFile) {
                 $this->restoreDatabase($sqlFile);
-                $this->log("✅ Database restored");
+                $this->log('✅ Database restored');
             }
 
             // Clean temp
@@ -288,15 +287,15 @@ class BackupService
 
             return [
                 'success' => true,
-                'message' => 'Backup restored successfully'
+                'message' => 'Backup restored successfully',
             ];
 
         } catch (\Exception $e) {
-            $this->log("❌ Restore failed: " . $e->getMessage());
-            
+            $this->log('❌ Restore failed: '.$e->getMessage());
+
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -323,7 +322,7 @@ class BackupService
         exec($command, $output, $returnCode);
 
         if ($returnCode !== 0) {
-            throw new \Exception("Database restore failed");
+            throw new \Exception('Database restore failed');
         }
     }
 
@@ -332,7 +331,7 @@ class BackupService
      */
     private function deleteDirectory(string $dir): void
     {
-        if (!file_exists($dir)) {
+        if (! file_exists($dir)) {
             return;
         }
 

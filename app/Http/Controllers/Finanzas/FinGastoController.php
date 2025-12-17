@@ -36,10 +36,10 @@ class FinGastoController extends Controller
         // 1. Validar Caja Abierta (Obligatorio para sacar dinero efectivo)
         // Si fuera pago con Cheque/Banco, podría ser opcional, pero simplificaremos asumiendo "Gastos Menores" de caja.
         $sesionActiva = \App\Models\Tesoreria\TesSesionCaja::where('usuario_id', auth()->id())
-                            ->where('estado', 'abierta')
-                            ->first();
+            ->where('estado', 'abierta')
+            ->first();
 
-        if (!$sesionActiva) {
+        if (! $sesionActiva) {
             return response()->json(['message' => 'Debe tener una CAJA ABIERTA para registrar gastos.'], 403);
         }
 
@@ -47,10 +47,10 @@ class FinGastoController extends Controller
         $gasto = \App\Models\Finanzas\FinGasto::create([
             'descripcion' => $validated['descripcion'],
             'monto' => $validated['monto'],
-            'categoria_id' => $request->categoria_id, 
+            'categoria_id' => $request->categoria_id,
             'fecha_gasto' => now(),
             'usuario_id' => auth()->id(),
-            'sesion_caja_id' => $sesionActiva->id // Vinculado al arqueo
+            'sesion_caja_id' => $sesionActiva->id, // Vinculado al arqueo
         ]);
 
         return response()->json(['message' => 'Gasto registrado', 'data' => $gasto], 201);

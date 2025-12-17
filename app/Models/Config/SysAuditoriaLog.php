@@ -2,9 +2,9 @@
 
 namespace App\Models\Config;
 
+use App\Models\RRHH\SysUsuario;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RRHH\SysUsuario;
 
 class SysAuditoriaLog extends Model
 {
@@ -24,7 +24,7 @@ class SysAuditoriaLog extends Model
         'datos_nuevos',
         'ip_usuario',
         'navegador_info',
-        'fecha'
+        'fecha',
     ];
 
     protected $casts = [

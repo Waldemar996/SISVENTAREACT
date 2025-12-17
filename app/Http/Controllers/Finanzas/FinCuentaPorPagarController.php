@@ -46,14 +46,15 @@ class FinCuentaPorPagarController extends Controller
                         'estado' => $cuenta->estado,
                         'proveedor' => [
                             'id' => $cuenta->proveedor_id,
-                            'razon_social' => $cuenta->proveedor_razon_social
-                        ]
+                            'razon_social' => $cuenta->proveedor_razon_social,
+                        ],
                     ];
                 });
 
             return response()->json($cuentas);
         } catch (\Exception $e) {
-            Log::error('Error en CXP index: ' . $e->getMessage());
+            Log::error('Error en CXP index: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar cuentas por pagar'], 500);
         }
     }
@@ -68,14 +69,14 @@ class FinCuentaPorPagarController extends Controller
             'fecha_pago' => 'required|date',
             'metodo_pago' => 'required|in:efectivo,tarjeta,transferencia,cheque',
             'numero_referencia' => 'nullable|string|max:100',
-            'observaciones' => 'nullable|string|max:500'
+            'observaciones' => 'nullable|string|max:500',
         ]);
 
         DB::beginTransaction();
         try {
             // Verificar que la compra existe
             $compra = DB::table('oper_compras')->where('id', $id)->first();
-            if (!$compra) {
+            if (! $compra) {
                 return response()->json(['error' => 'Compra no encontrada'], 404);
             }
 
@@ -83,7 +84,7 @@ class FinCuentaPorPagarController extends Controller
             $pagosAnteriores = DB::table('fin_pagos_proveedores')
                 ->where('compra_id', $id)
                 ->sum('monto_abonado');
-            
+
             $saldoPendiente = $compra->total - $pagosAnteriores;
 
             if (($request->monto - $saldoPendiente) > 0.01) {
@@ -104,11 +105,13 @@ class FinCuentaPorPagarController extends Controller
             ]);
 
             DB::commit();
+
             return response()->json(['message' => 'Pago registrado correctamente'], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al registrar pago CXP: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al registrar pago: ' . $e->getMessage()], 500);
+            Log::error('Error al registrar pago CXP: '.$e->getMessage());
+
+            return response()->json(['error' => 'Error al registrar pago: '.$e->getMessage()], 500);
         }
     }
 
@@ -124,7 +127,7 @@ class FinCuentaPorPagarController extends Controller
                 ->where('c.id', $id)
                 ->first();
 
-            if (!$cuenta) {
+            if (! $cuenta) {
                 return response()->json(['error' => 'Cuenta no encontrada'], 404);
             }
 
@@ -135,10 +138,11 @@ class FinCuentaPorPagarController extends Controller
 
             return response()->json([
                 'cuenta' => $cuenta,
-                'pagos' => $pagos
+                'pagos' => $pagos,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error en CXP show: ' . $e->getMessage());
+            Log::error('Error en CXP show: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar cuenta'], 500);
         }
     }

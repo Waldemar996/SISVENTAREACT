@@ -29,14 +29,15 @@ class RrhhPuestoController extends Controller
                         'departamento_id' => $puesto->departamento_id,
                         'activo' => true, // Default to true as column missing
                         'departamento' => $puesto->departamento_nombre ? [
-                            'nombre' => $puesto->departamento_nombre
-                        ] : null
+                            'nombre' => $puesto->departamento_nombre,
+                        ] : null,
                     ];
                 });
 
             return response()->json($puestos);
         } catch (\Exception $e) {
-            Log::error('Error en Puestos index: ' . $e->getMessage());
+            Log::error('Error en Puestos index: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar puestos'], 500);
         }
     }
@@ -58,7 +59,8 @@ class RrhhPuestoController extends Controller
 
             return response()->json(['message' => 'Puesto creado correctamente', 'id' => $id], 201);
         } catch (\Exception $e) {
-            Log::error('Error al crear puesto: ' . $e->getMessage());
+            Log::error('Error al crear puesto: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al crear puesto'], 500);
         }
     }
@@ -67,16 +69,17 @@ class RrhhPuestoController extends Controller
     {
         try {
             $puesto = DB::table('rrhh_puestos')->where('id', $id)->first();
-            
-            if (!$puesto) {
+
+            if (! $puesto) {
                 return response()->json(['error' => 'Puesto no encontrado'], 404);
             }
-            
+
             // Map for consistency if needed, or just return raw
             // Frontend expects nombre_puesto mostly
             return response()->json($puesto);
         } catch (\Exception $e) {
-            Log::error('Error en Puesto show: ' . $e->getMessage());
+            Log::error('Error en Puesto show: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar puesto'], 500);
         }
     }
@@ -101,7 +104,8 @@ class RrhhPuestoController extends Controller
 
             return response()->json(['message' => 'Puesto actualizado correctamente']);
         } catch (\Exception $e) {
-            Log::error('Error al actualizar puesto: ' . $e->getMessage());
+            Log::error('Error al actualizar puesto: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al actualizar puesto'], 500);
         }
     }
@@ -114,7 +118,7 @@ class RrhhPuestoController extends Controller
 
             if ($enUso) {
                 return response()->json([
-                    'error' => 'No se puede eliminar porque hay empleados asignados a este puesto'
+                    'error' => 'No se puede eliminar porque hay empleados asignados a este puesto',
                 ], 400);
             }
 
@@ -122,7 +126,8 @@ class RrhhPuestoController extends Controller
 
             return response()->json(['message' => 'Puesto eliminado correctamente']);
         } catch (\Exception $e) {
-            Log::error('Error al eliminar puesto: ' . $e->getMessage());
+            Log::error('Error al eliminar puesto: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al eliminar puesto'], 500);
         }
     }

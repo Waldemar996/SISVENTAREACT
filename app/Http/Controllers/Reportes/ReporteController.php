@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Reportes;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inventario\InvProducto;
+use App\Models\Operaciones\OperCompra;
+use App\Models\Operaciones\OperVenta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Operaciones\OperVenta;
-use App\Models\Operaciones\OperCompra;
-use App\Models\Inventario\InvProducto;
 
 class ReporteController extends Controller
 {
@@ -17,12 +17,12 @@ class ReporteController extends Controller
             // 1. KPIs Generales (Totales Históricos)
             $totalVentas = OperVenta::where('estado', 'COMPLETADO')->sum('total_venta');
             $totalCompras = OperCompra::where('estado', 'COMPLETADO')->sum('total_compra');
-            
-            // Ganancia aproximada: Ventas - Costo de lo Vendido (COGS). 
+
+            // Ganancia aproximada: Ventas - Costo de lo Vendido (COGS).
             // Para exactitud real se requiere relacionar cada linea de venta con su costo histórico exacto.
             // Aquí usaremos una aproximación sumando los 'total_linea' - 'costo_total' presumido o simplemente Margen Bruto si tuviéramos costo en venta
             // Dado que guardamos 'costo_unitario_historico' en oper_ventas_det, podemos calcularlo exacto.
-            
+
             $costoVentas = DB::table('oper_ventas_det')
                 ->join('oper_ventas', 'oper_ventas.id', '=', 'oper_ventas_det.venta_id')
                 ->where('oper_ventas.estado', 'COMPLETADO')
@@ -37,6 +37,7 @@ class ReporteController extends Controller
                 ->get()
                 ->filter(function ($prod) {
                     $stockTotal = $prod->bodegaProductos ? $prod->bodegaProductos->sum('existencia') : 0;
+
                     return $stockTotal <= $prod->stock_minimo;
                 })
                 ->count();
@@ -71,19 +72,20 @@ class ReporteController extends Controller
                     'ventas_totales' => $totalVentas,
                     'compras_totales' => $totalCompras,
                     'ganancia_bruta' => $gananciaBruta,
-                    'productos_bajo_stock' => $productosBajoStock
+                    'productos_bajo_stock' => $productosBajoStock,
                 ],
                 'charts' => [
                     'ventas_semanales' => $ventasUltimos7Dias,
-                    'top_productos' => $topProductos
-                ]
+                    'top_productos' => $topProductos,
+                ],
             ]);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Error Dashboard: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Error Dashboard: '.$e->getMessage());
+
             return response()->json([
                 'error' => true,
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ], 500);
         }
     }
@@ -91,7 +93,7 @@ class ReporteController extends Controller
     /**
      * Reporte de Ventas Detalladas
      */
-    public function getVentasDetalladas(Request $request) 
+    public function getVentasDetalladas(Request $request)
     {
         $query = OperVenta::with(['cliente', 'usuario', 'detalles.producto'])
             ->orderBy('fecha_emision', 'desc');
@@ -111,7 +113,33 @@ class ReporteController extends Controller
 
         // Export mode vs Pagination
         if ($request->query('export') === 'true') {
-            return response()->json($query->get()); 
+            return response()->json($query->get());
+        }
+
+        return response()->json($query->paginate(50));
+    }
+
+    /**
+     * Reporte de Compras Detalladas
+     */
+    public function getComprasDetalladas(Request $request)
+    {
+        $query = OperCompra::with(['proveedor', 'usuario', 'detalles.producto'])
+            ->orderBy('fecha_emision', 'desc');
+
+        if ($request->filled('fecha_inicio')) {
+            $query->whereDate('fecha_emision', '>=', $request->fecha_inicio);
+        }
+        if ($request->filled('fecha_fin')) {
+            $query->whereDate('fecha_emision', '<=', $request->fecha_fin);
+        }
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        // Export mode vs Pagination
+        if ($request->query('export') === 'true') {
+            return response()->json($query->get());
         }
 
         return response()->json($query->paginate(50));
@@ -135,6 +163,7 @@ class ReporteController extends Controller
         if ($request->query('export') === 'true') {
             return response()->json($query->get());
         }
+
         return response()->json($query->paginate(50));
     }
 
@@ -144,7 +173,7 @@ class ReporteController extends Controller
     public function getKardex(Request $request)
     {
         $request->validate([
-            'producto_id' => 'required|exists:inv_productos,id'
+            'producto_id' => 'required|exists:inv_productos,id',
         ]);
 
         $query = \App\Models\Inventario\InvKardex::with(['bodega', 'producto'])
@@ -161,6 +190,7 @@ class ReporteController extends Controller
         if ($request->query('export') === 'true') {
             return response()->json($query->get());
         }
+
         return response()->json($query->paginate(50));
     }
 
@@ -171,14 +201,15 @@ class ReporteController extends Controller
     {
         $query = InvProducto::with(['categoria', 'marca', 'bodegaProductos.bodega'])
             ->where('activo', true)
-            ->whereHas('bodegaProductos', function($q) {
+            ->whereHas('bodegaProductos', function ($q) {
                 $q->where('existencia', '>', 0);
             });
 
         // Calculate Totals on the fly (or via DB raw for performance)
-        $productos = $query->get()->map(function($prod) {
+        $productos = $query->get()->map(function ($prod) {
             $stock = $prod->stock_total;
             $valor = $stock * $prod->costo_promedio;
+
             return [
                 'id' => $prod->id,
                 'codigo_sku' => $prod->codigo_sku,
@@ -186,7 +217,7 @@ class ReporteController extends Controller
                 'categoria' => $prod->categoria->nombre ?? 'N/A',
                 'stock_total' => $stock,
                 'costo_promedio' => $prod->costo_promedio,
-                'valor_total' => $valor
+                'valor_total' => $valor,
             ];
         });
 
@@ -196,7 +227,7 @@ class ReporteController extends Controller
 
         return response()->json([
             'data' => $productos->values(),
-            'total_valorizado' => $productos->sum('valor_total')
+            'total_valorizado' => $productos->sum('valor_total'),
         ]);
     }
 
@@ -208,13 +239,14 @@ class ReporteController extends Controller
         // Ventas al crédito pendientes
         // Asumimos que PENDIENTE significa que falta pago
         // Idealmente deberiamos restar los pagos realizados (FinPagoCliente).
-        
+
         $ventas = OperVenta::with(['cliente'])
             ->where('estado', 'PENDIENTE')
             ->orderBy('fecha_emision', 'asc')
             ->get()
-            ->map(function($venta) {
+            ->map(function ($venta) {
                 $pagado = \App\Models\Finanzas\FinPagoCliente::where('venta_id', $venta->id)->sum('monto');
+
                 return [
                     'id' => $venta->id,
                     'fecha' => $venta->fecha_emision,
@@ -222,16 +254,16 @@ class ReporteController extends Controller
                     'total' => $venta->total_venta,
                     'pagado' => $pagado,
                     'saldo' => $venta->total_venta - $pagado,
-                    'dias_mora' => \Carbon\Carbon::parse($venta->fecha_emision)->diffInDays(now())
+                    'dias_mora' => \Carbon\Carbon::parse($venta->fecha_emision)->diffInDays(now()),
                 ];
             })
-            ->filter(function($row) {
+            ->filter(function ($row) {
                 return $row['saldo'] > 0;
             });
 
         return response()->json([
             'data' => $ventas->values(),
-            'total_cxc' => $ventas->sum('saldo')
+            'total_cxc' => $ventas->sum('saldo'),
         ]);
     }
 }

@@ -17,6 +17,7 @@ class ComCotizacionController extends Controller
     public function index()
     {
         $cotizaciones = \App\Models\Comercial\ComCotizacion::with(['cliente', 'usuario', 'detalles'])->orderBy('created_at', 'desc')->get();
+
         return response()->json($cotizaciones);
     }
 
@@ -29,31 +30,31 @@ class ComCotizacionController extends Controller
             'detalles' => 'required|array|min:1',
             'detalles.*.producto_id' => 'required|exists:inv_productos,id',
             'detalles.*.cantidad' => 'required|integer|min:1',
-            'detalles.*.precio_unitario' => 'required|numeric|min:0'
+            'detalles.*.precio_unitario' => 'required|numeric|min:0',
         ]);
 
-        return \Illuminate\Support\Facades\DB::transaction(function() use ($validated) {
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($validated) {
             $total = 0;
-            foreach($validated['detalles'] as $detalle) {
+            foreach ($validated['detalles'] as $detalle) {
                 $total += $detalle['cantidad'] * $detalle['precio_unitario'];
             }
 
             $cotizacion = \App\Models\Comercial\ComCotizacion::create([
-                'codigo_cotizacion' => 'COT-' . time(),
+                'codigo_cotizacion' => 'COT-'.time(),
                 'cliente_id' => $validated['cliente_id'],
                 'usuario_id' => auth()->id(),
                 'fecha_emision' => now(),
                 'fecha_vencimiento' => $validated['fecha_vencimiento'],
                 'total' => $total,
-                'estado' => 'borrador' // borrador, enviada, aprobada, convertida_venta
+                'estado' => 'borrador', // borrador, enviada, aprobada, convertida_venta
             ]);
 
-            foreach($validated['detalles'] as $detalle) {
+            foreach ($validated['detalles'] as $detalle) {
                 $cotizacion->detalles()->create([
                     'producto_id' => $detalle['producto_id'],
                     'cantidad' => $detalle['cantidad'],
                     'precio_unitario' => $detalle['precio_unitario'],
-                    'subtotal' => $detalle['cantidad'] * $detalle['precio_unitario']
+                    'subtotal' => $detalle['cantidad'] * $detalle['precio_unitario'],
                 ]);
             }
 
@@ -76,12 +77,12 @@ class ComCotizacionController extends Controller
             'detalles.*.producto_id' => 'required|exists:inv_productos,id',
             'detalles.*.cantidad' => 'required|integer|min:1',
             'detalles.*.precio_unitario' => 'required|numeric|min:0',
-            'notas' => 'nullable|string'
+            'notas' => 'nullable|string',
         ]);
 
-        return \Illuminate\Support\Facades\DB::transaction(function() use ($validated, $cotizacion) {
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $cotizacion) {
             $total = 0;
-            foreach($validated['detalles'] as $detalle) {
+            foreach ($validated['detalles'] as $detalle) {
                 $total += $detalle['cantidad'] * $detalle['precio_unitario'];
             }
 
@@ -89,18 +90,18 @@ class ComCotizacionController extends Controller
                 'cliente_id' => $validated['cliente_id'],
                 'fecha_vencimiento' => $validated['fecha_vencimiento'],
                 'total' => $total,
-                'notas' => $validated['notas'] ?? $cotizacion->notas
+                'notas' => $validated['notas'] ?? $cotizacion->notas,
             ]);
 
             // Sync detalles: Delete old, create new
             $cotizacion->detalles()->delete();
 
-            foreach($validated['detalles'] as $detalle) {
+            foreach ($validated['detalles'] as $detalle) {
                 $cotizacion->detalles()->create([
                     'producto_id' => $detalle['producto_id'],
                     'cantidad' => $detalle['cantidad'],
                     'precio_unitario' => $detalle['precio_unitario'],
-                    'subtotal' => $detalle['cantidad'] * $detalle['precio_unitario']
+                    'subtotal' => $detalle['cantidad'] * $detalle['precio_unitario'],
                 ]);
             }
 
@@ -121,12 +122,12 @@ class ComCotizacionController extends Controller
     {
         // 0. Validar Sesión de Caja (Integridad)
         $sesionActiva = \App\Models\Tesoreria\TesSesionCaja::where('usuario_id', auth()->id())
-                            ->where('estado', 'abierta')->first();
-        if (!$sesionActiva) {
+            ->where('estado', 'abierta')->first();
+        if (! $sesionActiva) {
             return response()->json(['message' => 'Para facturar esta cotización necesitas abrir caja primero.'], 403);
         }
 
-        return \Illuminate\Support\Facades\DB::transaction(function() use ($id, $sesionActiva) {
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($id, $sesionActiva) {
             $cotizacion = \App\Models\Comercial\ComCotizacion::with('detalles')->findOrFail($id);
 
             if ($cotizacion->estado === 'convertida_venta') {
@@ -136,7 +137,7 @@ class ComCotizacionController extends Controller
             // 1. Crear Venta basada en Cotización
             $venta = \App\Models\Operaciones\OperVenta::create([
                 'tipo_comprobante' => 'FACTURA',
-                'numero_comprobante' => 'V-' . time(),
+                'numero_comprobante' => 'V-'.time(),
                 'cliente_id' => $cotizacion->cliente_id,
                 'usuario_id' => auth()->id(),
                 'bodega_id' => 1, // Default Central
@@ -145,11 +146,11 @@ class ComCotizacionController extends Controller
                 'subtotal' => $cotizacion->total, // Simplificado sin impuestos por ahora
                 'total_impuestos' => 0,
                 'total_venta' => $cotizacion->total,
-                'estado' => 'COMPLETADO'
+                'estado' => 'COMPLETADO',
             ]);
 
             // 2. Migrar detalles y mover Kardex
-            foreach($cotizacion->detalles as $detalle) {
+            foreach ($cotizacion->detalles as $detalle) {
                 // Verificar Stock Antes (Ahora sí importa)
                 $producto = \App\Models\Inventario\InvProducto::find($detalle->producto_id);
                 // Aquí se debería validar stock disponible real... lo omito por brevedad pero el usuario pidió avanzado.
@@ -161,7 +162,7 @@ class ComCotizacionController extends Controller
                     'precio_unitario' => $detalle->precio_unitario,
                     'impuesto_aplicado' => 0,
                     'costo_unitario_historico' => $producto->costo_promedio ?? 0,
-                    'subtotal' => $detalle->subtotal
+                    'subtotal' => $detalle->subtotal,
                 ]);
 
                 // Registrar en Kardex
@@ -171,7 +172,7 @@ class ComCotizacionController extends Controller
                     'venta',
                     $detalle->cantidad,
                     0,
-                    'VENTAS (COT-' . $cotizacion->codigo_cotizacion . ')',
+                    'VENTAS (COT-'.$cotizacion->codigo_cotizacion.')',
                     $venta->id
                 );
             }
@@ -182,10 +183,11 @@ class ComCotizacionController extends Controller
             return response()->json(['message' => 'Cotización facturada y stock descontado', 'venta_id' => $venta->id]);
         });
     }
+
     public function cambiarEstado(Request $request, $id)
     {
         $request->validate([
-            'estado' => 'required|in:enviada,aprobada,rechazada'
+            'estado' => 'required|in:enviada,aprobada,rechazada',
         ]);
 
         $cotizacion = \App\Models\Comercial\ComCotizacion::findOrFail($id);
@@ -195,46 +197,46 @@ class ComCotizacionController extends Controller
         // Borrador -> Enviada
         // Enviada -> Aprobada | Rechazada
         // Aprobada -> (Convertir a Venta es otro endpoint)
-        
+
         if ($cotizacion->estado === 'borrador' && $nuevoEstado !== 'enviada') {
-             return response()->json(['message' => 'Un borrador solo puede pasar a Enviada.'], 400);
+            return response()->json(['message' => 'Un borrador solo puede pasar a Enviada.'], 400);
         }
 
-        if ($cotizacion->estado === 'enviada' && !in_array($nuevoEstado, ['aprobada', 'rechazada'])) {
+        if ($cotizacion->estado === 'enviada' && ! in_array($nuevoEstado, ['aprobada', 'rechazada'])) {
             return response()->json(['message' => 'Una cotización enviada solo se puede Aprobar o Rechazar.'], 400);
         }
 
         if (in_array($cotizacion->estado, ['aprobada', 'rechazada', 'convertida_venta'])) {
-             return response()->json(['message' => 'No se puede cambiar el estado de una cotización finalizada.'], 400);
+            return response()->json(['message' => 'No se puede cambiar el estado de una cotización finalizada.'], 400);
         }
 
         $cotizacion->update(['estado' => $nuevoEstado]);
-        
-        return response()->json(['message' => 'Estado actualizado a ' . strtoupper($nuevoEstado), 'estado' => $nuevoEstado]);
+
+        return response()->json(['message' => 'Estado actualizado a '.strtoupper($nuevoEstado), 'estado' => $nuevoEstado]);
     }
 
     public function duplicar($id)
     {
         $original = \App\Models\Comercial\ComCotizacion::with('detalles')->findOrFail($id);
 
-        return \Illuminate\Support\Facades\DB::transaction(function() use ($original) {
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($original) {
             $clon = \App\Models\Comercial\ComCotizacion::create([
-                'codigo_cotizacion' => 'COT-' . time(), // Nuevo código
+                'codigo_cotizacion' => 'COT-'.time(), // Nuevo código
                 'cliente_id' => $original->cliente_id,
                 'usuario_id' => auth()->id(), // Usuario actual
                 'fecha_emision' => now(),
                 'fecha_vencimiento' => now()->addDays(15), // Reset vencimiento
                 'total' => $original->total,
                 'estado' => 'borrador', // Siempre nace como borrador
-                'notas' => $original->notas . ' (Copia de ' . $original->codigo_cotizacion . ')'
+                'notas' => $original->notas.' (Copia de '.$original->codigo_cotizacion.')',
             ]);
 
-            foreach($original->detalles as $detalle) {
+            foreach ($original->detalles as $detalle) {
                 $clon->detalles()->create([
                     'producto_id' => $detalle->producto_id,
                     'cantidad' => $detalle->cantidad,
                     'precio_unitario' => $detalle->precio_unitario,
-                    'subtotal' => $detalle->subtotal
+                    'subtotal' => $detalle->subtotal,
                 ]);
             }
 
@@ -245,12 +247,13 @@ class ComCotizacionController extends Controller
     public function destroy($id)
     {
         $cotizacion = \App\Models\Comercial\ComCotizacion::findOrFail($id);
-        
-        if (!in_array($cotizacion->estado, ['borrador', 'rechazada'])) {
+
+        if (! in_array($cotizacion->estado, ['borrador', 'rechazada'])) {
             return response()->json(['message' => 'Solo se pueden eliminar cotizaciones en borrador o rechazadas.'], 403);
         }
 
         $cotizacion->delete(); // Soft Delete
+
         return response()->json(['message' => 'Cotización eliminada correctamente (baja lógica)']);
     }
 }

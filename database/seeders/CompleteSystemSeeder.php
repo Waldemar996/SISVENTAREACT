@@ -14,16 +14,16 @@ class CompleteSystemSeeder extends Seeder
     {
         // 1. Impuestos (si la tabla existe)
         $this->seedImpuestos();
-        
+
         // 2. Series (si la tabla existe)
         $this->seedSeries();
-        
+
         // 3. Cuentas Contables (si la tabla existe)
         $this->seedCuentasContables();
-        
+
         // 4. Configuración Empresa
         $this->seedEmpresa();
-        
+
         echo "✅ Todos los módulos poblados con datos de prueba\n";
     }
 
@@ -31,7 +31,7 @@ class CompleteSystemSeeder extends Seeder
     {
         try {
             // Verificar si la tabla existe
-            if (!DB::getSchemaBuilder()->hasTable('sys_impuestos')) {
+            if (! DB::getSchemaBuilder()->hasTable('sys_impuestos')) {
                 echo "⚠️ Tabla sys_impuestos no existe, creándola...\n";
                 DB::statement("
                     CREATE TABLE IF NOT EXISTS `sys_impuestos` (
@@ -63,7 +63,7 @@ class CompleteSystemSeeder extends Seeder
                     'activo' => true,
                     'descripcion' => 'Impuesto al Valor Agregado',
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ],
                 [
                     'codigo' => 'ISR',
@@ -73,7 +73,7 @@ class CompleteSystemSeeder extends Seeder
                     'activo' => true,
                     'descripcion' => 'Impuesto Sobre la Renta',
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ],
                 [
                     'codigo' => 'RET',
@@ -83,13 +83,13 @@ class CompleteSystemSeeder extends Seeder
                     'activo' => true,
                     'descripcion' => 'Retención de IVA',
                     'created_at' => now(),
-                    'updated_at' => now()
-                ]
+                    'updated_at' => now(),
+                ],
             ]);
 
             echo "✅ Impuestos creados: 3\n";
         } catch (\Exception $e) {
-            echo "❌ Error en impuestos: " . $e->getMessage() . "\n";
+            echo '❌ Error en impuestos: '.$e->getMessage()."\n";
         }
     }
 
@@ -97,7 +97,7 @@ class CompleteSystemSeeder extends Seeder
     {
         try {
             // Verificar si la tabla existe
-            if (!DB::getSchemaBuilder()->hasTable('sys_series')) {
+            if (! DB::getSchemaBuilder()->hasTable('sys_series')) {
                 echo "⚠️ Tabla sys_series no existe, creándola...\n";
                 DB::statement("
                     CREATE TABLE IF NOT EXISTS `sys_series` (
@@ -132,7 +132,7 @@ class CompleteSystemSeeder extends Seeder
                     'activa' => true,
                     'descripcion' => 'Serie para facturas',
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ],
                 [
                     'tipo_documento' => 'cotizacion',
@@ -144,7 +144,7 @@ class CompleteSystemSeeder extends Seeder
                     'activa' => true,
                     'descripcion' => 'Serie para cotizaciones',
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ],
                 [
                     'tipo_documento' => 'venta',
@@ -156,7 +156,7 @@ class CompleteSystemSeeder extends Seeder
                     'activa' => true,
                     'descripcion' => 'Serie para ventas',
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ],
                 [
                     'tipo_documento' => 'compra',
@@ -168,7 +168,7 @@ class CompleteSystemSeeder extends Seeder
                     'activa' => true,
                     'descripcion' => 'Serie para compras',
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ],
                 [
                     'tipo_documento' => 'partida',
@@ -180,13 +180,13 @@ class CompleteSystemSeeder extends Seeder
                     'activa' => true,
                     'descripcion' => 'Serie para partidas contables',
                     'created_at' => now(),
-                    'updated_at' => now()
-                ]
+                    'updated_at' => now(),
+                ],
             ]);
 
             echo "✅ Series creadas: 5\n";
         } catch (\Exception $e) {
-            echo "❌ Error en series: " . $e->getMessage() . "\n";
+            echo '❌ Error en series: '.$e->getMessage()."\n";
         }
     }
 
@@ -194,7 +194,7 @@ class CompleteSystemSeeder extends Seeder
     {
         try {
             // Verificar si la tabla existe
-            if (!DB::getSchemaBuilder()->hasTable('cont_cuentas')) {
+            if (! DB::getSchemaBuilder()->hasTable('cont_cuentas')) {
                 echo "⚠️ Tabla cont_cuentas no existe, creándola...\n";
                 DB::statement("
                     CREATE TABLE IF NOT EXISTS `cont_cuentas` (
@@ -228,25 +228,25 @@ class CompleteSystemSeeder extends Seeder
                 ['codigo' => '1.1.02', 'nombre' => 'Bancos', 'tipo' => 'activo', 'nivel' => 3, 'cuenta_padre_id' => 2, 'acepta_movimiento' => true, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
                 ['codigo' => '1.1.03', 'nombre' => 'Cuentas por Cobrar', 'tipo' => 'activo', 'nivel' => 3, 'cuenta_padre_id' => 2, 'acepta_movimiento' => true, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
                 ['codigo' => '1.1.04', 'nombre' => 'Inventarios', 'tipo' => 'activo', 'nivel' => 3, 'cuenta_padre_id' => 2, 'acepta_movimiento' => true, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
-                
+
                 // Pasivos
                 ['codigo' => '2', 'nombre' => 'PASIVO', 'tipo' => 'pasivo', 'nivel' => 1, 'cuenta_padre_id' => null, 'acepta_movimiento' => false, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
                 ['codigo' => '2.1', 'nombre' => 'PASIVO CORRIENTE', 'tipo' => 'pasivo', 'nivel' => 2, 'cuenta_padre_id' => 7, 'acepta_movimiento' => false, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
                 ['codigo' => '2.1.01', 'nombre' => 'Cuentas por Pagar', 'tipo' => 'pasivo', 'nivel' => 3, 'cuenta_padre_id' => 8, 'acepta_movimiento' => true, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
                 ['codigo' => '2.1.02', 'nombre' => 'IVA por Pagar', 'tipo' => 'pasivo', 'nivel' => 3, 'cuenta_padre_id' => 8, 'acepta_movimiento' => true, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
-                
+
                 // Capital
                 ['codigo' => '3', 'nombre' => 'CAPITAL', 'tipo' => 'capital', 'nivel' => 1, 'cuenta_padre_id' => null, 'acepta_movimiento' => false, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
                 ['codigo' => '3.1', 'nombre' => 'Capital Social', 'tipo' => 'capital', 'nivel' => 2, 'cuenta_padre_id' => 11, 'acepta_movimiento' => true, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
-                
+
                 // Ingresos
                 ['codigo' => '4', 'nombre' => 'INGRESOS', 'tipo' => 'ingreso', 'nivel' => 1, 'cuenta_padre_id' => null, 'acepta_movimiento' => false, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
                 ['codigo' => '4.1', 'nombre' => 'Ventas', 'tipo' => 'ingreso', 'nivel' => 2, 'cuenta_padre_id' => 13, 'acepta_movimiento' => true, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
-                
+
                 // Gastos
                 ['codigo' => '5', 'nombre' => 'GASTOS', 'tipo' => 'gasto', 'nivel' => 1, 'cuenta_padre_id' => null, 'acepta_movimiento' => false, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
                 ['codigo' => '5.1', 'nombre' => 'Gastos Administrativos', 'tipo' => 'gasto', 'nivel' => 2, 'cuenta_padre_id' => 15, 'acepta_movimiento' => true, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
-                
+
                 // Costos
                 ['codigo' => '6', 'nombre' => 'COSTOS', 'tipo' => 'costos', 'nivel' => 1, 'cuenta_padre_id' => null, 'acepta_movimiento' => false, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
                 ['codigo' => '6.1', 'nombre' => 'Costo de Ventas', 'tipo' => 'costos', 'nivel' => 2, 'cuenta_padre_id' => 17, 'acepta_movimiento' => true, 'activa' => true, 'created_at' => now(), 'updated_at' => now()],
@@ -254,7 +254,7 @@ class CompleteSystemSeeder extends Seeder
 
             echo "✅ Cuentas contables creadas: 18\n";
         } catch (\Exception $e) {
-            echo "❌ Error en cuentas contables: " . $e->getMessage() . "\n";
+            echo '❌ Error en cuentas contables: '.$e->getMessage()."\n";
         }
     }
 
@@ -263,8 +263,8 @@ class CompleteSystemSeeder extends Seeder
         try {
             // Verificar si ya existe configuración
             $existe = DB::table('sys_configuracion')->exists();
-            
-            if (!$existe) {
+
+            if (! $existe) {
                 DB::table('sys_configuracion')->insert([
                     'nombre_empresa' => 'Mi Empresa S.A.',
                     'nit' => '12345678-9',
@@ -275,15 +275,15 @@ class CompleteSystemSeeder extends Seeder
                     'regimen_tributario' => 'Régimen General',
                     'moneda_base' => 'GTQ',
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
-                
+
                 echo "✅ Configuración de empresa creada\n";
             } else {
                 echo "ℹ️ Configuración de empresa ya existe\n";
             }
         } catch (\Exception $e) {
-            echo "❌ Error en empresa: " . $e->getMessage() . "\n";
+            echo '❌ Error en empresa: '.$e->getMessage()."\n";
         }
     }
 }

@@ -41,13 +41,14 @@ class ContPartidaController extends Controller
                         'total_haber' => (float) $partida->total_haber,
                         'estado' => $partida->estado,
                         'created_at' => $partida->created_at,
-                        'usuario' => $partida->usuario_nombre
+                        'usuario' => $partida->usuario_nombre,
                     ];
                 });
 
             return response()->json($partidas);
         } catch (\Exception $e) {
-            Log::error('Error en Partidas index: ' . $e->getMessage());
+            Log::error('Error en Partidas index: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar partidas'], 500);
         }
     }
@@ -64,7 +65,7 @@ class ContPartidaController extends Controller
             'detalles.*.cuenta_id' => 'required|exists:cont_cuentas,id',
             'detalles.*.debe' => 'required|numeric|min:0',
             'detalles.*.haber' => 'required|numeric|min:0',
-            'detalles.*.descripcion' => 'nullable|string|max:200'
+            'detalles.*.descripcion' => 'nullable|string|max:200',
         ]);
 
         // Validar partida doble
@@ -75,7 +76,7 @@ class ContPartidaController extends Controller
             return response()->json([
                 'error' => 'La partida no está cuadrada. Debe = Haber',
                 'total_debe' => $totalDebe,
-                'total_haber' => $totalHaber
+                'total_haber' => $totalHaber,
             ], 400);
         }
 
@@ -83,12 +84,12 @@ class ContPartidaController extends Controller
         foreach ($request->detalles as $detalle) {
             if ($detalle['debe'] > 0 && $detalle['haber'] > 0) {
                 return response()->json([
-                    'error' => 'Cada línea debe tener debe O haber, no ambos'
+                    'error' => 'Cada línea debe tener debe O haber, no ambos',
                 ], 400);
             }
             if ($detalle['debe'] == 0 && $detalle['haber'] == 0) {
                 return response()->json([
-                    'error' => 'Cada línea debe tener un monto en debe o haber'
+                    'error' => 'Cada línea debe tener un monto en debe o haber',
                 ], 400);
             }
         }
@@ -102,7 +103,7 @@ class ContPartidaController extends Controller
 
         if ($cuentasInvalidas->count() > 0) {
             return response()->json([
-                'error' => 'Las siguientes cuentas no aceptan movimientos: ' . $cuentasInvalidas->implode(', ')
+                'error' => 'Las siguientes cuentas no aceptan movimientos: '.$cuentasInvalidas->implode(', '),
             ], 400);
         }
 
@@ -112,8 +113,8 @@ class ContPartidaController extends Controller
             $ultimaPartida = DB::table('cont_partidas')
                 ->whereYear('fecha', date('Y', strtotime($request->fecha)))
                 ->max('numero_partida');
-            
-            $numeroPartida = 'P-' . date('Y', strtotime($request->fecha)) . '-' . str_pad(($ultimaPartida ? intval(substr($ultimaPartida, -4)) + 1 : 1), 4, '0', STR_PAD_LEFT);
+
+            $numeroPartida = 'P-'.date('Y', strtotime($request->fecha)).'-'.str_pad(($ultimaPartida ? intval(substr($ultimaPartida, -4)) + 1 : 1), 4, '0', STR_PAD_LEFT);
 
             // Crear partida
             $partidaId = DB::table('cont_partidas')->insertGetId([
@@ -125,7 +126,7 @@ class ContPartidaController extends Controller
                 'estado' => 'activa',
                 'usuario_id' => auth()->id(),
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             // Crear detalles
@@ -137,19 +138,21 @@ class ContPartidaController extends Controller
                     'haber' => $detalle['haber'],
                     'descripcion' => $detalle['descripcion'] ?? null,
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
             }
 
             DB::commit();
+
             return response()->json([
                 'message' => 'Partida creada correctamente',
                 'id' => $partidaId,
-                'numero_partida' => $numeroPartida
+                'numero_partida' => $numeroPartida,
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al crear partida: ' . $e->getMessage());
+            Log::error('Error al crear partida: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al crear partida'], 500);
         }
     }
@@ -161,8 +164,8 @@ class ContPartidaController extends Controller
     {
         try {
             $partida = DB::table('cont_partidas')->where('id', $id)->first();
-            
-            if (!$partida) {
+
+            if (! $partida) {
                 return response()->json(['error' => 'Partida no encontrada'], 404);
             }
 
@@ -182,10 +185,11 @@ class ContPartidaController extends Controller
 
             return response()->json([
                 'partida' => $partida,
-                'detalles' => $detalles
+                'detalles' => $detalles,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error en Partida show: ' . $e->getMessage());
+            Log::error('Error en Partida show: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar partida'], 500);
         }
     }
@@ -197,8 +201,8 @@ class ContPartidaController extends Controller
     {
         try {
             $partida = DB::table('cont_partidas')->where('id', $id)->first();
-            
-            if (!$partida) {
+
+            if (! $partida) {
                 return response()->json(['error' => 'Partida no encontrada'], 404);
             }
 
@@ -210,12 +214,13 @@ class ContPartidaController extends Controller
                 ->where('id', $id)
                 ->update([
                     'estado' => 'anulada',
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
 
             return response()->json(['message' => 'Partida anulada correctamente']);
         } catch (\Exception $e) {
-            Log::error('Error al anular partida: ' . $e->getMessage());
+            Log::error('Error al anular partida: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al anular partida'], 500);
         }
     }

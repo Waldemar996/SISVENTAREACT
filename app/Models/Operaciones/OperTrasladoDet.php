@@ -2,15 +2,16 @@
 
 namespace App\Models\Operaciones;
 
+use App\Models\Inventario\InvProducto;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Inventario\InvProducto;
 
 class OperTrasladoDet extends Model
 {
     use HasFactory;
 
     protected $table = 'oper_traslados_det';
+
     public $timestamps = false;
 
     protected $fillable = [

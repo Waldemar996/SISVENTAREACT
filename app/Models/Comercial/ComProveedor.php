@@ -11,6 +11,7 @@ class ComProveedor extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'com_proveedores';
+
     public $timestamps = true; // V9 has timestamps
 
     protected $fillable = [
@@ -21,10 +22,10 @@ class ComProveedor extends Model
         'telefono',
         'email',
         'regimen_fiscal', // 'pequeno_contribuyente','general','agente_retenedor'
-        'dias_credito'
+        'dias_credito',
     ];
 
     protected $casts = [
-        'dias_credito' => 'integer'
+        'dias_credito' => 'integer',
     ];
 }

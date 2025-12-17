@@ -20,8 +20,9 @@ class ProdOrdenController extends Controller
     public function index()
     {
         $ordenes = \App\Models\Inventario\ProdOrden::with(['productoTerminado', 'responsable', 'bodegaDestino'])
-                    ->orderBy('id', 'desc')
-                    ->paginate(20);
+            ->orderBy('id', 'desc')
+            ->paginate(20);
+
         return response()->json($ordenes);
     }
 
@@ -35,14 +36,14 @@ class ProdOrdenController extends Controller
         ]);
 
         $orden = \App\Models\Inventario\ProdOrden::create([
-            'numero_orden' => 'ORD-' . time(),
+            'numero_orden' => 'ORD-'.time(),
             'producto_terminado_id' => $validated['producto_terminado_id'],
             'cantidad_planeada' => $validated['cantidad_planeada'],
             'cantidad_producida' => 0,
             'bodega_destino_id' => $validated['bodega_destino_id'],
             'fecha_inicio_programada' => $validated['fecha_inicio_programada'],
             'responsable_id' => auth()->id(),
-            'estado' => 'planificada'
+            'estado' => 'planificada',
         ]);
 
         return response()->json($orden, 201);
@@ -59,7 +60,7 @@ class ProdOrdenController extends Controller
     public function finalizar(Request $request, $id)
     {
         $orden = \App\Models\Inventario\ProdOrden::findOrFail($id);
-        
+
         if ($orden->estado === 'finalizada') {
             return response()->json(['message' => 'Orden ya finalizada'], 422);
         }
@@ -80,7 +81,7 @@ class ProdOrdenController extends Controller
             // 2. Descontar Insumos (Salida de Materia Prima)
             foreach ($ingredientes as $ingrediente) {
                 $cantidadNecesaria = $ingrediente->cantidad_requerida * $cantidadReal;
-                
+
                 // Obtener costo actual del insumo para calcular costo del producto final
                 $productoInsumo = \App\Models\Inventario\InvProducto::find($ingrediente->producto_hijo_id);
                 $costoInsumo = $productoInsumo->costo_promedio;
@@ -111,7 +112,7 @@ class ProdOrdenController extends Controller
                 // Let's check KardexService.php again.
                 // It has: $entradas = ['compra', 'traslado_entrada', 'devolucion', 'produccion'];
                 // It has: $salidas = ['venta', 'traslado_salida'];
-                // WE NEED TO ADD 'consumo' to KardexService. 
+                // WE NEED TO ADD 'consumo' to KardexService.
                 // For now, let's assume we will update KardexService to support 'consumo_produccion'.
                 $cantidadReal,
                 $costoUnitarioProductoTerminado,
@@ -124,15 +125,17 @@ class ProdOrdenController extends Controller
                 'estado' => 'finalizada',
                 'cantidad_producida' => $cantidadReal,
                 'fecha_fin_real' => now(),
-                'costo_real_total' => $costoTotalOrden
+                'costo_real_total' => $costoTotalOrden,
             ]);
 
             \Illuminate\Support\Facades\DB::commit();
+
             return response()->json(['message' => 'Producción ejecutada exitosamente. Inventario actualizado.']);
 
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\DB::rollBack();
-            return response()->json(['message' => 'Error en producción: ' . $e->getMessage()], 500);
+
+            return response()->json(['message' => 'Error en producción: '.$e->getMessage()], 500);
         }
     }
 }

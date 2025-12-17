@@ -2,15 +2,16 @@
 
 namespace App\Models\Operaciones;
 
+use App\Models\RRHH\SysUsuario;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RRHH\SysUsuario;
 
 class OperDevolucion extends Model
 {
     use HasFactory;
 
     protected $table = 'oper_devoluciones';
+
     public $timestamps = false;
 
     protected $fillable = [

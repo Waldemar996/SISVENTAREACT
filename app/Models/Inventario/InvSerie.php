@@ -2,11 +2,11 @@
 
 namespace App\Models\Inventario;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Logistica\LogBodega;
 use App\Models\Operaciones\OperCompra;
 use App\Models\Operaciones\OperVenta;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class InvSerie extends Model
 {

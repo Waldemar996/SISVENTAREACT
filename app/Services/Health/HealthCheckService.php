@@ -2,14 +2,14 @@
 
 namespace App\Services\Health;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Redis;
 use Exception;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 /**
  * Health Check Service
- * 
+ *
  * Verifica el estado del sistema:
  * - Database
  * - Redis
@@ -39,7 +39,7 @@ class HealthCheckService
                 'memory_usage' => $this->getMemoryUsage(),
                 'cpu_load' => $this->getCPULoad(),
                 'uptime' => $this->getUptime(),
-            ]
+            ],
         ];
     }
 
@@ -60,12 +60,12 @@ class HealthCheckService
                 'status' => 'healthy',
                 'response_time_ms' => round($duration, 2),
                 'connection' => 'active',
-                'test_query' => 'passed'
+                'test_query' => 'passed',
             ];
         } catch (Exception $e) {
             return [
                 'status' => 'unhealthy',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -81,7 +81,7 @@ class HealthCheckService
             $duration = (microtime(true) - $start) * 1000;
 
             // Test set/get
-            $testKey = 'health:check:' . time();
+            $testKey = 'health:check:'.time();
             Cache::put($testKey, 'test', 10);
             $value = Cache::get($testKey);
             Cache::forget($testKey);
@@ -89,12 +89,12 @@ class HealthCheckService
             return [
                 'status' => 'healthy',
                 'response_time_ms' => round($duration, 2),
-                'test_cache' => $value === 'test' ? 'passed' : 'failed'
+                'test_cache' => $value === 'test' ? 'passed' : 'failed',
             ];
         } catch (Exception $e) {
             return [
                 'status' => 'unhealthy',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -121,7 +121,7 @@ class HealthCheckService
             'status' => $status,
             'total_gb' => round($totalSpace / 1024 / 1024 / 1024, 2),
             'free_gb' => round($freeSpace / 1024 / 1024 / 1024, 2),
-            'used_percentage' => round($usedPercentage, 2)
+            'used_percentage' => round($usedPercentage, 2),
         ];
     }
 
@@ -132,7 +132,7 @@ class HealthCheckService
     {
         try {
             $testKey = 'health:cache:test';
-            $testValue = 'test_' . time();
+            $testValue = 'test_'.time();
 
             Cache::put($testKey, $testValue, 10);
             $retrieved = Cache::get($testKey);
@@ -140,12 +140,12 @@ class HealthCheckService
 
             return [
                 'status' => $retrieved === $testValue ? 'healthy' : 'unhealthy',
-                'test' => 'passed'
+                'test' => 'passed',
             ];
         } catch (Exception $e) {
             return [
                 'status' => 'unhealthy',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -164,12 +164,12 @@ class HealthCheckService
             return [
                 'status' => 'healthy',
                 'total_events' => $count,
-                'latest_event' => $latest ? $latest->occurred_at : null
+                'latest_event' => $latest ? $latest->occurred_at : null,
             ];
         } catch (Exception $e) {
             return [
                 'status' => 'unhealthy',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -196,12 +196,12 @@ class HealthCheckService
                 'sync_status' => $sync,
                 'write_model_count' => $ventasCount,
                 'read_model_count' => $readModelCount,
-                'difference' => abs($ventasCount - $readModelCount)
+                'difference' => abs($ventasCount - $readModelCount),
             ];
         } catch (Exception $e) {
             return [
                 'status' => 'unhealthy',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -213,11 +213,11 @@ class HealthCheckService
     {
         $memoryUsage = memory_get_usage(true);
         $memoryLimit = ini_get('memory_limit');
-        
+
         return [
             'current_mb' => round($memoryUsage / 1024 / 1024, 2),
             'peak_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
-            'limit' => $memoryLimit
+            'limit' => $memoryLimit,
         ];
     }
 
@@ -228,10 +228,11 @@ class HealthCheckService
     {
         if (function_exists('sys_getloadavg')) {
             $load = sys_getloadavg();
+
             return [
                 '1min' => $load[0],
                 '5min' => $load[1],
-                '15min' => $load[2]
+                '15min' => $load[2],
             ];
         }
 

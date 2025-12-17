@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::table('oper_devoluciones', function (Blueprint $table) {
             $table->unsignedBigInteger('sesion_caja_id')->nullable()->after('usuario_id');
             $table->decimal('monto_total', 10, 2)->default(0)->after('monto_reembolsado');
-            
+
             // Foreign key constraint
             $table->foreign('sesion_caja_id')
-                  ->references('id')
-                  ->on('tes_sesiones_caja')
-                  ->onDelete('set null');
+                ->references('id')
+                ->on('tes_sesiones_caja')
+                ->onDelete('set null');
         });
     }
 

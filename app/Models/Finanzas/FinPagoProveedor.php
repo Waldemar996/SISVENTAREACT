@@ -2,16 +2,17 @@
 
 namespace App\Models\Finanzas;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Operaciones\OperCompra;
 use App\Models\RRHH\SysUsuario;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class FinPagoProveedor extends Model
 {
     use HasFactory;
 
     protected $table = 'fin_pagos_proveedores';
+
     public $timestamps = false;
 
     protected $fillable = [

@@ -2,16 +2,17 @@
 
 namespace App\Models\Finanzas;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\RRHH\SysUsuario;
 use App\Models\Tesoreria\TesSesionCaja;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class FinGasto extends Model
 {
     use HasFactory;
 
     protected $table = 'fin_gastos';
+
     public $timestamps = false;
 
     protected $fillable = [

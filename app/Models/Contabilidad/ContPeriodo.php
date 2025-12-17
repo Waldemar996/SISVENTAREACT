@@ -10,6 +10,7 @@ class ContPeriodo extends Model
     use HasFactory;
 
     protected $table = 'cont_periodos';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -17,6 +18,6 @@ class ContPeriodo extends Model
         'mes',
         'estado',
         'fecha_cierre',
-        'usuario_cierre_id'
+        'usuario_cierre_id',
     ];
 }

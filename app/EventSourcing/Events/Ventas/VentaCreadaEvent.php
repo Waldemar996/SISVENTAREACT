@@ -3,11 +3,10 @@
 namespace App\EventSourcing\Events\Ventas;
 
 use App\EventSourcing\DomainEvent;
-use Carbon\Carbon;
 
 /**
  * Evento: Venta Creada
- * 
+ *
  * Se dispara cuando se crea una nueva venta
  * Contiene TODA la información necesaria para reconstruir el estado
  */
@@ -79,6 +78,7 @@ class VentaCreadaEvent extends DomainEvent
         );
 
         $event->metadata = $metadata;
+
         return $event;
     }
 }

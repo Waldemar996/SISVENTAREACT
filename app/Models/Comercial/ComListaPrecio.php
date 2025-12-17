@@ -10,11 +10,12 @@ class ComListaPrecio extends Model
     use HasFactory;
 
     protected $table = 'com_listas_precios';
+
     public $timestamps = false;
 
     protected $fillable = ['nombre', 'activo'];
-    
+
     protected $casts = [
-        'activo' => 'boolean'
+        'activo' => 'boolean',
     ];
 }

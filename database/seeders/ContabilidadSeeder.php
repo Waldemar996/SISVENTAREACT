@@ -55,7 +55,7 @@ class ContabilidadSeeder extends Seeder
         $this->createCuenta(null, '5', 'GASTOS', 'gasto', 1, false);
         $this->createCuenta(32, '5.1', 'COSTOS DE VENTAS', 'gasto', 2, false);
         $this->createCuenta(33, '5.1.01', 'Costo de Ventas', 'gasto', 3, true);
-        
+
         $this->createCuenta(32, '5.2', 'GASTOS DE OPERACIÓN', 'gasto', 2, false);
         $this->createCuenta(35, '5.2.01', 'Sueldos y Salarios', 'gasto', 3, true);
         $this->createCuenta(35, '5.2.02', 'Alquileres', 'gasto', 3, true);
@@ -68,18 +68,18 @@ class ContabilidadSeeder extends Seeder
         if (DB::table('cont_cuentas')->where('codigo_cuenta', $codigo)->exists()) {
             return;
         }
-        
+
         $realPadreId = null;
         if ($padreId !== null) {
             // Inferir padre por código
             $lastDot = strrpos($codigo, '.');
-             if ($lastDot !== false) {
-                 $codigoPadre = substr($codigo, 0, $lastDot);
-                 $padre = DB::table('cont_cuentas')->where('codigo_cuenta', $codigoPadre)->first();
-                 if ($padre) {
-                     $realPadreId = $padre->id;
-                 }
-             }
+            if ($lastDot !== false) {
+                $codigoPadre = substr($codigo, 0, $lastDot);
+                $padre = DB::table('cont_cuentas')->where('codigo_cuenta', $codigoPadre)->first();
+                if ($padre) {
+                    $realPadreId = $padre->id;
+                }
+            }
         }
 
         DB::table('cont_cuentas')->insert([
@@ -90,7 +90,7 @@ class ContabilidadSeeder extends Seeder
             'cuenta_padre_id' => $realPadreId,
             'es_cuenta_movimiento' => $aceptaMovimiento,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
     }
 }

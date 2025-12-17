@@ -3,17 +3,17 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Optimiza la base de datos
- * 
+ *
  * - Optimiza tablas
  * - Analiza tablas
  * - Limpia cache
  * - Regenera estadísticas
- * 
+ *
  * Usage: php artisan db:optimize
  */
 class OptimizeDatabase extends Command
@@ -29,7 +29,7 @@ class OptimizeDatabase extends Command
     {
         $this->info('🔧 Starting database optimization...');
 
-        $tables = $this->option('tables') 
+        $tables = $this->option('tables')
             ? explode(',', $this->option('tables'))
             : $this->getAllTables();
 
@@ -40,7 +40,7 @@ class OptimizeDatabase extends Command
             try {
                 // Optimize table
                 DB::statement("OPTIMIZE TABLE {$table}");
-                
+
                 // Analyze if requested
                 if ($this->option('analyze')) {
                     DB::statement("ANALYZE TABLE {$table}");
@@ -50,7 +50,7 @@ class OptimizeDatabase extends Command
 
             } catch (\Exception $e) {
                 $this->newLine();
-                $this->warn("⚠️  Error optimizing {$table}: " . $e->getMessage());
+                $this->warn("⚠️  Error optimizing {$table}: ".$e->getMessage());
             }
         }
 
@@ -77,12 +77,12 @@ class OptimizeDatabase extends Command
         $dbName = DB::getDatabaseName();
         $key = "Tables_in_{$dbName}";
 
-        return array_map(fn($table) => $table->$key, $tables);
+        return array_map(fn ($table) => $table->$key, $tables);
     }
 
     private function showStatistics(): void
     {
-        $stats = DB::select("
+        $stats = DB::select('
             SELECT 
                 table_name,
                 ROUND(((data_length + index_length) / 1024 / 1024), 2) AS size_mb,
@@ -91,13 +91,13 @@ class OptimizeDatabase extends Command
             WHERE table_schema = DATABASE()
             ORDER BY (data_length + index_length) DESC
             LIMIT 10
-        ");
+        ');
 
         $this->newLine();
         $this->info('📊 Top 10 largest tables:');
         $this->table(
             ['Table', 'Size (MB)', 'Rows'],
-            array_map(fn($s) => [$s->table_name, $s->size_mb, number_format($s->table_rows)], $stats)
+            array_map(fn ($s) => [$s->table_name, $s->size_mb, number_format($s->table_rows)], $stats)
         );
     }
 }

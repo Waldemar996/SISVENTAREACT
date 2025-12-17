@@ -6,14 +6,16 @@ use Carbon\Carbon;
 
 /**
  * Base class para todos los Domain Events
- * 
+ *
  * Un Domain Event representa algo que YA PASÓ en el dominio
  * Siempre en pasado: VentaCreada, ProductoActualizado, StockReducido
  */
 abstract class DomainEvent
 {
     protected Carbon $occurredAt;
+
     protected ?int $userId;
+
     protected array $metadata;
 
     public function __construct()

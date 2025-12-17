@@ -2,17 +2,18 @@
 
 namespace App\Models\Operaciones;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Comercial\ComProveedor;
 use App\Models\Logistica\LogBodega;
 use App\Models\RRHH\SysUsuario;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class OperCompra extends Model
 {
     use HasFactory;
 
     protected $table = 'oper_compras';
+
     public $timestamps = false; // Only a fecha column is defined in SQL, or similar
 
     protected $fillable = [
@@ -26,7 +27,7 @@ class OperCompra extends Model
         'subtotal',
         'total_impuestos',
         'total_compra',
-        'estado'
+        'estado',
     ];
 
     protected $casts = [

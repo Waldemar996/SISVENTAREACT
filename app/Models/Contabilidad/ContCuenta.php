@@ -13,14 +13,14 @@ class ContCuenta extends Model
     // Table created_at/updated_at exist in schema for this table (Line 144)
     // No, wait. Let me check schema for cont_cuentas.
     // Line 144: created_at timestamp NULL
-    
+
     protected $fillable = [
         'codigo_cuenta',
         'nombre_cuenta',
         'tipo',
         'nivel',
         'es_cuenta_movimiento',
-        'cuenta_padre_id'
+        'cuenta_padre_id',
     ];
 
     public function padre()

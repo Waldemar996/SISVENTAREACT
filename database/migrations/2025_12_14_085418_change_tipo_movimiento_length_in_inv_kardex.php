@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,7 +10,7 @@ return new class extends Migration
     public function up(): void
     {
         // Using raw SQL because doctrine/dbal might not be installed
-        DB::statement("ALTER TABLE inv_kardex MODIFY COLUMN tipo_movimiento VARCHAR(50) NOT NULL");
+        DB::statement('ALTER TABLE inv_kardex MODIFY COLUMN tipo_movimiento VARCHAR(50) NOT NULL');
     }
 
     /**

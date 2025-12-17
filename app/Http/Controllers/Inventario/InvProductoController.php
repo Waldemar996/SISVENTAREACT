@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class InvProductoController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      */
@@ -18,17 +17,18 @@ class InvProductoController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nombre', 'like', "%{$search}%")
-                  ->orWhere('codigo_sku', 'like', "%{$search}%");
+                    ->orWhere('codigo_sku', 'like', "%{$search}%");
             });
         }
 
         if ($request->has('all')) {
-             return response()->json($query->orderBy('nombre', 'asc')->get());
+            return response()->json($query->orderBy('nombre', 'asc')->get());
         }
 
         $productos = $query->orderBy('id', 'desc')->paginate(15);
+
         return response()->json($productos);
     }
 
@@ -49,12 +49,14 @@ class InvProductoController extends Controller
         ]);
 
         $producto = \App\Models\Inventario\InvProducto::create($validated);
+
         return response()->json(['message' => 'Producto creado', 'data' => $producto], 201);
     }
 
     public function show(string $id)
     {
         $producto = \App\Models\Inventario\InvProducto::with(['categoria', 'marca', 'unidad'])->findOrFail($id);
+
         return response()->json($producto);
     }
 
@@ -66,13 +68,14 @@ class InvProductoController extends Controller
             'categoria_id' => 'sometimes|exists:inv_categorias,id',
             'marca_id' => 'sometimes|exists:inv_marcas,id',
             'unidad_id' => 'sometimes|exists:inv_unidades,id',
-            'codigo_sku' => 'sometimes|required|string|unique:inv_productos,codigo_sku,' . $id,
+            'codigo_sku' => 'sometimes|required|string|unique:inv_productos,codigo_sku,'.$id,
             'nombre' => 'sometimes|required|string|max:200',
             'precio_venta_base' => 'sometimes|numeric|min:0',
-            'activo' => 'boolean'
+            'activo' => 'boolean',
         ]);
 
         $producto->update($validated);
+
         return response()->json(['message' => 'Producto actualizado', 'data' => $producto]);
     }
 
@@ -83,6 +86,7 @@ class InvProductoController extends Controller
     {
         $producto = \App\Models\Inventario\InvProducto::findOrFail($id);
         $producto->delete(); // Soft delete (sets deleted_at)
+
         return response()->json(['message' => 'Producto eliminado correctamente (baja lógica)']);
     }
 }

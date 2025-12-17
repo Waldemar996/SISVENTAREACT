@@ -11,6 +11,7 @@ class InvMarca extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'inv_marcas';
+
     public $timestamps = false;
 
     protected $fillable = [

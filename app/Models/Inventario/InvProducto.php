@@ -5,7 +5,8 @@ namespace App\Models\Inventario;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Finanzas\FinTipoImpuesto; // New model needed
+
+// New model needed
 
 class InvProducto extends Model
 {
@@ -34,7 +35,7 @@ class InvProducto extends Model
         'stock_minimo',
         'stock_maximo',
         'imagen_principal_url',
-        'activo'
+        'activo',
     ];
 
     protected $casts = [
@@ -61,7 +62,7 @@ class InvProducto extends Model
     {
         return $this->belongsTo(\App\Models\Inventario\InvUnidad::class, 'unidad_id');
     }
-    
+
     public function impuesto()
     {
         return $this->belongsTo(\App\Models\Finanzas\FinTipoImpuesto::class, 'impuesto_id');
@@ -71,6 +72,7 @@ class InvProducto extends Model
     {
         return $this->hasMany(\App\Models\Inventario\InvBodegaProducto::class, 'producto_id');
     }
+
     protected $appends = ['stock_total'];
 
     public function getStockTotalAttribute()

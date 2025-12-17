@@ -10,6 +10,7 @@ class InvBodegaProducto extends Model
     use HasFactory;
 
     protected $table = 'inv_bodega_producto';
+
     public $timestamps = false;
 
     protected $fillable = [

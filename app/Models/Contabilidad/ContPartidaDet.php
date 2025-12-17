@@ -10,6 +10,7 @@ class ContPartidaDet extends Model
     use HasFactory;
 
     protected $table = 'cont_partidas_det';
+
     public $timestamps = false; // Detalle usually no timestamps in this schema
 
     protected $fillable = [
@@ -18,7 +19,7 @@ class ContPartidaDet extends Model
         'concepto_linea',
         'debe',
         'haber',
-        'referencia_adicional'
+        'referencia_adicional',
     ];
 
     public function partida()

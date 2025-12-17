@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 
 class InvMarcaController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $marcas = \App\Models\Inventario\InvMarca::all();
+
         return response()->json($marcas);
     }
 
@@ -24,10 +24,11 @@ class InvMarcaController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:100|unique:inv_marcas',
-            'pais' => 'nullable|string|max:50'
+            'pais' => 'nullable|string|max:50',
         ]);
 
         $marca = \App\Models\Inventario\InvMarca::create($validated);
+
         return response()->json(['message' => 'Marca creada', 'data' => $marca], 201);
     }
 
@@ -37,6 +38,7 @@ class InvMarcaController extends Controller
     public function show(string $id)
     {
         $marca = \App\Models\Inventario\InvMarca::findOrFail($id);
+
         return response()->json($marca);
     }
 
@@ -46,13 +48,14 @@ class InvMarcaController extends Controller
     public function update(Request $request, string $id)
     {
         $marca = \App\Models\Inventario\InvMarca::findOrFail($id);
-        
+
         $validated = $request->validate([
-            'nombre' => 'sometimes|required|string|max:100|unique:inv_marcas,nombre,' . $id,
-            'pais' => 'nullable|string|max:50'
+            'nombre' => 'sometimes|required|string|max:100|unique:inv_marcas,nombre,'.$id,
+            'pais' => 'nullable|string|max:50',
         ]);
 
         $marca->update($validated);
+
         return response()->json(['message' => 'Marca actualizada', 'data' => $marca]);
     }
 
@@ -62,13 +65,14 @@ class InvMarcaController extends Controller
     public function destroy(string $id)
     {
         $marca = \App\Models\Inventario\InvMarca::findOrFail($id);
-        
+
         // Check usage
         if ($marca->productos()->exists()) {
             return response()->json(['error' => 'No se puede eliminar la marca porque tiene productos asociados'], 400);
         }
 
         $marca->delete();
+
         return response()->json(['message' => 'Marca eliminada']);
     }
 }

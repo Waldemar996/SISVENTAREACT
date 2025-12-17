@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Comercial;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Comercial\ComCliente;
+use Illuminate\Http\Request;
 
 class ComClienteController extends Controller
 {
@@ -14,6 +14,7 @@ class ComClienteController extends Controller
     public function index()
     {
         $clientes = ComCliente::orderBy('razon_social')->get();
+
         return response()->json($clientes);
     }
 
@@ -29,10 +30,11 @@ class ComClienteController extends Controller
             'telefono' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:100',
             'limite_credito' => 'numeric|min:0',
-            'dias_credito' => 'integer|min:0'
+            'dias_credito' => 'integer|min:0',
         ]);
 
         $cliente = ComCliente::create($validated);
+
         return response()->json(['message' => 'Cliente registrado exitosamente', 'data' => $cliente], 201);
     }
 
@@ -42,6 +44,7 @@ class ComClienteController extends Controller
     public function show(string $id)
     {
         $cliente = ComCliente::findOrFail($id);
+
         return response()->json($cliente);
     }
 
@@ -54,15 +57,16 @@ class ComClienteController extends Controller
 
         $validated = $request->validate([
             'razon_social' => 'required|string|max:200',
-            'nit' => 'nullable|string|max:20|unique:com_clientes,nit,' . $id,
+            'nit' => 'nullable|string|max:20|unique:com_clientes,nit,'.$id,
             'direccion' => 'nullable|string',
             'telefono' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:100',
             'limite_credito' => 'numeric|min:0',
-            'dias_credito' => 'integer|min:0'
+            'dias_credito' => 'integer|min:0',
         ]);
 
         $cliente->update($validated);
+
         return response()->json(['message' => 'Cliente actualizado', 'data' => $cliente]);
     }
 
@@ -73,6 +77,7 @@ class ComClienteController extends Controller
     {
         $cliente = ComCliente::findOrFail($id);
         $cliente->delete();
+
         return response()->json(['message' => 'Cliente eliminado']);
     }
 }

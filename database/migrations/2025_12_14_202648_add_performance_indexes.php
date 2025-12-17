@@ -8,7 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * PERFORMANCE INDEXES - Sprint 1
      * Mejora estimada: +300% en queries frecuentes
      */
@@ -18,16 +18,16 @@ return new class extends Migration
         // VENTAS - Queries más frecuentes
         // ========================================
         Schema::table('oper_ventas', function (Blueprint $table) {
-            if (!$this->indexExists('oper_ventas', 'idx_ventas_estado_fecha')) {
+            if (! $this->indexExists('oper_ventas', 'idx_ventas_estado_fecha')) {
                 $table->index(['estado', 'fecha_emision'], 'idx_ventas_estado_fecha');
             }
-            if (!$this->indexExists('oper_ventas', 'idx_ventas_cliente_estado')) {
+            if (! $this->indexExists('oper_ventas', 'idx_ventas_cliente_estado')) {
                 $table->index(['cliente_id', 'estado'], 'idx_ventas_cliente_estado');
             }
-            if (!$this->indexExists('oper_ventas', 'idx_ventas_numero')) {
+            if (! $this->indexExists('oper_ventas', 'idx_ventas_numero')) {
                 $table->index('numero_comprobante', 'idx_ventas_numero');
             }
-            if (!$this->indexExists('oper_ventas', 'idx_ventas_usuario')) {
+            if (! $this->indexExists('oper_ventas', 'idx_ventas_usuario')) {
                 $table->index('usuario_id', 'idx_ventas_usuario');
             }
         });
@@ -36,13 +36,13 @@ return new class extends Migration
         // COMPRAS
         // ========================================
         Schema::table('oper_compras', function (Blueprint $table) {
-            if (!$this->indexExists('oper_compras', 'idx_compras_estado_fecha')) {
+            if (! $this->indexExists('oper_compras', 'idx_compras_estado_fecha')) {
                 $table->index(['estado', 'fecha_emision'], 'idx_compras_estado_fecha');
             }
-            if (!$this->indexExists('oper_compras', 'idx_compras_proveedor_estado')) {
+            if (! $this->indexExists('oper_compras', 'idx_compras_proveedor_estado')) {
                 $table->index(['proveedor_id', 'estado'], 'idx_compras_proveedor_estado');
             }
-            if (!$this->indexExists('oper_compras', 'idx_compras_numero')) {
+            if (! $this->indexExists('oper_compras', 'idx_compras_numero')) {
                 $table->index('numero_comprobante', 'idx_compras_numero');
             }
         });
@@ -51,13 +51,13 @@ return new class extends Migration
         // KARDEX
         // ========================================
         Schema::table('inv_kardex', function (Blueprint $table) {
-            if (!$this->indexExists('inv_kardex', 'idx_kardex_producto_bodega_fecha')) {
+            if (! $this->indexExists('inv_kardex', 'idx_kardex_producto_bodega_fecha')) {
                 $table->index(['producto_id', 'bodega_id', 'fecha'], 'idx_kardex_producto_bodega_fecha');
             }
-            if (!$this->indexExists('inv_kardex', 'idx_kardex_referencia')) {
+            if (! $this->indexExists('inv_kardex', 'idx_kardex_referencia')) {
                 $table->index(['referencia_tipo', 'referencia_id'], 'idx_kardex_referencia');
             }
-            if (!$this->indexExists('inv_kardex', 'idx_kardex_tipo')) {
+            if (! $this->indexExists('inv_kardex', 'idx_kardex_tipo')) {
                 $table->index('tipo_movimiento', 'idx_kardex_tipo');
             }
         });
@@ -66,13 +66,13 @@ return new class extends Migration
         // PRODUCTOS
         // ========================================
         Schema::table('inv_productos', function (Blueprint $table) {
-            if (!$this->indexExists('inv_productos', 'idx_productos_sku')) {
+            if (! $this->indexExists('inv_productos', 'idx_productos_sku')) {
                 $table->index('codigo_sku', 'idx_productos_sku');
             }
-            if (!$this->indexExists('inv_productos', 'idx_productos_activo_categoria')) {
+            if (Schema::hasColumn('inv_productos', 'activo') && ! $this->indexExists('inv_productos', 'idx_productos_activo_categoria')) {
                 $table->index(['activo', 'categoria_id'], 'idx_productos_activo_categoria');
             }
-            if (!$this->indexExists('inv_productos', 'idx_productos_nombre')) {
+            if (! $this->indexExists('inv_productos', 'idx_productos_nombre')) {
                 $table->index('nombre', 'idx_productos_nombre');
             }
         });
@@ -81,10 +81,10 @@ return new class extends Migration
         // STOCK POR BODEGA
         // ========================================
         Schema::table('inv_bodega_producto', function (Blueprint $table) {
-            if (!$this->indexExists('inv_bodega_producto', 'idx_stock_producto_bodega')) {
+            if (! $this->indexExists('inv_bodega_producto', 'idx_stock_producto_bodega')) {
                 $table->index(['producto_id', 'bodega_id'], 'idx_stock_producto_bodega');
             }
-            if (!$this->indexExists('inv_bodega_producto', 'idx_stock_bodega')) {
+            if (! $this->indexExists('inv_bodega_producto', 'idx_stock_bodega')) {
                 $table->index('bodega_id', 'idx_stock_bodega');
             }
         });
@@ -93,10 +93,10 @@ return new class extends Migration
         // CLIENTES
         // ========================================
         Schema::table('com_clientes', function (Blueprint $table) {
-            if (!$this->indexExists('com_clientes', 'idx_clientes_nit')) {
+            if (! $this->indexExists('com_clientes', 'idx_clientes_nit')) {
                 $table->index('nit', 'idx_clientes_nit');
             }
-            if (!$this->indexExists('com_clientes', 'idx_clientes_activo')) {
+            if (Schema::hasColumn('com_clientes', 'activo') && ! $this->indexExists('com_clientes', 'idx_clientes_activo')) {
                 $table->index('activo', 'idx_clientes_activo');
             }
         });
@@ -105,10 +105,10 @@ return new class extends Migration
         // PROVEEDORES
         // ========================================
         Schema::table('com_proveedores', function (Blueprint $table) {
-            if (!$this->indexExists('com_proveedores', 'idx_proveedores_nit')) {
+            if (! $this->indexExists('com_proveedores', 'idx_proveedores_nit')) {
                 $table->index('nit', 'idx_proveedores_nit');
             }
-            if (!$this->indexExists('com_proveedores', 'idx_proveedores_activo')) {
+            if (Schema::hasColumn('com_proveedores', 'activo') && ! $this->indexExists('com_proveedores', 'idx_proveedores_activo')) {
                 $table->index('activo', 'idx_proveedores_activo');
             }
         });
@@ -117,10 +117,10 @@ return new class extends Migration
         // DETALLES DE VENTA
         // ========================================
         Schema::table('oper_ventas_det', function (Blueprint $table) {
-            if (!$this->indexExists('oper_ventas_det', 'idx_ventas_det_venta')) {
+            if (! $this->indexExists('oper_ventas_det', 'idx_ventas_det_venta')) {
                 $table->index('venta_id', 'idx_ventas_det_venta');
             }
-            if (!$this->indexExists('oper_ventas_det', 'idx_ventas_det_producto')) {
+            if (! $this->indexExists('oper_ventas_det', 'idx_ventas_det_producto')) {
                 $table->index('producto_id', 'idx_ventas_det_producto');
             }
         });
@@ -129,21 +129,22 @@ return new class extends Migration
         // DETALLES DE COMPRA
         // ========================================
         Schema::table('oper_compras_det', function (Blueprint $table) {
-            if (!$this->indexExists('oper_compras_det', 'idx_compras_det_compra')) {
+            if (! $this->indexExists('oper_compras_det', 'idx_compras_det_compra')) {
                 $table->index('compra_id', 'idx_compras_det_compra');
             }
-            if (!$this->indexExists('oper_compras_det', 'idx_compras_det_producto')) {
+            if (! $this->indexExists('oper_compras_det', 'idx_compras_det_producto')) {
                 $table->index('producto_id', 'idx_compras_det_producto');
             }
         });
     }
-    
+
     /**
      * Helper method to check if an index exists
      */
     private function indexExists(string $table, string $indexName): bool
     {
         $indexes = DB::select("SHOW INDEX FROM {$table} WHERE Key_name = ?", [$indexName]);
+
         return count($indexes) > 0;
     }
 

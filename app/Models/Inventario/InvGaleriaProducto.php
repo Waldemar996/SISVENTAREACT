@@ -10,6 +10,7 @@ class InvGaleriaProducto extends Model
     use HasFactory;
 
     protected $table = 'inv_galeria_productos';
+
     public $timestamps = false;
 
     protected $fillable = [

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class SysEmpresaController extends Controller
 {
@@ -17,10 +16,11 @@ class SysEmpresaController extends Controller
     {
         try {
             $empresa = DB::table('sys_configuracion')->first();
-            
+
             return response()->json($empresa);
         } catch (\Exception $e) {
-            Log::error('Error en Empresa index: ' . $e->getMessage());
+            Log::error('Error en Empresa index: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar configuración de empresa'], 500);
         }
     }
@@ -39,7 +39,7 @@ class SysEmpresaController extends Controller
             'sitio_web' => 'nullable|url|max:200',
             'regimen_tributario' => 'nullable|string|max:100',
             'moneda_base' => 'required|string|max:3',
-            'logo' => 'nullable|image|max:2048'
+            'logo' => 'nullable|image|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -53,7 +53,7 @@ class SysEmpresaController extends Controller
                 'sitio_web' => $request->sitio_web,
                 'regimen_tributario' => $request->regimen_tributario,
                 'moneda_base' => $request->moneda_base,
-                'updated_at' => now()
+                'updated_at' => now(),
             ];
 
             // Manejar logo si se sube
@@ -75,10 +75,12 @@ class SysEmpresaController extends Controller
             }
 
             DB::commit();
+
             return response()->json(['message' => $message]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al guardar configuración de empresa: ' . $e->getMessage());
+            Log::error('Error al guardar configuración de empresa: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al guardar configuración'], 500);
         }
     }

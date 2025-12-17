@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Comercial;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Comercial\ComProveedor;
+use Illuminate\Http\Request;
 
 class ComProveedorController extends Controller
 {
@@ -15,6 +15,7 @@ class ComProveedorController extends Controller
     {
         // Removed 'activo' filter as column does not exist
         $proveedores = ComProveedor::orderBy('razon_social')->get();
+
         return response()->json($proveedores);
     }
 
@@ -28,10 +29,11 @@ class ComProveedorController extends Controller
             'nit' => 'nullable|string|max:20',
             'nombre_contacto' => 'nullable|string|max:100',
             'telefono' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:100'
+            'email' => 'nullable|email|max:100',
         ]);
 
         $proveedor = ComProveedor::create($validated);
+
         return response()->json(['message' => 'Proveedor registrado', 'data' => $proveedor], 201);
     }
 
@@ -41,6 +43,7 @@ class ComProveedorController extends Controller
     public function show(string $id)
     {
         $proveedor = ComProveedor::findOrFail($id);
+
         return response()->json($proveedor);
     }
 
@@ -50,16 +53,17 @@ class ComProveedorController extends Controller
     public function update(Request $request, string $id)
     {
         $proveedor = ComProveedor::findOrFail($id);
-        
+
         $validated = $request->validate([
             'razon_social' => 'required|string|max:200',
             'nit' => 'nullable|string|max:20',
             'nombre_contacto' => 'nullable|string|max:100',
             'telefono' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:100'
+            'email' => 'nullable|email|max:100',
         ]);
 
         $proveedor->update($validated);
+
         return response()->json(['message' => 'Proveedor actualizado', 'data' => $proveedor]);
     }
 
@@ -71,6 +75,7 @@ class ComProveedorController extends Controller
         $proveedor = ComProveedor::findOrFail($id);
         // Soft Delete (trait added to Model)
         $proveedor->delete();
+
         return response()->json(['message' => 'Proveedor eliminado']);
     }
 }

@@ -13,9 +13,9 @@ class InvSerieController extends Controller
     public function index(Request $request)
     {
         $query = \App\Models\Inventario\InvSerie::with(['producto', 'bodega']);
-        
+
         if ($request->has('q')) {
-            $query->where('numero_serie', 'like', '%' . $request->q . '%');
+            $query->where('numero_serie', 'like', '%'.$request->q.'%');
         }
 
         return response()->json($query->limit(50)->get()); // Limitar para rendimiento
@@ -33,7 +33,7 @@ class InvSerieController extends Controller
             'producto_id' => $validated['producto_id'],
             'bodega_id' => $validated['bodega_id'],
             'numero_serie' => $validated['numero_serie'],
-            'estado' => 'disponible'
+            'estado' => 'disponible',
         ]);
 
         return response()->json(['message' => 'Serie registrada', 'data' => $serie], 201);
@@ -48,6 +48,7 @@ class InvSerieController extends Controller
     {
         $serie = \App\Models\Inventario\InvSerie::findOrFail($id);
         $serie->update($request->only('estado')); // Solo estado por ahora
+
         return response()->json(['message' => 'Estado de serie actualizado']);
     }
 
@@ -55,9 +56,10 @@ class InvSerieController extends Controller
     {
         $serie = \App\Models\Inventario\InvSerie::findOrFail($id);
         if ($serie->estado !== 'disponible') {
-             return response()->json(['message' => 'No se puede eliminar una serie que ya fue vendida o no está disponible.'], 409);
+            return response()->json(['message' => 'No se puede eliminar una serie que ya fue vendida o no está disponible.'], 409);
         }
         $serie->delete();
+
         return response()->json(['message' => 'Serie eliminada']);
     }
 }

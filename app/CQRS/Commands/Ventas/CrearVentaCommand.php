@@ -7,7 +7,7 @@ use App\DTOs\Ventas\CrearVentaDTO;
 
 /**
  * Command: Crear Venta
- * 
+ *
  * Encapsula la intención de crear una venta
  */
 class CrearVentaCommand implements Command
@@ -20,7 +20,7 @@ class CrearVentaCommand implements Command
     public function validate(): bool
     {
         // Validaciones básicas
-        return $this->dto->clienteId > 0 
+        return $this->dto->clienteId > 0
             && count($this->dto->detalles) > 0;
     }
 

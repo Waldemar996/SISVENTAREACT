@@ -5,118 +5,58 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [\App\Http\Controllers\PageController::class, 'welcome']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     // Módulo Inventario
-    Route::get('/inventario/productos', function () {
-        return Inertia::render('Inventario/Productos/Index');
-    })->name('inventario.productos');
-    
-    // Módulo Ventas (POS y Listado)
-    Route::get('/operaciones/ventas', function () {
-        return Inertia::render('Operaciones/Ventas/Index');
-    })->name('operaciones.ventas.index');
+    Route::get('/inventario/productos', [\App\Http\Controllers\PageController::class, 'inventoryProducts'])->name('inventario.productos');
 
-    Route::get('/operaciones/ventas/crear', function () {
-        return Inertia::render('Operaciones/Ventas/Create');
-    })->name('operaciones.ventas.crear');
+    // Módulo Ventas (POS y Listado)
+    Route::get('/operaciones/ventas', [\App\Http\Controllers\PageController::class, 'salesIndex'])->name('operaciones.ventas.index');
+    Route::get('/operaciones/ventas/crear', [\App\Http\Controllers\PageController::class, 'salesCreate'])->name('operaciones.ventas.crear');
 
     // Módulo Compras
-    Route::get('/operaciones/compras', function () {
-        return Inertia::render('Operaciones/Compras/Index');
-    })->name('operaciones.compras.index');
-
-    Route::get('/operaciones/compras/crear', function () {
-        return Inertia::render('Operaciones/Compras/Create');
-    })->name('operaciones.compras.crear');
+    Route::get('/operaciones/compras', [\App\Http\Controllers\PageController::class, 'purchasesIndex'])->name('operaciones.compras.index');
+    Route::get('/operaciones/compras/crear', [\App\Http\Controllers\PageController::class, 'purchasesCreate'])->name('operaciones.compras.crear');
 
     // Reportes
-    Route::get('/reportes', function () {
-        return Inertia::render('Reportes/Index');
-    })->name('reportes.index');
+    Route::get('/reportes', [\App\Http\Controllers\PageController::class, 'reportsIndex'])->name('reportes.index');
 
     // RRHH
-    Route::get('/rrhh/empleados', function () {
-        return Inertia::render('RRHH/Empleados/Index');
-    })->name('rrhh.empleados');
-    Route::get('/rrhh/departamentos', function () {
-        return Inertia::render('RRHH/Departamentos/Index');
-    })->name('rrhh.departamentos');
-    Route::get('/rrhh/puestos', function () {
-        return Inertia::render('RRHH/Puestos/Index');
-    })->name('rrhh.puestos');
+    Route::get('/rrhh/empleados', [\App\Http\Controllers\PageController::class, 'rrhhEmployees'])->name('rrhh.empleados');
+    Route::get('/rrhh/departamentos', [\App\Http\Controllers\PageController::class, 'rrhhDepartments'])->name('rrhh.departamentos');
+    Route::get('/rrhh/puestos', [\App\Http\Controllers\PageController::class, 'rrhhPositions'])->name('rrhh.puestos');
 
     // Módulo Inventario
-    Route::get('/inventario/categorias', function () {
-        return Inertia::render('Inventario/Categorias/Index');
-    })->name('inventario.categorias');
-    Route::get('/inventario/marcas', function () {
-        return Inertia::render('Inventario/Marcas/Index');
-    })->name('inventario.marcas');
-    Route::get('/inventario/unidades', function () {
-        return Inertia::render('Inventario/Unidades/Index');
-    })->name('inventario.unidades');
+    Route::get('/inventario/categorias', [\App\Http\Controllers\PageController::class, 'inventoryCategories'])->name('inventario.categorias');
+    Route::get('/inventario/marcas', [\App\Http\Controllers\PageController::class, 'inventoryBrands'])->name('inventario.marcas');
+    Route::get('/inventario/unidades', [\App\Http\Controllers\PageController::class, 'inventoryUnits'])->name('inventario.unidades');
 
     // Inventario Avanzado
-    Route::get('/inventario/kardex', function () {
-        return Inertia::render('Inventario/Kardex/Index');
-    })->name('inventario.kardex');
-    Route::get('/inventario/lotes', function () {
-        return Inertia::render('Inventario/Lotes/Manager');
-    })->name('inventario.lotes');
+    Route::get('/inventario/kardex', [\App\Http\Controllers\PageController::class, 'inventoryKardex'])->name('inventario.kardex');
+    Route::get('/inventario/lotes', [\App\Http\Controllers\PageController::class, 'inventoryLots'])->name('inventario.lotes');
 
     // Módulo Producción
-    Route::get('/produccion/formulas', function () {
-        return Inertia::render('Produccion/Formulas/Index');
-    })->name('produccion.formulas');
-    Route::get('/produccion/ordenes', function () {
-        return Inertia::render('Produccion/Ordenes/Manager');
-    })->name('produccion.ordenes');
+    Route::get('/produccion/formulas', [\App\Http\Controllers\PageController::class, 'prodFormulas'])->name('produccion.formulas');
+    Route::get('/produccion/ordenes', [\App\Http\Controllers\PageController::class, 'prodOrders'])->name('produccion.ordenes');
 
     // Módulo Comercial
-    Route::get('/comercial/clientes', function () {
-        return Inertia::render('Comercial/Clientes/Index');
-    })->name('comercial.clientes');
-    Route::get('/comercial/proveedores', function () {
-        return Inertia::render('Comercial/Proveedores/Index');
-    })->name('comercial.proveedores');
+    Route::get('/comercial/clientes', [\App\Http\Controllers\PageController::class, 'clientsIndex'])->name('comercial.clientes');
+    Route::get('/comercial/proveedores', [\App\Http\Controllers\PageController::class, 'suppliersIndex'])->name('comercial.proveedores');
 
     // Módulo Cotizaciones (Avanzado)
-    Route::get('/comercial/cotizaciones', function () {
-        return Inertia::render('Comercial/Cotizaciones/Index');
-    })->name('comercial.cotizaciones');
-    Route::get('/comercial/cotizaciones/crear', function () {
-        return Inertia::render('Comercial/Cotizaciones/Create');
-    })->name('comercial.cotizaciones.crear');
+    Route::get('/comercial/cotizaciones', [\App\Http\Controllers\PageController::class, 'quotesIndex'])->name('comercial.cotizaciones');
+    Route::get('/comercial/cotizaciones/crear', [\App\Http\Controllers\PageController::class, 'quotesCreate'])->name('comercial.cotizaciones.crear');
 
     // Finanzas
-    Route::get('/finanzas/gastos', function () {
-        return Inertia::render('Finanzas/Gastos/Index');
-    })->name('finanzas.gastos');
+    Route::get('/finanzas/gastos', [\App\Http\Controllers\PageController::class, 'expensesIndex'])->name('finanzas.gastos');
 
     // Módulo Tesorería (Avanzado)
-    Route::get('/tesoreria/cajas', function () {
-        return Inertia::render('Tesoreria/Cajas/Index');
-    })->name('tesoreria.cajas');
-
-    Route::get('/tesoreria/sesiones', function () {
-        return Inertia::render('Tesoreria/Sesiones/Control');
-    })->name('tesoreria.sesiones');
-
-    Route::get('/tesoreria/historial-cortes', function () {
-        return Inertia::render('Tesoreria/Sesiones/Index');
-    })->name('tesoreria.historial');
-    
+    Route::get('/tesoreria/cajas', [\App\Http\Controllers\PageController::class, 'treasuryBoxes'])->name('tesoreria.cajas');
+    Route::get('/tesoreria/sesiones', [\App\Http\Controllers\PageController::class, 'treasurySessionsControl'])->name('tesoreria.sesiones');
+    Route::get('/tesoreria/historial-cortes', [\App\Http\Controllers\PageController::class, 'treasurySessionsIndex'])->name('tesoreria.historial');
     Route::get('/tesoreria/sesion/{id}/ticket', [\App\Http\Controllers\Tesoreria\TesSesionCajaController::class, 'ticket'])->name('tesoreria.sesion.ticket');
 
     // Reportes PDF
@@ -128,92 +68,64 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reportes/pdf/cxc', [\App\Http\Controllers\Reportes\PdfReporteController::class, 'downloadCxc'])->name('reportes.pdf.cxc');
 
     // Módulo Finanzas (CXC / CXP)
-    Route::get('/finanzas/cxc', function () {
-        return Inertia::render('Finanzas/PagosClientes/Index');
-    })->name('finanzas.cxc');
-    Route::get('/finanzas/cxp', function () {
-        return Inertia::render('Finanzas/PagosProveedores/Index');
-    })->name('finanzas.cxp');
-    Route::get('/finanzas/gastos', function () {
-        return Inertia::render('Finanzas/Gastos/Index');
-    })->name('finanzas.gastos');
+    Route::get('/finanzas/cxc', [\App\Http\Controllers\PageController::class, 'cxcIndex'])->name('finanzas.cxc');
+    Route::get('/finanzas/cxp', [\App\Http\Controllers\PageController::class, 'cxpIndex'])->name('finanzas.cxp');
+    // duplicate route name removed, expenses already above
+    // Route::get('/finanzas/gastos', ...)->name('finanzas.gastos');
 
     // Módulo Configuración
-    Route::get('/configuracion', function () {
-        return Inertia::render('Configuracion/Index');
-    })->name('configuracion.index');
-    Route::get('/api/configuracion', [\App\Http\Controllers\Config\SysConfiguracionController::class, 'index']); // For loading initial data
-    Route::post('/api/configuracion', [\App\Http\Controllers\Config\SysConfiguracionController::class, 'update']); // Use POST with _method=PUT for FormData compatibility
+    Route::get('/configuracion', [\App\Http\Controllers\PageController::class, 'configIndex'])->name('configuracion.index');
+    Route::get('/api/configuracion', [\App\Http\Controllers\Config\SysConfiguracionController::class, 'index']); 
+    Route::post('/api/configuracion', [\App\Http\Controllers\Config\SysConfiguracionController::class, 'update']); 
 
     // Operaciones Especiales (Devoluciones)
-    Route::get('/operaciones/devoluciones', function () {
-        return Inertia::render('Operaciones/Devoluciones/Index');
-    })->name('operaciones.devoluciones');
+    Route::get('/operaciones/devoluciones', [\App\Http\Controllers\PageController::class, 'returnsIndex'])->name('operaciones.devoluciones');
 
     // Configuración y Auditoría
-    Route::get('/configuracion', function () {
-        return Inertia::render('Configuracion/Index');
-    })->name('sys.configuracion');
-
-    Route::get('/auditoria', function () {
-        return Inertia::render('Auditoria/Index');
-    })->name('sys.auditoria');
-    
-    Route::get('/seguridad/usuarios', function () {
-        return Inertia::render('Seguridad/Usuarios/Index');
-    })->name('sys.usuarios');
+    Route::get('/auditoria', [\App\Http\Controllers\PageController::class, 'auditIndex'])->name('sys.auditoria');
+    Route::get('/seguridad/usuarios', [\App\Http\Controllers\PageController::class, 'securityUsers'])->name('sys.usuarios');
 
     // Imprimir Cotización
-    Route::get('/comercial/cotizaciones/{id}/print', function ($id) {
-        $cotizacion = \App\Models\Comercial\ComCotizacion::with(['cliente', 'detalles.producto.marca', 'usuario'])->findOrFail($id);
-        $empresa = \App\Models\Config\SysConfiguracion::first(); // Pass global config
-        return Inertia::render('Comercial/Cotizaciones/Print', [
-            'cotizacion' => $cotizacion,
-            'empresa' => $empresa
-        ]);
-    })->name('comercial.cotizaciones.print');
-
-    // Imprimir Venta (usa Controller para lógica unificada)
+    Route::get('/comercial/cotizaciones/{id}/print', [\App\Http\Controllers\Comercial\ComCotizacionController::class, 'print'])->name('comercial.cotizaciones.print');
+    
+    // Imprimir Venta
     Route::get('/operaciones/ventas/{id}/print', [\App\Http\Controllers\Operaciones\OperVentaController::class, 'print'])->name('operaciones.ventas.print');
     Route::get('/operaciones/ventas/{id}/ticket', [\App\Http\Controllers\Operaciones\OperVentaController::class, 'ticket'])->name('operaciones.ventas.ticket');
 
     // Módulo Logística
-    Route::get('/logistica/bodegas', function () {
-        return Inertia::render('Logistica/Bodegas/Index');
-    })->name('logistica.bodegas');
-    Route::get('/logistica/traslados', function () {
-        return Inertia::render('Logistica/Traslados/Index');
-    })->name('logistica.traslados');
+    Route::get('/logistica/bodegas', [\App\Http\Controllers\PageController::class, 'logWarehouses'])->name('logistica.bodegas');
+    Route::get('/logistica/traslados', [\App\Http\Controllers\PageController::class, 'logTransfers'])->name('logistica.traslados');
 
     // Módulo Contabilidad
-    Route::get('/contabilidad/cuentas', function () {
-        return Inertia::render('Contabilidad/Cuentas/Index');
-    })->name('contabilidad.cuentas');
-    Route::get('/contabilidad/partidas', function () {
-        return Inertia::render('Contabilidad/Partidas/Index');
-    })->name('contabilidad.partidas');
+    Route::get('/contabilidad/cuentas', [\App\Http\Controllers\PageController::class, 'accAccounts'])->name('contabilidad.cuentas');
+    Route::get('/contabilidad/partidas', [\App\Http\Controllers\PageController::class, 'accEntries'])->name('contabilidad.partidas');
 
     // Módulo Configuración Avanzada
-    Route::get('/configuracion/empresa', function () {
-        return Inertia::render('Configuracion/Empresa/Index');
-    })->name('configuracion.empresa');
-    Route::get('/configuracion/impuestos', function () {
-        return Inertia::render('Configuracion/Impuestos/Index');
-    })->name('configuracion.impuestos');
-    Route::get('/configuracion/series', function () {
-        return Inertia::render('Configuracion/Series/Index');
-    })->name('configuracion.series');
+    Route::get('/configuracion/empresa', [\App\Http\Controllers\PageController::class, 'configCompany'])->name('configuracion.empresa');
+    Route::get('/configuracion/impuestos', [\App\Http\Controllers\PageController::class, 'configTaxes'])->name('configuracion.impuestos');
+    Route::get('/configuracion/series', [\App\Http\Controllers\PageController::class, 'configSeries'])->name('configuracion.series');
 
-    // Módulo POS
-    Route::get('/operaciones/pos', function () {
-        return Inertia::render('Operaciones/POS/Index');
-    })->name('operaciones.pos');
+    // Módulo POS (Legacy)
+    Route::get('/operaciones/pos', [\App\Http\Controllers\PageController::class, 'posLegacy'])->name('operaciones.pos');
+
+    // [ENTERPRISE] New Module-based POS
+    Route::get('/sales/pos', [\App\Http\Controllers\PageController::class, 'entSalesPos'])->name('sales.pos');
+
+    // [ENTERPRISE] New Module-based Inventory
+    Route::get('/inventory/managed-products', [\App\Http\Controllers\PageController::class, 'entInvManaged'])->name('inventory.managed_products');
+
+    // [ENTERPRISE] New Module-based Reports
+    Route::get('/reports/sales-performance', [\App\Http\Controllers\PageController::class, 'entRepSales'])->name('reports.sales_performance');
+
+    // [ENTERPRISE] New Module-based Users
+    Route::get('/users/manage', [\App\Http\Controllers\PageController::class, 'entUsersManage'])->name('users.manage');
+
+    Route::get('/users/roles', [\App\Http\Controllers\PageController::class, 'entUsersRoles'])->name('users.roles');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
 
 use App\Http\Controllers\AuthController;
 

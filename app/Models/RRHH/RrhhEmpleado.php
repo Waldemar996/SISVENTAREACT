@@ -11,6 +11,7 @@ class RrhhEmpleado extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'rrhh_empleados';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -24,7 +25,7 @@ class RrhhEmpleado extends Model
         'puesto_id',
         'fecha_contratacion',
         'estado',
-        'foto_perfil_url'
+        'foto_perfil_url',
     ];
 
     protected $casts = [

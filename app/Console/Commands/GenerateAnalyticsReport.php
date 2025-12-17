@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\Analytics\AdvancedAnalyticsService;
+use Illuminate\Console\Command;
 
 /**
  * Genera reporte de analytics
- * 
+ *
  * Usage: php artisan analytics:report {type}
  */
 class GenerateAnalyticsReport extends Command
@@ -25,7 +25,7 @@ class GenerateAnalyticsReport extends Command
         $this->info("Generating {$type} analytics report...");
 
         try {
-            $data = match($type) {
+            $data = match ($type) {
                 'rfm' => $analytics->getRFMSegmentation(),
                 'cohort' => $analytics->getCohortAnalysis(),
                 'abc' => $analytics->getABCAnalysis(),
@@ -49,7 +49,8 @@ class GenerateAnalyticsReport extends Command
             return Command::SUCCESS;
 
         } catch (\Exception $e) {
-            $this->error('❌ Error generating report: ' . $e->getMessage());
+            $this->error('❌ Error generating report: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }
@@ -59,20 +60,20 @@ class GenerateAnalyticsReport extends Command
         if ($type === 'rfm') {
             $this->table(
                 ['Cliente', 'RFM Score', 'Segment', 'Value'],
-                array_map(fn($row) => [
+                array_map(fn ($row) => [
                     $row['nombre'],
                     $row['rfm_score'],
                     $row['segment'],
-                    $row['value']
+                    $row['value'],
                 ], array_slice($data, 0, 10))
             );
         } elseif ($type === 'abc') {
             $this->table(
                 ['Producto', 'Revenue', 'Category'],
-                array_map(fn($row) => [
+                array_map(fn ($row) => [
                     $row['nombre'],
-                    '$' . number_format($row['total_revenue'], 2),
-                    $row['category']
+                    '$'.number_format($row['total_revenue'], 2),
+                    $row['category'],
                 ], array_slice($data, 0, 10))
             );
         }
@@ -80,13 +81,13 @@ class GenerateAnalyticsReport extends Command
 
     private function exportReport(array $data, string $type, string $format): string
     {
-        $filename = storage_path("app/reports/{$type}_" . date('Y-m-d_His') . ".{$format}");
+        $filename = storage_path("app/reports/{$type}_".date('Y-m-d_His').".{$format}");
 
         if ($format === 'json') {
             file_put_contents($filename, json_encode($data, JSON_PRETTY_PRINT));
         } elseif ($format === 'csv') {
             $fp = fopen($filename, 'w');
-            if (!empty($data)) {
+            if (! empty($data)) {
                 fputcsv($fp, array_keys($data[0]));
                 foreach ($data as $row) {
                     fputcsv($fp, $row);

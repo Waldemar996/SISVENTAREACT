@@ -14,5 +14,7 @@ Array
     [11] => total_impuestos
     [12] => descuento
     [13] => total_venta
-    [14] => estado
+    [14] => total_venta
+    [15] => estado
+    [16] => forma_pago
 )

@@ -10,6 +10,7 @@ class ProdFormula extends Model
     use HasFactory, \Illuminate\Database\Eloquent\SoftDeletes;
 
     protected $table = 'prod_formulas';
+
     public $timestamps = false;
 
     protected $fillable = [

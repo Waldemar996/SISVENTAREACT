@@ -2,15 +2,16 @@
 
 namespace App\Models\Operaciones;
 
+use App\Models\Inventario\InvProducto;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Inventario\InvProducto;
 
 class OperDevolucionDet extends Model
 {
     use HasFactory;
 
     protected $table = 'oper_devoluciones_det';
+
     public $timestamps = false;
 
     protected $fillable = [

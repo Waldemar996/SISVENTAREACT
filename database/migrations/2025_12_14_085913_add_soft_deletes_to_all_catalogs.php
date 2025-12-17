@@ -19,12 +19,12 @@ return new class extends Migration
             'rrhh_empleados',
             'rrhh_departamentos',
             'tes_cajas',
-            'sys_usuarios'
+            'sys_usuarios',
         ];
 
         foreach ($tables as $table) {
             Schema::table($table, function (Blueprint $table) {
-                if (!Schema::hasColumn($table->getTable(), 'deleted_at')) {
+                if (! Schema::hasColumn($table->getTable(), 'deleted_at')) {
                     $table->softDeletes();
                 }
             });
@@ -44,14 +44,14 @@ return new class extends Migration
             'rrhh_empleados',
             'rrhh_departamentos',
             'tes_cajas',
-            'sys_usuarios'
+            'sys_usuarios',
         ];
 
         foreach ($tables as $table) {
             Schema::table($table, function (Blueprint $table) {
                 // $table->dropSoftDeletes(); // Optional: keeps data safely even on rollback usually
                 if (Schema::hasColumn($table->getTable(), 'deleted_at')) {
-                     $table->dropSoftDeletes();
+                    $table->dropSoftDeletes();
                 }
             });
         }

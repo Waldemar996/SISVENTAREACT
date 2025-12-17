@@ -147,6 +147,13 @@ export default function AuthenticatedLayout({ header, children }) {
             ],
         },
         {
+            id: 'reportes',
+            name: 'Reportes',
+            icon: ChartBarIcon,
+            href: '/reportes',
+            single: true,
+        },
+        {
             id: 'logistica',
             name: 'Logística',
             icon: TruckIcon,

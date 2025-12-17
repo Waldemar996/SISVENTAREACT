@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\RRHH;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\RRHH\RrhhEmpleado;
-use App\Models\RRHH\RrhhPuesto;
+use Illuminate\Http\Request;
 
 class RrhhEmpleadoController extends Controller
 {
@@ -15,6 +14,7 @@ class RrhhEmpleadoController extends Controller
     public function index()
     {
         $empleados = RrhhEmpleado::with(['puesto.departamento'])->orderBy('apellidos')->get();
+
         return response()->json($empleados);
     }
 
@@ -31,10 +31,11 @@ class RrhhEmpleadoController extends Controller
             'telefono' => 'nullable|string|max:20',
             'puesto_id' => 'required|exists:rrhh_puestos,id',
             'fecha_contratacion' => 'required|date',
-            'estado' => 'required|in:activo,baja,suspension'
+            'estado' => 'required|in:activo,baja,suspension',
         ]);
 
         $empleado = RrhhEmpleado::create($validated);
+
         return response()->json(['message' => 'Empleado registrado', 'data' => $empleado], 201);
     }
 
@@ -44,6 +45,7 @@ class RrhhEmpleadoController extends Controller
     public function show(string $id)
     {
         $empleado = RrhhEmpleado::with(['puesto', 'usuario'])->findOrFail($id);
+
         return response()->json($empleado);
     }
 
@@ -59,10 +61,11 @@ class RrhhEmpleadoController extends Controller
             'email_personal' => 'nullable|email',
             'telefono' => 'nullable|string|max:20',
             'puesto_id' => 'required|exists:rrhh_puestos,id',
-            'estado' => 'required|in:activo,baja,suspension'
+            'estado' => 'required|in:activo,baja,suspension',
         ]);
 
         $empleado->update($validated);
+
         return response()->json(['message' => 'Empleado actualizado', 'data' => $empleado]);
     }
 
@@ -77,6 +80,7 @@ class RrhhEmpleadoController extends Controller
             return response()->json(['message' => 'No se puede eliminar empleado con usuario de sistema asociado.'], 400);
         }
         $empleado->delete();
+
         return response()->json(['message' => 'Empleado eliminado']);
     }
 }

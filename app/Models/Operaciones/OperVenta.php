@@ -2,18 +2,19 @@
 
 namespace App\Models\Operaciones;
 
+use App\Models\Comercial\ComCliente;
+use App\Models\Logistica\LogBodega;
+use App\Models\RRHH\SysUsuario;
+use App\Models\Tesoreria\TesSesionCaja;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Comercial\ComCliente;
-use App\Models\RRHH\SysUsuario;
-use App\Models\Logistica\LogBodega;
-use App\Models\Tesoreria\TesSesionCaja;
 
 class OperVenta extends Model
 {
     use HasFactory;
 
     protected $table = 'oper_ventas';
+
     public $timestamps = true;
 
     protected $fillable = [

@@ -2,23 +2,22 @@
 
 namespace App\Services\Ventas;
 
+use App\CQRS\Projectors\VentaProjector;
 use App\DTOs\Ventas\CrearVentaDTO;
+use App\EventSourcing\Events\Ventas\VentaAnuladaEvent;
+use App\EventSourcing\Events\Ventas\VentaCreadaEvent;
+use App\EventSourcing\EventStore;
 use App\Models\Operaciones\OperVenta;
 use App\Models\Operaciones\OperVentaDet;
 use App\Models\Tesoreria\TesSesionCaja;
-use App\Services\KardexService;
 use App\Services\AuditService;
-use App\EventSourcing\EventStore;
-use App\EventSourcing\Events\Ventas\VentaCreadaEvent;
-use App\EventSourcing\Events\Ventas\VentaAnuladaEvent;
-use App\CQRS\Projectors\VentaProjector;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Services\KardexService;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Service Layer para Ventas con Event Sourcing + CQRS
- * 
+ *
  * NUEVO: Event Sourcing + CQRS - nivel Google/Netflix/Amazon
  * - Event Sourcing: Auditoría perfecta + Time travel
  * - CQRS: Queries ultra-rápidas desde read model
@@ -74,7 +73,7 @@ class VentaService
             $this->auditService->log('VENTAS', 'CREAR', $venta->id, [
                 'numero' => $venta->numero_comprobante,
                 'cliente_id' => $venta->cliente_id,
-                'total' => $venta->total_venta
+                'total' => $venta->total_venta,
             ]);
 
             // 7. Limpiar cache del dashboard
@@ -115,7 +114,7 @@ class VentaService
             // 4. Auditoría (legacy)
             $this->auditService->log('VENTAS', 'ANULAR', $venta->id, [
                 'numero' => $venta->numero_comprobante,
-                'motivo' => $motivo
+                'motivo' => $motivo,
             ]);
 
             // 5. Limpiar cache
@@ -130,12 +129,12 @@ class VentaService
      */
     private function validarCajaAbierta(?int $sesionCajaId, ?int $usuarioId): void
     {
-        if (!$sesionCajaId) {
+        if (! $sesionCajaId) {
             $sesionActiva = TesSesionCaja::where('usuario_id', $usuarioId)
                 ->where('estado', 'ABIERTA')
                 ->first();
 
-            if (!$sesionActiva) {
+            if (! $sesionActiva) {
                 throw new Exception('No hay una sesión de caja abierta. Debe abrir caja antes de realizar ventas.');
             }
         }
@@ -158,7 +157,7 @@ class VentaService
                 $producto = DB::table('inv_productos')
                     ->where('id', $detalle['producto_id'])
                     ->value('nombre');
-                    
+
                 throw new Exception("Stock insuficiente para '{$producto}'. Disponible: {$stock}, Solicitado: {$detalle['cantidad']}");
             }
         }
@@ -199,7 +198,7 @@ class VentaService
             'subtotal' => round($subtotal, 2),
             'descuento_total' => round($descuentoTotal, 2),
             'impuesto_total' => round($impuestoTotal, 2),
-            'total' => round($total, 2)
+            'total' => round($total, 2),
         ];
     }
 
@@ -223,7 +222,7 @@ class VentaService
             'impuesto_total' => $totales['impuesto_total'],
             'total_venta' => $totales['total'],
             'observaciones' => $dto->observaciones,
-            'estado' => 'COMPLETADO'
+            'estado' => 'COMPLETADO',
         ]);
     }
 
@@ -242,7 +241,7 @@ class VentaService
                 'descuento' => $detalle['descuento'] ?? 0,
                 'impuesto' => $detalle['impuesto'] ?? 0,
                 'subtotal' => $detalle['cantidad'] * $detalle['precio_unitario'],
-                'costo_unitario_historico' => $detalle['costo_unitario'] ?? 0
+                'costo_unitario_historico' => $detalle['costo_unitario'] ?? 0,
             ]);
 
             // Registrar movimiento en kardex (salida de stock)
@@ -281,7 +280,7 @@ class VentaService
      */
     private function generarNumeroComprobante(string $tipoComprobante): string
     {
-        $prefijo = match($tipoComprobante) {
+        $prefijo = match ($tipoComprobante) {
             'FACTURA' => 'F',
             'BOLETA' => 'B',
             'TICKET' => 'T',
@@ -299,7 +298,7 @@ class VentaService
             $numero = 1;
         }
 
-        return $prefijo . '-' . now()->year . '-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
+        return $prefijo.'-'.now()->year.'-'.str_pad($numero, 6, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -308,7 +307,7 @@ class VentaService
     private function limpiarCache(?int $usuarioId): void
     {
         if ($usuarioId) {
-            cache()->forget('dashboard:stats:' . $usuarioId);
+            cache()->forget('dashboard:stats:'.$usuarioId);
         }
     }
 }

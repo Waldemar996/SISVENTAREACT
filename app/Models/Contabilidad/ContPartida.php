@@ -21,7 +21,7 @@ class ContPartida extends Model
         'origen_id',
         'tipo_partida',
         'estado',
-        'usuario_creador_id'
+        'usuario_creador_id',
     ];
 
     protected $casts = [

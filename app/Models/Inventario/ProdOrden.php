@@ -2,10 +2,10 @@
 
 namespace App\Models\Inventario;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Logistica\LogBodega;
 use App\Models\RRHH\SysUsuario;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class ProdOrden extends Model
 {

@@ -11,6 +11,7 @@ class DashboardController extends Controller
 {
     // Cache duration in minutes
     const CACHE_DURATION = 5; // 5 minutes for dashboard stats
+
     const CACHE_KEY_PREFIX = 'dashboard_';
 
     public function index()
@@ -18,7 +19,7 @@ class DashboardController extends Controller
         try {
             // Use cache for dashboard stats
             $stats = Cache::remember(
-                self::CACHE_KEY_PREFIX . 'stats_' . auth()->id(),
+                self::CACHE_KEY_PREFIX.'stats_'.auth()->id(),
                 now()->addMinutes(self::CACHE_DURATION),
                 function () {
                     return [
@@ -28,14 +29,15 @@ class DashboardController extends Controller
                         'ventasPorCategoria' => $this->getVentasPorCategoria(),
                         'productosCriticos' => $this->getProductosCriticos(),
                         'actividadReciente' => $this->getActividadReciente(),
-                        'alertas' => $this->getAlertas()
+                        'alertas' => $this->getAlertas(),
                     ];
                 }
             );
 
             return Inertia::render('Dashboard', ['stats' => $stats]);
         } catch (\Exception $e) {
-            Log::error('Error Dashboard: ' . $e->getMessage());
+            Log::error('Error Dashboard: '.$e->getMessage());
+
             return Inertia::render('Dashboard', ['stats' => null]);
         }
     }
@@ -46,7 +48,7 @@ class DashboardController extends Controller
     public static function clearCache($userId = null)
     {
         $userId = $userId ?? auth()->id();
-        Cache::forget(self::CACHE_KEY_PREFIX . 'stats_' . $userId);
+        Cache::forget(self::CACHE_KEY_PREFIX.'stats_'.$userId);
     }
 
     /**
@@ -58,17 +60,17 @@ class DashboardController extends Controller
     }
 
     // ... rest of the methods remain the same ...
-    
+
     private function getResumenFInanciero()
     {
         $hoy = date('Y-m-d');
         $inicioMes = date('Y-m-01');
         $finMes = date('Y-m-t');
-        
+
         // Mes anterior para comparaciones
         $inicioMesAnterior = date('Y-m-01', strtotime('-1 month'));
         $finMesAnterior = date('Y-m-t', strtotime('-1 month'));
-        
+
         // 1. Ventas del Mes
         $ventasMes = DB::table('oper_ventas')
             ->whereDate('fecha_emision', '>=', $inicioMes)
@@ -113,17 +115,17 @@ class DashboardController extends Controller
             ->sum('total_compra');
 
         // 5. NUEVAS MÉTRICAS PRO
-        
+
         // Margen Bruto del Mes (Ventas - Compras)
         $margenMes = $ventasMes - $comprasMes;
         $margenMesAnterior = $ventasMesAnterior - $comprasMesAnterior;
-        
+
         // Ticket Promedio
         $cantidadVentasMes = DB::table('oper_ventas')
             ->whereDate('fecha_emision', '>=', $inicioMes)
             ->where('estado', '!=', 'anulada')
             ->count();
-        
+
         $ticketPromedio = $cantidadVentasMes > 0 ? $ventasMes / $cantidadVentasMes : 0;
 
         // Calcular tendencias (% cambio)
@@ -139,22 +141,22 @@ class DashboardController extends Controller
             'ventas_mes_anterior' => (float) $ventasMesAnterior,
             'tendencia_ventas' => $tendenciaVentas,
             'sparkline_ventas' => $sparklines['ventas'],
-            
+
             'ventas_hoy' => (float) $ventasHoy,
             'cantidad_ventas_hoy' => $cantidadVentasHoy,
-            
+
             'valor_inventario' => (float) $valorInventario,
-            
+
             'compras_mes' => (float) $comprasMes,
             'compras_mes_anterior' => (float) $comprasMesAnterior,
             'tendencia_compras' => $tendenciaCompras,
             'sparkline_compras' => $sparklines['compras'],
-            
+
             'margen_mes' => (float) $margenMes,
             'margen_mes_anterior' => (float) $margenMesAnterior,
             'tendencia_margen' => $tendenciaMargen,
             'sparkline_margen' => $sparklines['margen'],
-            
+
             'ticket_promedio' => (float) $ticketPromedio,
             'cantidad_ventas_mes' => $cantidadVentasMes,
         ];
@@ -163,10 +165,10 @@ class DashboardController extends Controller
     private function getSparklineData()
     {
         $datos = ['ventas' => [], 'compras' => [], 'margen' => []];
-        
+
         for ($i = 6; $i >= 0; $i--) {
             $fecha = date('Y-m-d', strtotime("-$i days"));
-            
+
             $ventaDia = DB::table('oper_ventas')
                 ->whereDate('fecha_emision', $fecha)
                 ->where('estado', '!=', 'anulada')
@@ -181,7 +183,7 @@ class DashboardController extends Controller
             $datos['compras'][] = (float) $compraDia;
             $datos['margen'][] = (float) ($ventaDia - $compraDia);
         }
-        
+
         return $datos;
     }
 
@@ -190,15 +192,15 @@ class DashboardController extends Controller
         if ($anterior == 0) {
             return [
                 'porcentaje' => $actual > 0 ? 100 : 0,
-                'direccion' => $actual > 0 ? 'up' : 'neutral'
+                'direccion' => $actual > 0 ? 'up' : 'neutral',
             ];
         }
 
         $cambio = (($actual - $anterior) / $anterior) * 100;
-        
+
         return [
             'porcentaje' => abs(round($cambio, 1)),
-            'direccion' => $cambio > 0 ? 'up' : ($cambio < 0 ? 'down' : 'neutral')
+            'direccion' => $cambio > 0 ? 'up' : ($cambio < 0 ? 'down' : 'neutral'),
         ];
     }
 

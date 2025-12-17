@@ -2,44 +2,50 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comercial\ComProveedor;
+use App\Models\Finanzas\FinTipoImpuesto;
+use App\Models\Inventario\InvBodegaProducto;
+use App\Models\Inventario\InvCategoria;
+use App\Models\Inventario\InvMarca;
+use App\Models\Inventario\InvProducto;
+use App\Models\Inventario\InvUnidad;
+use App\Models\Logistica\LogBodega;
+use App\Models\Operaciones\OperCompra;
+use App\Models\Operaciones\OperCompraDet;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Inventario\InvCategoria;
-use App\Models\Inventario\InvProducto;
-use App\Models\Inventario\InvMarca;
-use App\Models\Inventario\InvUnidad;
-use App\Models\Comercial\ComProveedor;
-use App\Models\Operaciones\OperCompra;
-use App\Models\Operaciones\OperCompraDet;
-use App\Models\Logistica\LogBodega;
-use App\Models\Inventario\InvBodegaProducto;
-use App\Models\Finanzas\FinTipoImpuesto;
-use Carbon\Carbon;
 
 class SupermarketSeeder extends Seeder
 {
     private $cats = [];
+
     private $brands = [];
+
     private $units = [];
 
     // Helper: Create/Get Category
-    private function getCat($name, $parent = null) {
-        $key = $name . ($parent ? '_' . $parent : '');
-        if (!isset($this->cats[$key])) {
+    private function getCat($name, $parent = null)
+    {
+        $key = $name.($parent ? '_'.$parent : '');
+        if (! isset($this->cats[$key])) {
             $this->cats[$key] = InvCategoria::create([
                 'nombre' => $name,
-                'categoria_padre_id' => $parent
+                'categoria_padre_id' => $parent,
             ])->id;
         }
+
         return $this->cats[$key];
     }
 
     // Helper: Get/Create Brand
-    private function getBrand($name, $country = 'GT') {
-        if (!isset($this->brands[$name])) {
+    private function getBrand($name, $country = 'GT')
+    {
+        if (! isset($this->brands[$name])) {
             $this->brands[$name] = InvMarca::create(['nombre' => $name, 'pais' => $country])->id;
         }
+
         return $this->brands[$name];
     }
 
@@ -65,18 +71,18 @@ class SupermarketSeeder extends Seeder
 
         // CONFIG
         $iva = FinTipoImpuesto::create(['nombre' => 'IVA General', 'porcentaje' => 12.00, 'codigo_sat' => 'IVA']);
-        
+
         $userId = DB::table('sys_usuarios')->where('username', 'admin')->value('id');
-        if (!$userId) {
+        if (! $userId) {
             $userId = DB::table('sys_usuarios')->insertGetId([
                 'username' => 'admin', 'email' => 'admin@admin.com', 'password_hash' => Hash::make('password'),
-                'rol' => 'superadmin', 'activo' => 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()
+                'rol' => 'superadmin', 'activo' => 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),
             ]);
         }
 
         // PROVIDERS
         $prov1 = ComProveedor::create(['razon_social' => 'Distribuidora Universal S.A.', 'nit' => '111111-K', 'nombre_contacto' => 'Carlos Ruíz', 'telefono' => '2222-1111', 'email' => 'ventas@universal.com', 'regimen_fiscal' => 'general', 'dias_credito' => 30]);
-        
+
         // UNITS
         $this->units['UN'] = InvUnidad::create(['nombre' => 'Unidad', 'abreviatura' => 'UN'])->id;
         $this->units['LB'] = InvUnidad::create(['nombre' => 'Libra', 'abreviatura' => 'LB'])->id;
@@ -111,7 +117,7 @@ class SupermarketSeeder extends Seeder
                         ['Chile Pimiento', 'VEG-003', 'Granel', 'UN', 2.00, 1.00],
                         ['Zanahoria', 'VEG-004', 'Granel', 'LB', 2.50, 1.25],
                         ['Lechuga Romana', 'VEG-005', 'Granel', 'UN', 5.00, 3.00],
-                    ]
+                    ],
                 ],
                 'Carnes y Mariscos' => [
                     'Res' => [
@@ -127,7 +133,7 @@ class SupermarketSeeder extends Seeder
                     'Pescados' => [
                         ['Filete de Tilapia', 'MAR-001', 'Granel', 'LB', 25.00, 18.00],
                         ['Camarón Cultivado', 'MAR-002', 'Granel', 'LB', 45.00, 35.00],
-                    ]
+                    ],
                 ],
                 'Lácteos y Huevos' => [
                     'Leches' => [
@@ -142,8 +148,8 @@ class SupermarketSeeder extends Seeder
                     ],
                     'Huevos' => [
                         ['Cartón Huevos Mediano 30u', 'HUE-001', 'Granja Azul', 'CAJ', 45.00, 38.00],
-                    ]
-                ]
+                    ],
+                ],
             ],
             'Despensa' => [
                 'Abarrotes Básicos' => [
@@ -161,7 +167,7 @@ class SupermarketSeeder extends Seeder
                         ['Spaghetti', 'PAS-001', 'Ina', 'PQT', 4.00, 2.50],
                         ['Coditos', 'PAS-002', 'Ina', 'PQT', 4.00, 2.50],
                         ['Lasaña Lista', 'PAS-003', 'Roma', 'CAJ', 15.00, 11.00],
-                    ]
+                    ],
                 ],
                 'Desayuno' => [
                     'Cereales' => [
@@ -173,7 +179,7 @@ class SupermarketSeeder extends Seeder
                         ['Café Instantáneo', 'CAF-001', 'Nescafé', 'BOT', 35.00, 28.00],
                         ['Café Molido', 'CAF-002', 'Barista', 'PQT', 45.00, 35.00],
                         ['Azúcar Blanca 2.5kg', 'AZU-001', 'Caña Real', 'PQT', 20.00, 16.00],
-                    ]
+                    ],
                 ],
                 'Snacks' => [
                     'Salados' => [
@@ -184,8 +190,8 @@ class SupermarketSeeder extends Seeder
                     'Dulces' => [
                         ['Chocolate con Almendras', 'SNK-004', 'Hersheys', 'UN', 12.00, 9.00],
                         ['Galletas Oreo', 'SNK-005', 'Nabisco', 'PQT', 6.00, 4.00],
-                    ]
-                ]
+                    ],
+                ],
             ],
             'Bebidas' => [
                 'Gaseosas' => [
@@ -195,7 +201,7 @@ class SupermarketSeeder extends Seeder
                     ],
                     'Sabores' => [ // ADDED SUBCAT
                         ['Sprite 1.5L', 'BEB-003', 'Coca-Cola', 'BOT', 10.00, 8.00],
-                    ]
+                    ],
                 ],
                 'Aguas y Jugos' => [
                     'Agua Pura' => [ // ADDED SUBCAT
@@ -204,7 +210,7 @@ class SupermarketSeeder extends Seeder
                     'Jugos' => [ // ADDED SUBCAT
                         ['Jugo Naranja 1L', 'BEB-005', 'Del Valle', 'CAJ', 12.00, 9.00],
                         ['Gatorade Azul', 'BEB-006', 'Gatorade', 'BOT', 8.00, 6.00],
-                    ]
+                    ],
                 ],
                 'Licores' => [
                     'Cervezas' => [ // ADDED SUBCAT
@@ -213,8 +219,8 @@ class SupermarketSeeder extends Seeder
                     'Destilados y Vinos' => [ // ADDED SUBCAT
                         ['Whisky Etiqueta Roja', 'LIC-002', 'Johnny Walker', 'BOT', 150.00, 110.00],
                         ['Vino Tinto Merlot', 'LIC-003', 'Casillero del Diablo', 'BOT', 65.00, 45.00],
-                    ]
-                ]
+                    ],
+                ],
             ],
             'Hogar' => [
                 'Limpieza Ropa' => [
@@ -222,15 +228,15 @@ class SupermarketSeeder extends Seeder
                         ['Detergente Polvo 1kg', 'LIM-001', 'Ariel', 'PQT', 25.00, 19.00],
                         ['Suavizante', 'LIM-002', 'Suavitel', 'BOT', 18.00, 14.00],
                         ['Cloro Gel', 'LIM-003', 'Clorox', 'BOT', 15.00, 11.00],
-                    ]
+                    ],
                 ],
                 'Papel y Desechables' => [
                     'Papeles' => [ // ADDED SUBCAT
                         ['Papel Higiénico 12 Rollos', 'PAP-001', 'Scott', 'PQT', 45.00, 35.00],
                         ['Servitoallas', 'PAP-002', 'Scott', 'PQT', 22.00, 16.00],
                         ['Platos Desechables', 'PAP-003', 'Reyma', 'PQT', 15.00, 10.00],
-                    ]
-                ]
+                    ],
+                ],
             ],
             'Cuidado Personal' => [
                 'Higiene' => [
@@ -241,29 +247,29 @@ class SupermarketSeeder extends Seeder
                         ['Jabón Barra 3pack', 'PER-002', 'Dove', 'PQT', 25.00, 18.00],
                         ['Desodorante Spray', 'PER-003', 'Rexona', 'BOT', 22.00, 16.00],
                         ['Pasta Dental Total', 'PER-004', 'Colgate', 'CAJ', 18.00, 14.00],
-                    ]
+                    ],
                 ],
                 'Farmacia OTC' => [
                     'Medicamentos' => [ // ADDED SUBCAT
                         ['Tabcin Día', 'FAR-001', 'Bayer', 'CAJ', 25.00, 18.00],
                         ['Alka-Seltzer', 'FAR-002', 'Bayer', 'CAJ', 20.00, 15.00],
                         ['Vitamina C', 'FAR-003', 'Cebion', 'TUBO', 45.00, 35.00],
-                    ]
-                ]
+                    ],
+                ],
             ],
             'Mascotas' => [
                 'Perros' => [
-                     'Alimento y Premios' => [ // ADDED SUBCAT
+                    'Alimento y Premios' => [ // ADDED SUBCAT
                         ['Alimento Perro Adulto 4kg', 'MAS-001', 'Dog Chow', 'PQT', 85.00, 65.00],
                         ['Premios Carnaza', 'MAS-002', 'Pedigree', 'PQT', 15.00, 10.00],
-                     ]
+                    ],
                 ],
                 'Gatos' => [
                     'Alimento y Arena' => [ // ADDED SUBCAT
                         ['Alimento Gato Pescado', 'MAS-003', 'Whiskas', 'PQT', 35.00, 28.00],
                         ['Arena para Gatos', 'MAS-004', 'Tidy Cats', 'GAL', 45.00, 35.00],
-                    ]
-                ]
+                    ],
+                ],
             ],
             'Librería y Útiles' => [
                 'Papelería' => [
@@ -271,9 +277,9 @@ class SupermarketSeeder extends Seeder
                         ['Cuaderno Espiral', 'LIB-001', 'Scribe', 'UN', 12.00, 8.00],
                         ['Bolígrafos Negro/Azul', 'LIB-002', 'Bic', 'PQT', 10.00, 6.00],
                         ['Resma Papel Bond', 'LIB-003', 'Xerox', 'PQT', 45.00, 38.00],
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
 
         // --- PROCESSING ---
@@ -281,41 +287,41 @@ class SupermarketSeeder extends Seeder
 
         foreach ($catalog as $deptName => $categories) {
             $deptId = $this->getCat($deptName);
-            
+
             foreach ($categories as $catName => $subCatsOrProds) {
                 $catId = $this->getCat($catName, $deptId);
-                
+
                 foreach ($subCatsOrProds as $subCatName => $prods) {
                     $subCatId = $this->getCat($subCatName, $catId);
-                    
+
                     foreach ($prods as $p) {
-                         try {
+                        try {
                             $brandId = $this->getBrand($p[2]);
-                            
+
                             $uKey = $p[3];
-                            if (!isset($this->units[$uKey])) {
-                               $uKey = 'UN'; 
+                            if (! isset($this->units[$uKey])) {
+                                $uKey = 'UN';
                             }
                             $unitId = $this->units[$uKey];
 
                             $finalProds[] = InvProducto::create([
                                 'codigo_sku' => $p[1],
                                 'nombre' => $p[0],
-                                'descripcion_corta' => $p[0] . ' - ' . $p[2],
+                                'descripcion_corta' => $p[0].' - '.$p[2],
                                 'categoria_id' => $subCatId,
                                 'marca_id' => $brandId,
                                 'unidad_id' => $unitId,
-                                'precio_venta_base' => round((float)$p[4], 2), 
-                                'costo_promedio' => round((float)$p[5], 2),
-                                'impuesto_porcentaje' => 12.00, 
+                                'precio_venta_base' => round((float) $p[4], 2),
+                                'costo_promedio' => round((float) $p[5], 2),
+                                'impuesto_porcentaje' => 12.00,
                                 'impuesto_id' => $iva->id,
                                 'stock_minimo' => 5,
                                 'activo' => true,
-                                'controla_stock' => true
+                                'controla_stock' => true,
                             ]);
                         } catch (\Exception $e) {
-                             $this->command->error("FAILED PRODUCT: " . $p[0]);
-                             $this->command->error("ERROR: " . $e->getMessage());
+                            $this->command->error('FAILED PRODUCT: '.$p[0]);
+                            $this->command->error('ERROR: '.$e->getMessage());
                         }
                     }
                 }
@@ -335,11 +341,11 @@ class SupermarketSeeder extends Seeder
             'fecha_emision' => Carbon::now(),
             'estado' => 'recibido',
             'numero_comprobante' => 'INI-MEGA-001',
-            'total_compra' => 0
+            'total_compra' => 0,
         ]);
 
         $total = 0;
-        foreach($finalProds as $fp) {
+        foreach ($finalProds as $fp) {
             $qty = rand(10, 50);
             $c = round($fp->costo_promedio, 2);
             $sub = round($qty * $c, 2);
@@ -349,20 +355,20 @@ class SupermarketSeeder extends Seeder
                 'producto_id' => $fp->id,
                 'cantidad' => $qty,
                 'costo_unitario' => $c,
-                'subtotal' => $sub
+                'subtotal' => $sub,
             ]);
 
             InvBodegaProducto::create([
                 'bodega_id' => $bodega->id,
                 'producto_id' => $fp->id,
                 'existencia' => $qty,
-                'pasillo' => 'GEN'
+                'pasillo' => 'GEN',
             ]);
             $total += $sub;
         }
         $compra->update(['total_compra' => $total]);
 
-        $this->command->info('✅ HYPERMARKET Generado: ' . count($finalProds) . ' productos en catálogo masivo.');
+        $this->command->info('✅ HYPERMARKET Generado: '.count($finalProds).' productos en catálogo masivo.');
 
         // --- SECCIÓN COMERCIAL (CLIENTES, PROVEEDORES, COTIZACIONES) ---
         $this->command->info('👥 Generando Datos Comerciales (Clientes y Cotizaciones)...');
@@ -375,7 +381,7 @@ class SupermarketSeeder extends Seeder
                 ['Hotel "Las Cumbres"', '456789-1', 'Km 15 Carr. Salvador', '3333-3030', 'admin@hotelcumbres.gt', 'general_iva'],
                 ['Colegio "Los Pinitos"', '741852-9', 'Zona 15 VH', '2222-4040', 'admon@lospinitos.edu', 'exento'],
                 ['Juan Pérez (Consumidor Final)', 'CF', 'Ciudad', '5555-0000', null, 'pequeno_contribuyente'],
-                ['Tienda "La Esquina"', '369258-4', 'Avenida Petapa', '5555-8888', null, 'pequeno_contribuyente']
+                ['Tienda "La Esquina"', '369258-4', 'Avenida Petapa', '5555-8888', null, 'pequeno_contribuyente'],
             ];
 
             $clientes = [];
@@ -389,7 +395,7 @@ class SupermarketSeeder extends Seeder
                     'tipo_contribuyente' => $c[5],
                     'dias_credito' => $c[5] == 'general_iva' ? 30 : 0,
                     'limite_credito' => $c[5] == 'general_iva' ? 5000 : 1000,
-                    'vendedor_asignado_id' => $userId
+                    'vendedor_asignado_id' => $userId,
                 ]);
             }
 
@@ -398,44 +404,44 @@ class SupermarketSeeder extends Seeder
                 ['Licores de Guatemala S.A.', 'LIC-111'],
                 ['Distribuidora de Mascotas', 'PET-222'],
                 ['Farmacéutica Nacional', 'FAR-333'],
-                ['Papelera Internacional', 'PAP-444']
+                ['Papelera Internacional', 'PAP-444'],
             ];
-            
-            foreach($extraProviders as $ep) {
+
+            foreach ($extraProviders as $ep) {
                 ComProveedor::create([
                     'razon_social' => $ep[0],
                     'nit' => $ep[1],
                     'dias_credito' => 45,
-                    'regimen_fiscal' => 'general'
+                    'regimen_fiscal' => 'general',
                 ]);
             }
 
             // 3. COTIZACIONES
             // Cotización 1: Borrador
             $cot1 = \App\Models\Comercial\ComCotizacion::create([
-                'codigo_cotizacion' => 'COT-' . time() . '1',
-                'cliente_id' => $clientes[0]->id, 
+                'codigo_cotizacion' => 'COT-'.time().'1',
+                'cliente_id' => $clientes[0]->id,
                 'usuario_id' => $userId,
                 'fecha_emision' => Carbon::now(),
                 'fecha_vencimiento' => Carbon::now()->addDays(7),
                 'total' => 0,
-                'estado' => 'borrador'
+                'estado' => 'borrador',
             ]);
-            
+
             $totalCot1 = 0;
             $prodsCot1 = collect($finalProds)->random(5);
 
-            foreach($prodsCot1 as $p) {
+            foreach ($prodsCot1 as $p) {
                 $qty = rand(5, 20);
-                $price = (float)$p->precio_venta_base;
+                $price = (float) $p->precio_venta_base;
                 $sub = round($qty * $price, 2);
-                
+
                 \App\Models\Comercial\ComCotizacionDet::create([
                     'cotizacion_id' => $cot1->id,
                     'producto_id' => $p->id,
                     'cantidad' => $qty,
                     'precio_unitario' => $price,
-                    'subtotal' => $sub
+                    'subtotal' => $sub,
                 ]);
                 $totalCot1 += $sub;
             }
@@ -443,66 +449,66 @@ class SupermarketSeeder extends Seeder
 
             // Cotización 2: Enviada
             $cot2 = \App\Models\Comercial\ComCotizacion::create([
-                'codigo_cotizacion' => 'COT-' . time() . '2',
+                'codigo_cotizacion' => 'COT-'.time().'2',
                 'cliente_id' => $clientes[1]->id,
                 'usuario_id' => $userId,
                 'fecha_emision' => Carbon::yesterday(),
                 'fecha_vencimiento' => Carbon::now()->addDays(15),
                 'total' => 0,
-                'estado' => 'enviada'
+                'estado' => 'enviada',
             ]);
 
             $prodsCot2 = collect($finalProds)->random(8);
             $totalCot2 = 0;
-            foreach($prodsCot2 as $p) {
+            foreach ($prodsCot2 as $p) {
                 $qty = rand(10, 50);
-                $price = (float)$p->precio_venta_base;
+                $price = (float) $p->precio_venta_base;
                 $sub = round($qty * $price, 2);
-                
+
                 \App\Models\Comercial\ComCotizacionDet::create([
                     'cotizacion_id' => $cot2->id,
                     'producto_id' => $p->id,
                     'cantidad' => $qty,
                     'precio_unitario' => $price,
-                    'subtotal' => $sub
+                    'subtotal' => $sub,
                 ]);
                 $totalCot2 += $sub;
             }
             $cot2->update(['total' => round($totalCot2, 2)]);
 
-             // Cotización 3: Aprobada
-             $cot3 = \App\Models\Comercial\ComCotizacion::create([
-                'codigo_cotizacion' => 'COT-' . time() . '3',
+            // Cotización 3: Aprobada
+            $cot3 = \App\Models\Comercial\ComCotizacion::create([
+                'codigo_cotizacion' => 'COT-'.time().'3',
                 'cliente_id' => $clientes[3]->id,
                 'usuario_id' => $userId,
                 'fecha_emision' => Carbon::now()->subDays(2),
                 'fecha_vencimiento' => Carbon::now()->addDays(5),
                 'total' => 0,
-                'estado' => 'aprobada'
+                'estado' => 'aprobada',
             ]);
-            
+
             $prodsCot3 = collect($finalProds)->random(10);
             $totalCot3 = 0;
-            foreach($prodsCot3 as $p) {
-                 $qty = rand(50, 100);
-                 $price = (float)$p->precio_venta_base;
-                 $sub = round($qty * $price, 2);
-                 
-                 \App\Models\Comercial\ComCotizacionDet::create([
-                     'cotizacion_id' => $cot3->id,
-                     'producto_id' => $p->id,
-                     'cantidad' => $qty,
-                     'precio_unitario' => $price,
-                     'subtotal' => $sub
-                 ]);
-                 $totalCot3 += $sub;
-             }
-             $cot3->update(['total' => round($totalCot3, 2)]);
-             
-             $this->command->info('✅ Datos Comerciales Generados Exitosamente.');
-             
+            foreach ($prodsCot3 as $p) {
+                $qty = rand(50, 100);
+                $price = (float) $p->precio_venta_base;
+                $sub = round($qty * $price, 2);
+
+                \App\Models\Comercial\ComCotizacionDet::create([
+                    'cotizacion_id' => $cot3->id,
+                    'producto_id' => $p->id,
+                    'cantidad' => $qty,
+                    'precio_unitario' => $price,
+                    'subtotal' => $sub,
+                ]);
+                $totalCot3 += $sub;
+            }
+            $cot3->update(['total' => round($totalCot3, 2)]);
+
+            $this->command->info('✅ Datos Comerciales Generados Exitosamente.');
+
         } catch (\Exception $e) {
-            $this->command->error('❌ Error Generando Datos Comerciales: ' . $e->getMessage());
+            $this->command->error('❌ Error Generando Datos Comerciales: '.$e->getMessage());
         }
     }
 }

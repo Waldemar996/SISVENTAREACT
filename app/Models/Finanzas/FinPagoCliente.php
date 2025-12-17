@@ -2,17 +2,18 @@
 
 namespace App\Models\Finanzas;
 
+use App\Models\Operaciones\OperVenta;
+use App\Models\RRHH\SysUsuario;
+use App\Models\Tesoreria\TesSesionCaja;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Operaciones\OperVenta;
-use App\Models\Tesoreria\TesSesionCaja;
-use App\Models\RRHH\SysUsuario;
 
 class FinPagoCliente extends Model
 {
     use HasFactory;
 
     protected $table = 'fin_pagos_clientes';
+
     public $timestamps = false;
 
     protected $fillable = [

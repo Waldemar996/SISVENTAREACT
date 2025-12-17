@@ -7,9 +7,9 @@ use App\Services\Health\HealthCheckService;
 
 /**
  * Health Check Controller
- * 
+ *
  * Endpoint: GET /api/health
- * 
+ *
  * Para monitoring externo (Uptime Robot, Pingdom, etc.)
  */
 class HealthCheckController extends Controller
@@ -37,7 +37,7 @@ class HealthCheckController extends Controller
     {
         return response()->json([
             'status' => 'ok',
-            'timestamp' => now()->toIso8601String()
+            'timestamp' => now()->toIso8601String(),
         ]);
     }
 }

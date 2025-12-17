@@ -2,16 +2,17 @@
 
 namespace App\Models\Operaciones;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Logistica\LogBodega;
 use App\Models\RRHH\SysUsuario;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class OperTraslado extends Model
 {
     use HasFactory;
 
     protected $table = 'oper_traslados';
+
     public $timestamps = false;
 
     protected $fillable = [

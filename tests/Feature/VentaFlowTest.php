@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Comercial\ComCliente;
+use App\Models\Inventario\InvProducto;
 use App\Models\Operaciones\OperVenta;
 use App\Models\Operaciones\OperVentaDet;
-use App\Models\Inventario\InvProducto;
-use App\Models\Comercial\ComCliente;
-use App\Models\Tesoreria\TesSesionCaja;
 use App\Models\RRHH\SysUsuario;
+use App\Models\Tesoreria\TesSesionCaja;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class VentaFlowTest extends TestCase
 {
@@ -23,20 +23,20 @@ class VentaFlowTest extends TestCase
         $cliente = ComCliente::factory()->create();
         $producto = InvProducto::factory()->create([
             'precio_venta_base' => 100,
-            'stock_minimo' => 5
+            'stock_minimo' => 5,
         ]);
-        
+
         // Create stock
         \DB::table('inv_bodega_producto')->insert([
             'bodega_id' => 1,
             'producto_id' => $producto->id,
-            'existencia' => 50
+            'existencia' => 50,
         ]);
 
         // Create sesion caja
         $sesion = TesSesionCaja::factory()->create([
             'usuario_id' => $user->id,
-            'estado' => 'abierta'
+            'estado' => 'abierta',
         ]);
 
         // Act: Create venta
@@ -49,29 +49,29 @@ class VentaFlowTest extends TestCase
                 [
                     'producto_id' => $producto->id,
                     'cantidad' => 5,
-                    'precio_unitario' => 100
-                ]
-            ]
+                    'precio_unitario' => 100,
+                ],
+            ],
         ]);
 
         // Assert: Venta created
         $response->assertStatus(201);
         $this->assertDatabaseHas('oper_ventas', [
             'cliente_id' => $cliente->id,
-            'total_venta' => 500
+            'total_venta' => 500,
         ]);
 
         // Assert: Stock updated
         $this->assertDatabaseHas('inv_bodega_producto', [
             'producto_id' => $producto->id,
-            'existencia' => 45 // 50 - 5
+            'existencia' => 45, // 50 - 5
         ]);
 
         // Assert: Kardex entry created
         $this->assertDatabaseHas('inv_kardex', [
             'producto_id' => $producto->id,
             'tipo_movimiento' => 'VENTA',
-            'cantidad' => -5
+            'cantidad' => -5,
         ]);
     }
 
@@ -83,22 +83,22 @@ class VentaFlowTest extends TestCase
         $venta = OperVenta::factory()->create([
             'usuario_id' => $user->id,
             'estado' => 'COMPLETADO',
-            'total_venta' => 500
+            'total_venta' => 500,
         ]);
 
         $producto = InvProducto::factory()->create();
-        
+
         OperVentaDet::factory()->create([
             'venta_id' => $venta->id,
             'producto_id' => $producto->id,
-            'cantidad' => 5
+            'cantidad' => 5,
         ]);
 
         // Set initial stock
         \DB::table('inv_bodega_producto')->insert([
             'bodega_id' => 1,
             'producto_id' => $producto->id,
-            'existencia' => 45
+            'existencia' => 45,
         ]);
 
         // Act: Anular venta
@@ -108,20 +108,20 @@ class VentaFlowTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseHas('oper_ventas', [
             'id' => $venta->id,
-            'estado' => 'ANULADA'
+            'estado' => 'ANULADA',
         ]);
 
         // Assert: Stock reverted
         $this->assertDatabaseHas('inv_bodega_producto', [
             'producto_id' => $producto->id,
-            'existencia' => 50 // 45 + 5
+            'existencia' => 50, // 45 + 5
         ]);
 
         // Assert: Reversal kardex entry
         $this->assertDatabaseHas('inv_kardex', [
             'producto_id' => $producto->id,
             'tipo_movimiento' => 'ANULACION_VENTA',
-            'cantidad' => 5
+            'cantidad' => 5,
         ]);
     }
 
@@ -148,17 +148,17 @@ class VentaFlowTest extends TestCase
         $user = SysUsuario::factory()->create();
         $cliente = ComCliente::factory()->create();
         $producto = InvProducto::factory()->create();
-        
+
         // Only 2 items in stock
         \DB::table('inv_bodega_producto')->insert([
             'bodega_id' => 1,
             'producto_id' => $producto->id,
-            'existencia' => 2
+            'existencia' => 2,
         ]);
 
         $sesion = TesSesionCaja::factory()->create([
             'usuario_id' => $user->id,
-            'estado' => 'abierta'
+            'estado' => 'abierta',
         ]);
 
         // Act: Try to sell 5 items
@@ -170,9 +170,9 @@ class VentaFlowTest extends TestCase
                 [
                     'producto_id' => $producto->id,
                     'cantidad' => 5,
-                    'precio_unitario' => 100
-                ]
-            ]
+                    'precio_unitario' => 100,
+                ],
+            ],
         ]);
 
         // Assert: Error due to insufficient stock

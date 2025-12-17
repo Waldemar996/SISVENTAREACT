@@ -2,10 +2,10 @@
 
 namespace App\Models\Comercial;
 
+use App\Models\RRHH\SysUsuario;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\RRHH\SysUsuario;
 
 class ComCotizacion extends Model
 {

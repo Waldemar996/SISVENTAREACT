@@ -2,15 +2,16 @@
 
 namespace App\Models\Comercial;
 
+use App\Models\Inventario\InvProducto;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Inventario\InvProducto;
 
 class ComCotizacionDet extends Model
 {
     use HasFactory;
 
     protected $table = 'com_cotizaciones_det';
+
     public $timestamps = false;
 
     protected $fillable = [

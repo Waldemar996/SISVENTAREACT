@@ -10,6 +10,7 @@ class ContCuenta extends Model
     use HasFactory;
 
     protected $table = 'cont_cuentas';
+
     public $timestamps = false;
 
     protected $fillable = [

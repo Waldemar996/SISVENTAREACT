@@ -14,12 +14,14 @@ class InvUnidadController extends Controller
         try {
             // Check if activo column exists dynamically or just return all
             // Based on previous checks, safest is to get all for now, or check schema
-            // But strict implementation suggests checking model. 
+            // But strict implementation suggests checking model.
             // Let's assume standard behavior but be robust.
             $unidades = DB::table('inv_unidades')->orderBy('nombre')->get();
+
             return response()->json($unidades);
         } catch (\Exception $e) {
-            Log::error('Error en Unidades index: ' . $e->getMessage());
+            Log::error('Error en Unidades index: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al cargar unidades'], 500);
         }
     }
@@ -40,7 +42,8 @@ class InvUnidadController extends Controller
 
             return response()->json(['message' => 'Unidad creada correctamente', 'id' => $id], 201);
         } catch (\Exception $e) {
-            Log::error('Error al crear unidad: ' . $e->getMessage());
+            Log::error('Error al crear unidad: '.$e->getMessage());
+
             return response()->json(['error' => 'Error al crear unidad'], 500);
         }
     }
@@ -49,9 +52,10 @@ class InvUnidadController extends Controller
     {
         try {
             $unidad = DB::table('inv_unidades')->where('id', $id)->first();
-            if (!$unidad) {
+            if (! $unidad) {
                 return response()->json(['error' => 'Unidad no encontrada'], 404);
             }
+
             return response()->json($unidad);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al cargar unidad'], 500);
@@ -62,7 +66,7 @@ class InvUnidadController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:100',
-            'abreviatura' => 'required|string|max:10|unique:inv_unidades,abreviatura,' . $id,
+            'abreviatura' => 'required|string|max:10|unique:inv_unidades,abreviatura,'.$id,
         ]);
 
         try {
@@ -70,6 +74,7 @@ class InvUnidadController extends Controller
                 'nombre' => $request->nombre,
                 'abreviatura' => $request->abreviatura,
             ]);
+
             return response()->json(['message' => 'Unidad actualizada']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al actualizar unidad'], 500);
@@ -84,6 +89,7 @@ class InvUnidadController extends Controller
                 return response()->json(['error' => 'No se puede eliminar, unidad en uso'], 400);
             }
             DB::table('inv_unidades')->where('id', $id)->delete();
+
             return response()->json(['message' => 'Unidad eliminada']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al eliminar unidad'], 500);

@@ -62,28 +62,42 @@ export default function Dashboard({ auth, stats }) {
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Dashboard Pro" />
+            <Head title="Enterprise Dashboard" />
 
-            <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Panel de Control</h1>
-                    <p className="text-gray-500 text-sm mt-1">
-                        Resumen general de operaciones al {new Date().toLocaleDateString('es-GT', { weekday: 'long', day: 'numeric', month: 'long' })}.
-                    </p>
-                </div>
-                <div className="mt-4 md:mt-0 flex gap-3">
-                    {data.alertas.stock_bajo > 0 && (
-                        <Link href="/inventario/kardex" className="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-700 rounded-lg text-sm font-medium border border-amber-200 hover:bg-amber-100 transition">
-                            <ExclamationTriangleIcon className="w-5 h-5" />
-                            {data.alertas.stock_bajo} Productos Bajos
-                        </Link>
-                    )}
-                    {data.alertas.compras_pendientes > 0 && (
-                        <Link href="/operaciones/compras" className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium border border-blue-200 hover:bg-blue-100 transition">
-                            <ClockIcon className="w-5 h-5" />
-                            {data.alertas.compras_pendientes} Compras Pendientes
-                        </Link>
-                    )}
+            {/* Premium Header Section */}
+            <div className="relative mb-8 p-8 bg-gradient-to-r from-indigo-900 to-slate-900 rounded-3xl shadow-xl overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none"></div>
+
+                <div className="relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                    <div>
+                        <div className="flex items-center gap-3 mb-2">
+                            <span className="px-3 py-1 bg-indigo-500/20 text-indigo-200 text-xs font-bold uppercase tracking-wider rounded-full border border-indigo-500/30 backdrop-blur-sm">
+                                Vista General
+                            </span>
+                        </div>
+                        <h1 className="text-4xl font-extrabold text-white tracking-tight">
+                            Panel de Control
+                        </h1>
+                        <p className="text-indigo-200 mt-2 text-lg font-light">
+                            Resumen de operaciones al <span className="font-semibold text-white">{new Date().toLocaleDateString('es-GT', { weekday: 'long', day: 'numeric', month: 'long' })}</span>.
+                        </p>
+                    </div>
+
+                    <div className="flex gap-3">
+                        {data.alertas.stock_bajo > 0 && (
+                            <Link href="/inventario/kardex" className="flex items-center gap-2 px-5 py-3 bg-rose-500/20 text-rose-200 rounded-xl text-sm font-semibold border border-rose-500/30 hover:bg-rose-500/30 backdrop-blur-md transition-all shadow-lg shadow-rose-900/20 hover:scale-105">
+                                <ExclamationTriangleIcon className="w-5 h-5" />
+                                <span className="drop-shadow-sm">{data.alertas.stock_bajo} Alertas Stock</span>
+                            </Link>
+                        )}
+                        {data.alertas.compras_pendientes > 0 && (
+                            <Link href="/operaciones/compras" className="flex items-center gap-2 px-5 py-3 bg-blue-500/20 text-blue-200 rounded-xl text-sm font-semibold border border-blue-500/30 hover:bg-blue-500/30 backdrop-blur-md transition-all shadow-lg shadow-blue-900/20 hover:scale-105">
+                                <ClockIcon className="w-5 h-5" />
+                                {data.alertas.compras_pendientes} Pedidos
+                            </Link>
+                        )}
+                    </div>
                 </div>
             </div>
 

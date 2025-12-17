@@ -2,46 +2,46 @@
 
 namespace App\Services\Analytics;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Advanced Analytics Service
- * 
+ *
  * Implementa análisis avanzados:
  * - RFM Segmentation
  * - Cohort Analysis
  * - Customer Lifetime Value
  * - Churn Prediction
  * - ABC Analysis
- * 
+ *
  * Nivel: Netflix/Amazon Analytics
  */
 class AdvancedAnalyticsService
 {
     /**
      * RFM Segmentation
-     * 
+     *
      * Recency: Qué tan reciente fue la última compra
      * Frequency: Qué tan seguido compra
      * Monetary: Cuánto gasta
      */
     public function getRFMSegmentation(): array
     {
-        return Cache::remember('analytics:rfm', 3600, function() {
+        return Cache::remember('analytics:rfm', 3600, function () {
             $clientes = DB::table('com_clientes as c')
-                ->selectRaw("
+                ->selectRaw('
                     c.id,
                     c.razon_social,
                     c.nit,
                     COALESCE(DATEDIFF(NOW(), MAX(v.fecha_emision)), 999) as recency_days,
                     COALESCE(COUNT(v.id), 0) as frequency,
                     COALESCE(SUM(v.total_venta), 0) as monetary
-                ")
-                ->leftJoin('oper_ventas as v', function($join) {
+                ')
+                ->leftJoin('oper_ventas as v', function ($join) {
                     $join->on('c.id', '=', 'v.cliente_id')
-                         ->where('v.estado', '!=', 'ANULADO');
+                        ->where('v.estado', '!=', 'ANULADO');
                 })
                 ->where('c.activo', true)
                 ->groupBy('c.id', 'c.razon_social', 'c.nit')
@@ -52,7 +52,7 @@ class AdvancedAnalyticsService
             $frequencyScores = $this->calculateQuintiles($clientes->pluck('frequency')->toArray());
             $monetaryScores = $this->calculateQuintiles($clientes->pluck('monetary')->toArray());
 
-            return $clientes->map(function($cliente, $index) use ($recencyScores, $frequencyScores, $monetaryScores) {
+            return $clientes->map(function ($cliente, $index) use ($recencyScores, $frequencyScores, $monetaryScores) {
                 $r = $recencyScores[$index];
                 $f = $frequencyScores[$index];
                 $m = $monetaryScores[$index];
@@ -69,7 +69,7 @@ class AdvancedAnalyticsService
                     'm_score' => $m,
                     'rfm_score' => "{$r}{$f}{$m}",
                     'segment' => $this->getSegmentName($r, $f, $m),
-                    'value' => $this->getCustomerValue($r, $f, $m)
+                    'value' => $this->getCustomerValue($r, $f, $m),
                 ];
             })->toArray();
         });
@@ -77,12 +77,12 @@ class AdvancedAnalyticsService
 
     /**
      * Cohort Analysis
-     * 
+     *
      * Analiza retención de clientes por cohorte (mes de primera compra)
      */
     public function getCohortAnalysis(): array
     {
-        return Cache::remember('analytics:cohort', 3600, function() {
+        return Cache::remember('analytics:cohort', 3600, function () {
             // Obtener primera compra de cada cliente
             $primerasCompras = DB::table('oper_ventas')
                 ->select(
@@ -98,15 +98,15 @@ class AdvancedAnalyticsService
             $cohorts = [];
             foreach ($primerasCompras as $primera) {
                 $cohortMonth = $primera->cohort_month;
-                
-                if (!isset($cohorts[$cohortMonth])) {
+
+                if (! isset($cohorts[$cohortMonth])) {
                     $cohorts[$cohortMonth] = [
                         'cohort' => $cohortMonth,
                         'customers' => 0,
-                        'retention' => []
+                        'retention' => [],
                     ];
                 }
-                
+
                 $cohorts[$cohortMonth]['customers']++;
 
                 // Calcular retención por mes
@@ -120,7 +120,7 @@ class AdvancedAnalyticsService
 
                 foreach ($comprasPosterior as $month) {
                     $monthsAfter = $this->getMonthsDifference($cohortMonth, $month);
-                    if (!isset($cohorts[$cohortMonth]['retention'][$monthsAfter])) {
+                    if (! isset($cohorts[$cohortMonth]['retention'][$monthsAfter])) {
                         $cohorts[$cohortMonth]['retention'][$monthsAfter] = 0;
                     }
                     $cohorts[$cohortMonth]['retention'][$monthsAfter]++;
@@ -133,7 +133,7 @@ class AdvancedAnalyticsService
                 foreach ($cohort['retention'] as $month => &$count) {
                     $count = [
                         'count' => $count,
-                        'percentage' => round(($count / $total) * 100, 2)
+                        'percentage' => round(($count / $total) * 100, 2),
                     ];
                 }
             }
@@ -160,12 +160,12 @@ class AdvancedAnalyticsService
             ')
             ->first();
 
-        if (!$stats || $stats->total_purchases == 0) {
+        if (! $stats || $stats->total_purchases == 0) {
             return [
                 'clv' => 0,
                 'avg_purchase_value' => 0,
                 'purchase_frequency' => 0,
-                'customer_lifespan_days' => 0
+                'customer_lifespan_days' => 0,
             ];
         }
 
@@ -182,13 +182,13 @@ class AdvancedAnalyticsService
             'purchase_frequency' => round($purchaseFrequency, 2),
             'customer_lifespan_days' => $stats->customer_age_days,
             'total_purchases' => $stats->total_purchases,
-            'total_spent' => $stats->total_spent
+            'total_spent' => $stats->total_spent,
         ];
     }
 
     /**
      * ABC Analysis (Productos)
-     * 
+     *
      * A: 80% de las ventas (top productos)
      * B: 15% de las ventas
      * C: 5% de las ventas
@@ -213,7 +213,7 @@ class AdvancedAnalyticsService
         $totalRevenue = $productos->sum('total_revenue');
         $cumulative = 0;
 
-        return $productos->map(function($producto) use ($totalRevenue, &$cumulative) {
+        return $productos->map(function ($producto) use ($totalRevenue, &$cumulative) {
             $cumulative += $producto->total_revenue;
             $cumulativePercentage = ($cumulative / $totalRevenue) * 100;
 
@@ -232,7 +232,7 @@ class AdvancedAnalyticsService
                 'total_revenue' => $producto->total_revenue,
                 'revenue_percentage' => round(($producto->total_revenue / $totalRevenue) * 100, 2),
                 'cumulative_percentage' => round($cumulativePercentage, 2),
-                'category' => $category
+                'category' => $category,
             ];
         })->toArray();
     }
@@ -244,7 +244,7 @@ class AdvancedAnalyticsService
     {
         $sorted = $values;
         sort($sorted);
-        
+
         $count = count($sorted);
         $quintileSize = $count / 5;
 
@@ -252,11 +252,11 @@ class AdvancedAnalyticsService
         foreach ($values as $value) {
             $position = array_search($value, $sorted);
             $score = min(5, max(1, ceil(($position + 1) / $quintileSize)));
-            
+
             if ($reverse) {
                 $score = 6 - $score; // Invertir para recency
             }
-            
+
             $scores[] = $score;
         }
 
@@ -292,8 +292,13 @@ class AdvancedAnalyticsService
     {
         $score = $r + $f + $m;
 
-        if ($score >= 12) return 'High';
-        if ($score >= 8) return 'Medium';
+        if ($score >= 12) {
+            return 'High';
+        }
+        if ($score >= 8) {
+            return 'Medium';
+        }
+
         return 'Low';
     }
 
@@ -304,6 +309,7 @@ class AdvancedAnalyticsService
     {
         $d1 = Carbon::parse($date1);
         $d2 = Carbon::parse($date2);
+
         return $d1->diffInMonths($d2);
     }
 }

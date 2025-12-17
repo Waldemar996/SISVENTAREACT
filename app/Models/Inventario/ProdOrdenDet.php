@@ -2,15 +2,16 @@
 
 namespace App\Models\Inventario;
 
+use App\Models\Logistica\LogBodega;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Logistica\LogBodega;
 
 class ProdOrdenDet extends Model
 {
     use HasFactory;
 
     protected $table = 'prod_ordenes_det';
+
     public $timestamps = false;
 
     protected $fillable = [

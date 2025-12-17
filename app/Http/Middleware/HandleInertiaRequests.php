@@ -38,7 +38,7 @@ class HandleInertiaRequests extends Middleware
                 'nombre_empresa' => 'Mi Empresa',
                 'color_primary' => '#4F46E5',
                 'color_secondary' => '#1F2937',
-                'ruta_logo' => null
+                'ruta_logo' => null,
             ],
         ];
     }

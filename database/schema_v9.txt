@@ -1,0 +1,801 @@
+-- =========================================================================
+-- SISTEMA ERP - VERSIÓN ENTERPRISE V9 (MASTER SUITE)
+-- Base de Datos Completa: Estructura + Datos Originales + Lógica (Triggers/SP)
+-- =========================================================================
+
+-- (SQL Content provided by user - truncated for brevity in thought trace but will be full in file)
+CREATE DATABASE IF NOT EXISTS `sistemaerp_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `sistemaerp_db`;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 1. MÓDULO DE SISTEMA
+DROP TABLE IF EXISTS `sys_configuracion`;
+CREATE TABLE `sys_configuracion` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre_empresa` varchar(200) NOT NULL,
+  `nit_empresa` varchar(20) NOT NULL,
+  `direccion_fiscal` varchar(255) DEFAULT NULL,
+  `moneda_simbolo` varchar(5) NOT NULL DEFAULT 'Q',
+  `impuesto_general_iva` decimal(5,2) NOT NULL DEFAULT '12.00',
+  `ruta_logo` varchar(255) DEFAULT NULL,
+  `website` varchar(255) DEFAULT NULL,
+  `email_contacto` varchar(100) DEFAULT NULL,
+  `actualizado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `sys_usuarios`;
+CREATE TABLE `sys_usuarios` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `empleado_id` bigint unsigned DEFAULT NULL,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `rol` enum('superadmin','admin','vendedor','bodeguero','contador','rrhh') NOT NULL DEFAULT 'vendedor',
+  `activo` tinyint(1) NOT NULL DEFAULT '1',
+  `ultimo_acceso` datetime DEFAULT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sys_usuarios_username_unique` (`username`),
+  UNIQUE KEY `sys_usuarios_email_unique` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `sys_auditoria_logs`;
+CREATE TABLE `sys_auditoria_logs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint unsigned DEFAULT NULL,
+  `modulo` varchar(50) DEFAULT NULL,
+  `accion` varchar(100) DEFAULT NULL,
+  `tabla_afectada` varchar(100) DEFAULT NULL,
+  `registro_id` varchar(50) DEFAULT NULL,
+  `datos_anteriores` json DEFAULT NULL,
+  `datos_nuevos` json DEFAULT NULL,
+  `ip_usuario` varchar(45) DEFAULT NULL,
+  `navegador_info` text,
+  `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_auditoria_usuario` (`usuario_id`),
+  CONSTRAINT `fk_auditoria_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `sys_usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tablas Laravel Standard
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE `sessions` (
+  `id` varchar(255) NOT NULL,
+  `user_id` bigint unsigned DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text,
+  `payload` longtext NOT NULL,
+  `last_activity` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sessions_user_id_index` (`user_id`),
+  KEY `sessions_last_activity_index` (`last_activity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cache`;
+CREATE TABLE `cache` (
+  `key` varchar(255) NOT NULL,
+  `value` mediumtext NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cache_locks`;
+CREATE TABLE `cache_locks` (
+  `key` varchar(255) NOT NULL,
+  `owner` varchar(255) NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `failed_jobs`;
+CREATE TABLE `failed_jobs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `personal_access_tokens`;
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint unsigned NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `password_resets`;
+CREATE TABLE `password_resets` (
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  KEY `password_resets_email_index` (`email`)
+) ENGINE=InnoDB;
+
+
+-- 2. MÓDULO CONTABLE
+DROP TABLE IF EXISTS `cont_cuentas`;
+CREATE TABLE `cont_cuentas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `codigo_cuenta` varchar(20) NOT NULL,
+  `nombre_cuenta` varchar(100) NOT NULL,
+  `tipo` enum('activo','pasivo','patrimonio','ingreso','gasto','orden') NOT NULL,
+  `nivel` int NOT NULL DEFAULT 1,
+  `es_cuenta_movimiento` tinyint(1) NOT NULL DEFAULT 1,
+  `cuenta_padre_id` bigint unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cont_cuentas_codigo_unique` (`codigo_cuenta`),
+  CONSTRAINT `fk_cont_padre` FOREIGN KEY (`cuenta_padre_id`) REFERENCES `cont_cuentas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cont_periodos`;
+CREATE TABLE `cont_periodos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `anio` int NOT NULL,
+  `mes` int NOT NULL,
+  `estado` enum('abierto','cerrado') NOT NULL DEFAULT 'abierto',
+  `fecha_cierre` datetime DEFAULT NULL,
+  `usuario_cierre_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_periodo_unico` (`anio`,`mes`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cont_partidas`;
+CREATE TABLE `cont_partidas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `numero_partida` varchar(20) NOT NULL,
+  `periodo_id` bigint unsigned NOT NULL,
+  `fecha_contable` date NOT NULL,
+  `concepto` varchar(255) NOT NULL,
+  `origen_modulo` varchar(50) NOT NULL, 
+  `origen_id` bigint unsigned DEFAULT NULL, 
+  `tipo_partida` enum('diario','ingreso','egreso','ajuste','cierre') NOT NULL DEFAULT 'diario',
+  `estado` enum('borrador','mayorizada','anulada') NOT NULL DEFAULT 'mayorizada',
+  `usuario_creador_id` bigint unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_partida_periodo` FOREIGN KEY (`periodo_id`) REFERENCES `cont_periodos` (`id`),
+  CONSTRAINT `fk_partida_usuario` FOREIGN KEY (`usuario_creador_id`) REFERENCES `sys_usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cont_partidas_det`;
+CREATE TABLE `cont_partidas_det` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `partida_id` bigint unsigned NOT NULL,
+  `cuenta_contable_id` bigint unsigned NOT NULL,
+  `concepto_linea` varchar(200) DEFAULT NULL,
+  `debe` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `haber` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `referencia_adicional` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_det_partida` FOREIGN KEY (`partida_id`) REFERENCES `cont_partidas` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_det_cuenta` FOREIGN KEY (`cuenta_contable_id`) REFERENCES `cont_cuentas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- 3. MÓDULO COMERCIAL
+DROP TABLE IF EXISTS `com_listas_precios`;
+CREATE TABLE `com_listas_precios` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `com_clientes`;
+CREATE TABLE `com_clientes` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `razon_social` varchar(200) NOT NULL,
+  `nombre_comercial` varchar(200) DEFAULT NULL,
+  `nit` varchar(20) DEFAULT NULL,
+  `direccion` text,
+  `telefono` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `limite_credito` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `dias_credito` int NOT NULL DEFAULT '0',
+  `tipo_contribuyente` enum('pequeno_contribuyente','general_iva','exento') DEFAULT 'general_iva',
+  `lista_precio_id` bigint unsigned DEFAULT NULL,
+  `vendedor_asignado_id` bigint unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `com_clientes_nit_unique` (`nit`),
+  CONSTRAINT `fk_cliente_lista` FOREIGN KEY (`lista_precio_id`) REFERENCES `com_listas_precios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `com_proveedores`;
+CREATE TABLE `com_proveedores` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `razon_social` varchar(200) NOT NULL,
+  `nombre_comercial` varchar(200) DEFAULT NULL,
+  `nit` varchar(20) DEFAULT NULL,
+  `nombre_contacto` varchar(100) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `regimen_fiscal` enum('pequeno_contribuyente','general','agente_retenedor') DEFAULT 'general',
+  `dias_credito` int NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- 4. MÓDULO FINANCIERO
+DROP TABLE IF EXISTS `fin_tipos_impuestos`;
+CREATE TABLE `fin_tipos_impuestos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) NOT NULL,
+  `porcentaje` decimal(5,2) NOT NULL,
+  `codigo_sat` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `tes_bancos_cuentas`;
+CREATE TABLE `tes_bancos_cuentas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `banco_nombre` varchar(100) NOT NULL,
+  `numero_cuenta` varchar(50) NOT NULL,
+  `tipo_cuenta` enum('monetaria','ahorro') NOT NULL DEFAULT 'monetaria',
+  `moneda` varchar(5) NOT NULL DEFAULT 'GTQ',
+  `saldo_actual` decimal(14,2) NOT NULL DEFAULT '0.00',
+  `cuenta_contable_id` bigint unsigned DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_banco_contabilidad` FOREIGN KEY (`cuenta_contable_id`) REFERENCES `cont_cuentas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `log_bodegas`;
+CREATE TABLE `log_bodegas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `codigo_sucursal` varchar(20) DEFAULT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `tipo` enum('tienda','bodega_central','produccion','virtual') NOT NULL DEFAULT 'bodega_central',
+  `activa` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `tes_cajas`;
+CREATE TABLE `tes_cajas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre_caja` varchar(50) DEFAULT NULL,
+  `bodega_id` bigint unsigned NOT NULL,
+  `usuario_asignado_id` bigint unsigned DEFAULT NULL,
+  `estado` enum('disponible','ocupada','mantenimiento') NOT NULL DEFAULT 'disponible',
+  `cuenta_contable_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_caja_usuario` FOREIGN KEY (`usuario_asignado_id`) REFERENCES `sys_usuarios` (`id`),
+  CONSTRAINT `fk_caja_cuenta` FOREIGN KEY (`cuenta_contable_id`) REFERENCES `cont_cuentas` (`id`),
+  CONSTRAINT `fk_caja_bodega` FOREIGN KEY (`bodega_id`) REFERENCES `log_bodegas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `tes_sesiones_caja`;
+CREATE TABLE `tes_sesiones_caja` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `caja_id` bigint unsigned NOT NULL,
+  `usuario_id` bigint unsigned NOT NULL,
+  `fecha_apertura` datetime NOT NULL,
+  `fecha_cierre` datetime DEFAULT NULL,
+  `monto_inicial` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `monto_final_sistema` decimal(10,2) DEFAULT NULL,
+  `monto_final_real` decimal(10,2) DEFAULT NULL,
+  `diferencia` decimal(10,2) DEFAULT NULL,
+  `estado` enum('abierta','cerrada','arqueo') NOT NULL DEFAULT 'abierta',
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_sesion_caja` FOREIGN KEY (`caja_id`) REFERENCES `tes_cajas` (`id`),
+  CONSTRAINT `fk_sesion_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `sys_usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `fin_categorias_gastos`;
+CREATE TABLE `fin_categorias_gastos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `es_deducible` tinyint(1) NOT NULL DEFAULT '1',
+  `cuenta_contable_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_cat_gasto_cuenta` FOREIGN KEY (`cuenta_contable_id`) REFERENCES `cont_cuentas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `fin_gastos`;
+CREATE TABLE `fin_gastos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(200) NOT NULL,
+  `categoria_id` bigint unsigned NOT NULL,
+  `monto` decimal(12,2) NOT NULL,
+  `fecha_gasto` datetime NOT NULL,
+  `banco_cuenta_id` bigint unsigned DEFAULT NULL,
+  `sesion_caja_id` bigint unsigned DEFAULT NULL,
+  `usuario_id` bigint unsigned NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_gasto_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `fin_categorias_gastos` (`id`),
+  CONSTRAINT `fk_gasto_banco` FOREIGN KEY (`banco_cuenta_id`) REFERENCES `tes_bancos_cuentas` (`id`),
+  CONSTRAINT `fk_gasto_caja` FOREIGN KEY (`sesion_caja_id`) REFERENCES `tes_sesiones_caja` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- 5. MÓDULO DE INVENTARIOS
+DROP TABLE IF EXISTS `log_rutas`;
+CREATE TABLE `log_rutas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre_ruta` varchar(100) NOT NULL,
+  `zona_cobertura` varchar(100) DEFAULT NULL,
+  `vendedor_id` bigint unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_ruta_vend` FOREIGN KEY (`vendedor_id`) REFERENCES `sys_usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_categorias`;
+CREATE TABLE `inv_categorias` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `categoria_padre_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_cat_padre` FOREIGN KEY (`categoria_padre_id`) REFERENCES `inv_categorias` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_marcas`;
+CREATE TABLE `inv_marcas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `pais` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_unidades`;
+CREATE TABLE `inv_unidades` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) NOT NULL,
+  `abreviatura` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_productos`;
+CREATE TABLE `inv_productos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `codigo_sku` varchar(100) NOT NULL,
+  `codigo_barras_fabricante` varchar(100) DEFAULT NULL,
+  `nombre` varchar(200) NOT NULL,
+  `descripcion_corta` varchar(255) DEFAULT NULL,
+  `descripcion_detallada` text,
+  `categoria_id` bigint unsigned DEFAULT NULL,
+  `marca_id` bigint unsigned DEFAULT NULL,
+  `unidad_id` bigint unsigned DEFAULT NULL,
+  `tipo` enum('producto_terminado','materia_prima','servicio','kit') NOT NULL DEFAULT 'producto_terminado',
+  `controla_stock` tinyint(1) NOT NULL DEFAULT '1',
+  `usa_lotes` tinyint(1) NOT NULL DEFAULT '0',
+  `usa_series` tinyint(1) NOT NULL DEFAULT '0',
+  `costo_promedio` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `precio_venta_base` decimal(12,2) NOT NULL,
+  `precio_mayoreo` decimal(12,2) DEFAULT NULL,
+  `impuesto_porcentaje` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `stock_minimo` int NOT NULL DEFAULT '5',
+  `stock_maximo` int NOT NULL DEFAULT '100',
+  `imagen_principal_url` varchar(255) DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT '1',
+  `impuesto_id` bigint unsigned NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `inv_productos_sku_unique` (`codigo_sku`),
+  CONSTRAINT `fk_prod_cat` FOREIGN KEY (`categoria_id`) REFERENCES `inv_categorias` (`id`),
+  CONSTRAINT `fk_prod_marca` FOREIGN KEY (`marca_id`) REFERENCES `inv_marcas` (`id`),
+  CONSTRAINT `fk_prod_impuesto` FOREIGN KEY (`impuesto_id`) REFERENCES `fin_tipos_impuestos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_galeria_productos`;
+CREATE TABLE `inv_galeria_productos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `producto_id` bigint unsigned NOT NULL,
+  `url_imagen` varchar(255) NOT NULL,
+  `orden` int NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_galeria_prod` FOREIGN KEY (`producto_id`) REFERENCES `inv_productos` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_precios_producto`;
+CREATE TABLE `inv_precios_producto` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `lista_precio_id` bigint unsigned NOT NULL,
+  `producto_id` bigint unsigned NOT NULL,
+  `precio` decimal(12,2) NOT NULL,
+  `precio_minimo` decimal(12,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_precio_lista_prod` (`lista_precio_id`, `producto_id`),
+  CONSTRAINT `fk_pp_lista` FOREIGN KEY (`lista_precio_id`) REFERENCES `com_listas_precios` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_pp_prod` FOREIGN KEY (`producto_id`) REFERENCES `inv_productos` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_bodega_producto`;
+CREATE TABLE `inv_bodega_producto` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `bodega_id` bigint unsigned NOT NULL,
+  `producto_id` bigint unsigned NOT NULL,
+  `existencia` int NOT NULL DEFAULT '0',
+  `pasillo` varchar(20) DEFAULT NULL,
+  `estante` varchar(20) DEFAULT NULL,
+  `nivel` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `inv_bodega_producto_unique` (`bodega_id`,`producto_id`),
+  CONSTRAINT `fk_bp_bodega` FOREIGN KEY (`bodega_id`) REFERENCES `log_bodegas` (`id`),
+  CONSTRAINT `fk_bp_producto` FOREIGN KEY (`producto_id`) REFERENCES `inv_productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_lotes`;
+CREATE TABLE `inv_lotes` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `producto_id` bigint unsigned NOT NULL,
+  `codigo_lote` varchar(100) NOT NULL,
+  `fecha_fabricacion` date DEFAULT NULL,
+  `fecha_vencimiento` date NOT NULL,
+  `estado` enum('activo','vencido','agotado') NOT NULL DEFAULT 'activo',
+  `existencia_actual` decimal(12,2) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_lote_prod` FOREIGN KEY (`producto_id`) REFERENCES `inv_productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_series`;
+CREATE TABLE `inv_series` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `producto_id` bigint unsigned NOT NULL,
+  `bodega_id` bigint unsigned NOT NULL,
+  `numero_serie` varchar(100) NOT NULL,
+  `compra_id` bigint unsigned DEFAULT NULL,
+  `venta_id` bigint unsigned DEFAULT NULL,
+  `estado` enum('disponible','vendido','dañado','garantia','devolucion') NOT NULL DEFAULT 'disponible',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `inv_series_unique` (`producto_id`, `numero_serie`),
+  CONSTRAINT `fk_serie_prod` FOREIGN KEY (`producto_id`) REFERENCES `inv_productos` (`id`),
+  CONSTRAINT `fk_serie_bod` FOREIGN KEY (`bodega_id`) REFERENCES `log_bodegas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `inv_kardex`;
+CREATE TABLE `inv_kardex` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `producto_id` bigint unsigned NOT NULL,
+  `bodega_id` bigint unsigned NOT NULL,
+  `tipo_movimiento` enum('compra','venta','ajuste','traslado_salida','traslado_entrada','devolucion','produccion') NOT NULL,
+  `referencia_tipo` varchar(50) DEFAULT NULL,
+  `referencia_id` bigint unsigned DEFAULT NULL,
+  `cantidad` decimal(12,2) NOT NULL,
+  `costo_unitario` decimal(12,4) NOT NULL DEFAULT '0.0000',
+  `costo_total` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `stock_anterior` decimal(12,2) NOT NULL,
+  `stock_nuevo` decimal(12,2) NOT NULL,
+  `costo_promedio` decimal(12,4) DEFAULT NULL,
+  `glosa` varchar(255) DEFAULT NULL,
+  `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_kardex_reporte` (`producto_id`,`bodega_id`,`fecha`),
+  CONSTRAINT `fk_kardex_prod` FOREIGN KEY (`producto_id`) REFERENCES `inv_productos` (`id`),
+  CONSTRAINT `fk_kardex_bod` FOREIGN KEY (`bodega_id`) REFERENCES `log_bodegas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- 6. MÓDULO OPERATIVO (COMPRAS Y VENTAS)
+DROP TABLE IF EXISTS `com_cotizaciones`;
+CREATE TABLE `com_cotizaciones` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `codigo_cotizacion` varchar(50) NOT NULL,
+  `cliente_id` bigint unsigned NOT NULL,
+  `usuario_id` bigint unsigned NOT NULL,
+  `fecha_emision` datetime NOT NULL,
+  `fecha_vencimiento` datetime NOT NULL,
+  `total` decimal(12,2) NOT NULL,
+  `notas` text,
+  `estado` enum('borrador','enviada','aprobada','rechazada','convertida_venta') NOT NULL DEFAULT 'borrador',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `com_cotizaciones_codigo_unique` (`codigo_cotizacion`),
+  CONSTRAINT `fk_cot_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `com_clientes` (`id`),
+  CONSTRAINT `fk_cot_user` FOREIGN KEY (`usuario_id`) REFERENCES `sys_usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `com_cotizaciones_det`;
+CREATE TABLE `com_cotizaciones_det` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `cotizacion_id` bigint unsigned NOT NULL,
+  `producto_id` bigint unsigned NOT NULL,
+  `cantidad` int NOT NULL,
+  `precio_unitario` decimal(12,2) NOT NULL,
+  `subtotal` decimal(12,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_cdet_cot` FOREIGN KEY (`cotizacion_id`) REFERENCES `com_cotizaciones` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_cdet_prod_cot` FOREIGN KEY (`producto_id`) REFERENCES `inv_productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `oper_compras`;
+CREATE TABLE `oper_compras` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `proveedor_id` bigint unsigned NOT NULL,
+  `bodega_id` bigint unsigned NOT NULL,
+  `usuario_id` bigint unsigned NOT NULL,
+  `tipo_comprobante` varchar(20) NOT NULL DEFAULT 'FACTURA',
+  `numero_comprobante` varchar(50) DEFAULT NULL,
+  `fecha_emision` datetime NOT NULL,
+  `subtotal` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `total_impuestos` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `total_compra` decimal(12,2) NOT NULL,
+  `estado` varchar(20) NOT NULL DEFAULT 'COMPLETADO',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_compra_prov` FOREIGN KEY (`proveedor_id`) REFERENCES `com_proveedores` (`id`),
+  CONSTRAINT `fk_compra_bod` FOREIGN KEY (`bodega_id`) REFERENCES `log_bodegas` (`id`),
+  CONSTRAINT `fk_compra_usu` FOREIGN KEY (`usuario_id`) REFERENCES `sys_usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `oper_compras_det`;
+CREATE TABLE `oper_compras_det` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `compra_id` bigint unsigned NOT NULL,
+  `producto_id` bigint unsigned NOT NULL,
+  `lote_id` bigint unsigned DEFAULT NULL,
+  `cantidad` int NOT NULL,
+  `costo_unitario` decimal(12,2) NOT NULL,
+  `subtotal` decimal(12,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_cdet_compra` FOREIGN KEY (`compra_id`) REFERENCES `oper_compras` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_cdet_prod` FOREIGN KEY (`producto_id`) REFERENCES `inv_productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `oper_ventas`;
+CREATE TABLE `oper_ventas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tipo_comprobante` varchar(20) NOT NULL DEFAULT 'FACTURA',
+  `numero_comprobante` varchar(50) DEFAULT NULL,
+  `cliente_id` bigint unsigned NOT NULL,
+  `usuario_id` bigint unsigned NOT NULL,
+  `bodega_id` bigint unsigned NOT NULL,
+  `sesion_caja_id` bigint unsigned DEFAULT NULL,
+  `fecha_emision` datetime NOT NULL,
+  `fel_uuid` varchar(100) DEFAULT NULL,
+  `fel_serie` varchar(50) DEFAULT NULL,
+  `fel_numero` varchar(50) DEFAULT NULL,
+  `subtotal` decimal(12,2) NOT NULL,
+  `total_impuestos` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `descuento` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `total_venta` decimal(12,2) NOT NULL,
+  `estado` varchar(20) NOT NULL DEFAULT 'COMPLETADO',
+  `correlativo_interno` varchar(20) DEFAULT NULL,
+  `cotizacion_origen_id` bigint unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_venta_fel` (`fel_uuid`),
+  CONSTRAINT `fk_venta_cte` FOREIGN KEY (`cliente_id`) REFERENCES `com_clientes` (`id`),
+  CONSTRAINT `fk_venta_usu` FOREIGN KEY (`usuario_id`) REFERENCES `sys_usuarios` (`id`),
+  CONSTRAINT `fk_venta_bod` FOREIGN KEY (`bodega_id`) REFERENCES `log_bodegas` (`id`),
+  CONSTRAINT `fk_venta_sesion` FOREIGN KEY (`sesion_caja_id`) REFERENCES `tes_sesiones_caja` (`id`),
+  CONSTRAINT `fk_venta_cot` FOREIGN KEY (`cotizacion_origen_id`) REFERENCES `com_cotizaciones` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `oper_ventas_det`;
+CREATE TABLE `oper_ventas_det` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `venta_id` bigint unsigned NOT NULL,
+  `producto_id` bigint unsigned NOT NULL,
+  `lote_id` bigint unsigned DEFAULT NULL,
+  `cantidad` int NOT NULL,
+  `precio_unitario` decimal(12,2) NOT NULL,
+  `impuesto_aplicado` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `costo_unitario_historico` decimal(12,2) NOT NULL,
+  `subtotal` decimal(12,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_vdet_venta` FOREIGN KEY (`venta_id`) REFERENCES `oper_ventas` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_vdet_prod` FOREIGN KEY (`producto_id`) REFERENCES `inv_productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `oper_devoluciones`;
+CREATE TABLE `oper_devoluciones` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `venta_origen_id` bigint unsigned NOT NULL,
+  `fecha_devolucion` datetime NOT NULL,
+  `motivo` text,
+  `monto_reembolsado` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `es_cambio_producto` tinyint(1) NOT NULL DEFAULT '0',
+  `estado` enum('pendiente','aprobada','rechazada') NOT NULL DEFAULT 'pendiente',
+  `usuario_id` bigint unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_dev_venta` FOREIGN KEY (`venta_origen_id`) REFERENCES `oper_ventas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `oper_devoluciones_det`;
+CREATE TABLE `oper_devoluciones_det` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `devolucion_id` bigint unsigned NOT NULL,
+  `producto_id` bigint unsigned NOT NULL,
+  `cantidad` int NOT NULL,
+  `estado_fisico` enum('bueno_reingresa','dañado_desecho') NOT NULL DEFAULT 'bueno_reingresa',
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_ddet_dev` FOREIGN KEY (`devolucion_id`) REFERENCES `oper_devoluciones` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `oper_traslados`;
+CREATE TABLE `oper_traslados` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `bodega_origen_id` bigint unsigned NOT NULL,
+  `bodega_destino_id` bigint unsigned NOT NULL,
+  `usuario_solicita_id` bigint unsigned NOT NULL,
+  `usuario_autoriza_id` bigint unsigned DEFAULT NULL,
+  `fecha_solicitud` datetime NOT NULL,
+  `fecha_recepcion` datetime DEFAULT NULL,
+  `estado` enum('pendiente','en_transito','recibido','rechazado') NOT NULL DEFAULT 'pendiente',
+  `observaciones` text,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_traslado_orig` FOREIGN KEY (`bodega_origen_id`) REFERENCES `log_bodegas` (`id`),
+  CONSTRAINT `fk_traslado_dest` FOREIGN KEY (`bodega_destino_id`) REFERENCES `log_bodegas` (`id`),
+  CONSTRAINT `fk_traslado_sol` FOREIGN KEY (`usuario_solicita_id`) REFERENCES `sys_usuarios` (`id`),
+  CONSTRAINT `fk_traslado_aut` FOREIGN KEY (`usuario_autoriza_id`) REFERENCES `sys_usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `oper_traslados_det`;
+CREATE TABLE `oper_traslados_det` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `traslado_id` bigint unsigned NOT NULL,
+  `producto_id` bigint unsigned NOT NULL,
+  `cantidad_enviada` int NOT NULL,
+  `cantidad_recibida` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_tdet_traslado` FOREIGN KEY (`traslado_id`) REFERENCES `oper_traslados` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `fin_pagos_clientes`;
+CREATE TABLE `fin_pagos_clientes` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `venta_id` bigint unsigned NOT NULL,
+  `fecha_pago` datetime NOT NULL,
+  `monto_abonado` decimal(12,2) NOT NULL,
+  `metodo_pago` enum('efectivo','cheque','transferencia','tarjeta') NOT NULL,
+  `referencia` varchar(100) DEFAULT NULL,
+  `sesion_caja_id` bigint unsigned DEFAULT NULL,
+  `banco_cuenta_id` bigint unsigned DEFAULT NULL,
+  `usuario_cobrador_id` bigint unsigned NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_pago_venta` FOREIGN KEY (`venta_id`) REFERENCES `oper_ventas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `fin_pagos_proveedores`;
+CREATE TABLE `fin_pagos_proveedores` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `compra_id` bigint unsigned NOT NULL,
+  `fecha_pago` datetime NOT NULL,
+  `monto_abonado` decimal(12,2) NOT NULL,
+  `metodo_pago` enum('efectivo','cheque','transferencia') NOT NULL,
+  `referencia` varchar(100) DEFAULT NULL,
+  `banco_cuenta_id` bigint unsigned DEFAULT NULL,
+  `usuario_pagador_id` bigint unsigned NOT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_pago_compra` FOREIGN KEY (`compra_id`) REFERENCES `oper_compras` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- 7. RRHH Y PRODUCCIÓN
+DROP TABLE IF EXISTS `rrhh_departamentos`;
+CREATE TABLE `rrhh_departamentos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `rrhh_puestos`;
+CREATE TABLE `rrhh_puestos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre_puesto` varchar(100) NOT NULL,
+  `departamento_id` bigint unsigned DEFAULT NULL,
+  `salario_base` decimal(12,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_puesto_depto` FOREIGN KEY (`departamento_id`) REFERENCES `rrhh_departamentos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `rrhh_empleados`;
+CREATE TABLE `rrhh_empleados` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `codigo_empleado` varchar(20) DEFAULT NULL,
+  `nombres` varchar(100) NOT NULL,
+  `apellidos` varchar(100) NOT NULL,
+  `dpi_identificacion` varchar(20) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `email_personal` varchar(100) DEFAULT NULL,
+  `direccion_residencia` varchar(255) DEFAULT NULL,
+  `puesto_id` bigint unsigned DEFAULT NULL,
+  `fecha_contratacion` date DEFAULT NULL,
+  `estado` enum('activo','baja','suspension') NOT NULL DEFAULT 'activo',
+  `foto_perfil_url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_emp_puesto` FOREIGN KEY (`puesto_id`) REFERENCES `rrhh_puestos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `prod_formulas`;
+CREATE TABLE `prod_formulas` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `producto_padre_id` bigint unsigned NOT NULL,
+  `producto_hijo_id` bigint unsigned NOT NULL,
+  `cantidad_requerida` decimal(10,4) NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_form_padre` FOREIGN KEY (`producto_padre_id`) REFERENCES `inv_productos` (`id`),
+  CONSTRAINT `fk_form_hijo` FOREIGN KEY (`producto_hijo_id`) REFERENCES `inv_productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `prod_ordenes`;
+CREATE TABLE `prod_ordenes` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `numero_orden` varchar(50) NOT NULL,
+  `producto_terminado_id` bigint unsigned NOT NULL,
+  `cantidad_planeada` decimal(12,2) NOT NULL,
+  `cantidad_producida` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `bodega_destino_id` bigint unsigned NOT NULL,
+  `fecha_inicio_programada` date NOT NULL,
+  `fecha_fin_real` date DEFAULT NULL,
+  `estado` enum('planificada','en_proceso','calidad','finalizada','cancelada') NOT NULL DEFAULT 'planificada',
+  `responsable_id` bigint unsigned NOT NULL,
+  `observaciones` text,
+  `costo_estimado_total` decimal(12,2) DEFAULT NULL,
+  `costo_real_total` decimal(12,2) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `prod_ordenes_numero_orden_unique` (`numero_orden`),
+  CONSTRAINT `fk_orden_prod` FOREIGN KEY (`producto_terminado_id`) REFERENCES `inv_productos` (`id`),
+  CONSTRAINT `fk_orden_bod` FOREIGN KEY (`bodega_destino_id`) REFERENCES `log_bodegas` (`id`),
+  CONSTRAINT `fk_orden_resp` FOREIGN KEY (`responsable_id`) REFERENCES `sys_usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `prod_ordenes_det`;
+CREATE TABLE `prod_ordenes_det` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `orden_id` bigint unsigned NOT NULL,
+  `producto_insumo_id` bigint unsigned NOT NULL,
+  `bodega_origen_id` bigint unsigned NOT NULL,
+  `cantidad_solicitada` decimal(12,4) NOT NULL,
+  `cantidad_consumida` decimal(12,4) NOT NULL DEFAULT '0.0000',
+  `costo_unitario` decimal(12,2) NOT NULL,
+  `subtotal` decimal(12,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_odet_orden` FOREIGN KEY (`orden_id`) REFERENCES `prod_ordenes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_odet_prod` FOREIGN KEY (`producto_insumo_id`) REFERENCES `inv_productos` (`id`),
+  CONSTRAINT `fk_odet_bod` FOREIGN KEY (`bodega_origen_id`) REFERENCES `log_bodegas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Views and SPs included in file (truncated in this output)

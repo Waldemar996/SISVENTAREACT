@@ -2,18 +2,18 @@
 
 namespace Tests\Unit\Services;
 
-use Tests\TestCase;
-use App\Services\KardexService;
-use App\Models\Inventario\InvProducto;
 use App\Models\Inventario\InvBodegaProducto;
 use App\Models\Inventario\InvKardex;
+use App\Models\Inventario\InvProducto;
 use App\Models\Logistica\LogBodega;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Services\KardexService;
 use Exception;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * Tests críticos para KardexService
- * 
+ *
  * IMPORTANCIA: Este servicio maneja el stock - errores aquí = pérdidas económicas
  */
 class KardexServiceTest extends TestCase
@@ -21,22 +21,24 @@ class KardexServiceTest extends TestCase
     use RefreshDatabase;
 
     private KardexService $kardexService;
+
     private InvProducto $producto;
+
     private LogBodega $bodega;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
-        $this->kardexService = new KardexService();
-        
+
+        $this->kardexService = new KardexService;
+
         // Crear bodega de prueba
         $this->bodega = LogBodega::create([
             'nombre' => 'Bodega Test',
             'codigo' => 'BOD-TEST',
-            'activo' => true
+            'activo' => true,
         ]);
-        
+
         // Crear producto de prueba
         $this->producto = InvProducto::create([
             'nombre' => 'Producto Test',
@@ -44,7 +46,7 @@ class KardexServiceTest extends TestCase
             'precio_venta_base' => 100.00,
             'costo_promedio' => 50.00,
             'stock_minimo' => 5,
-            'activo' => true
+            'activo' => true,
         ]);
     }
 
@@ -66,15 +68,15 @@ class KardexServiceTest extends TestCase
         $stock = InvBodegaProducto::where('bodega_id', $this->bodega->id)
             ->where('producto_id', $this->producto->id)
             ->first();
-            
+
         $this->assertEquals(10, $stock->existencia);
-        
+
         // Assert: Verificar costo promedio ponderado
         // Costo anterior: 0 (no había stock)
         // Nuevo costo: (0*0 + 10*60) / 10 = 60
         $this->producto->refresh();
         $this->assertEquals(60.00, $this->producto->costo_promedio);
-        
+
         // Assert: Verificar registro en kardex
         $this->assertDatabaseHas('inv_kardex', [
             'producto_id' => $this->producto->id,
@@ -82,7 +84,7 @@ class KardexServiceTest extends TestCase
             'tipo_movimiento' => 'compra',
             'cantidad' => 10,
             'stock_anterior' => 0,
-            'stock_nuevo' => 10
+            'stock_nuevo' => 10,
         ]);
     }
 
@@ -93,9 +95,9 @@ class KardexServiceTest extends TestCase
         InvBodegaProducto::create([
             'bodega_id' => $this->bodega->id,
             'producto_id' => $this->producto->id,
-            'existencia' => 10
+            'existencia' => 10,
         ]);
-        
+
         $this->producto->costo_promedio = 50.00;
         $this->producto->save();
 
@@ -113,7 +115,7 @@ class KardexServiceTest extends TestCase
         // Assert: Costo promedio = (10*50 + 5*80) / 15 = 60
         $this->producto->refresh();
         $this->assertEquals(60.00, $this->producto->costo_promedio, '', 0.01);
-        
+
         // Assert: Stock total = 15
         $stock = InvBodegaProducto::where('bodega_id', $this->bodega->id)
             ->where('producto_id', $this->producto->id)
@@ -128,7 +130,7 @@ class KardexServiceTest extends TestCase
         InvBodegaProducto::create([
             'bodega_id' => $this->bodega->id,
             'producto_id' => $this->producto->id,
-            'existencia' => 20
+            'existencia' => 20,
         ]);
 
         // Act: Vender 5 unidades
@@ -147,7 +149,7 @@ class KardexServiceTest extends TestCase
             ->where('producto_id', $this->producto->id)
             ->first();
         $this->assertEquals(15, $stock->existencia);
-        
+
         // Assert: Costo promedio NO cambia en ventas
         $this->producto->refresh();
         $this->assertEquals(50.00, $this->producto->costo_promedio);
@@ -160,7 +162,7 @@ class KardexServiceTest extends TestCase
         InvBodegaProducto::create([
             'bodega_id' => $this->bodega->id,
             'producto_id' => $this->producto->id,
-            'existencia' => 5
+            'existencia' => 5,
         ]);
 
         // Assert: Debe lanzar excepción
@@ -216,10 +218,10 @@ class KardexServiceTest extends TestCase
         $stock = InvBodegaProducto::where('bodega_id', $this->bodega->id)
             ->where('producto_id', $this->producto->id)
             ->first();
-            
+
         $this->assertNotNull($stock);
         $this->assertEquals(15, $stock->existencia);
-        
+
         // Assert: Establece el costo promedio
         $this->producto->refresh();
         $this->assertEquals(45.00, $this->producto->costo_promedio);
@@ -232,7 +234,7 @@ class KardexServiceTest extends TestCase
         InvBodegaProducto::create([
             'bodega_id' => $this->bodega->id,
             'producto_id' => $this->producto->id,
-            'existencia' => 10
+            'existencia' => 10,
         ]);
 
         // Act: Registrar devolución de 3 unidades
@@ -269,7 +271,7 @@ class KardexServiceTest extends TestCase
 
         // Assert: Verifica que todos los campos se guardaron
         $kardex = InvKardex::where('producto_id', $this->producto->id)->first();
-        
+
         $this->assertNotNull($kardex);
         $this->assertEquals($this->bodega->id, $kardex->bodega_id);
         $this->assertEquals($this->producto->id, $kardex->producto_id);

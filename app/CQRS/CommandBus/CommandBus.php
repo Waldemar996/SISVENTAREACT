@@ -3,12 +3,12 @@
 namespace App\CQRS\CommandBus;
 
 use App\CQRS\Commands\Command;
-use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Command Bus - Patrón para ejecutar commands
- * 
+ *
  * Beneficios:
  * - Desacopla controllers de services
  * - Logging centralizado
@@ -18,6 +18,7 @@ use Exception;
 class CommandBus
 {
     private array $handlers = [];
+
     private array $middleware = [];
 
     /**
@@ -42,26 +43,26 @@ class CommandBus
     public function execute(Command $command): mixed
     {
         // Validar command
-        if (!$command->validate()) {
+        if (! $command->validate()) {
             throw new Exception("Invalid command: {$command->getName()}");
         }
 
         // Log inicio
         Log::info("Executing command: {$command->getName()}", [
             'command' => get_class($command),
-            'data' => $this->serializeCommand($command)
+            'data' => $this->serializeCommand($command),
         ]);
 
         $startTime = microtime(true);
 
         try {
             // Ejecutar middleware
-            $next = function($cmd) {
+            $next = function ($cmd) {
                 return $this->executeHandler($cmd);
             };
 
             foreach (array_reverse($this->middleware) as $middleware) {
-                $next = function($cmd) use ($middleware, $next) {
+                $next = function ($cmd) use ($middleware, $next) {
                     return $middleware($cmd, $next);
                 };
             }
@@ -70,19 +71,19 @@ class CommandBus
 
             // Log éxito
             $duration = (microtime(true) - $startTime) * 1000;
-            Log::info("Command executed successfully", [
+            Log::info('Command executed successfully', [
                 'command' => $command->getName(),
-                'duration_ms' => round($duration, 2)
+                'duration_ms' => round($duration, 2),
             ]);
 
             return $result;
 
         } catch (Exception $e) {
             // Log error
-            Log::error("Command execution failed", [
+            Log::error('Command execution failed', [
                 'command' => $command->getName(),
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             throw $e;
@@ -96,7 +97,7 @@ class CommandBus
     {
         $commandClass = get_class($command);
 
-        if (!isset($this->handlers[$commandClass])) {
+        if (! isset($this->handlers[$commandClass])) {
             throw new Exception("No handler registered for: {$commandClass}");
         }
 
@@ -111,7 +112,7 @@ class CommandBus
         // Implementación básica
         return [
             'class' => get_class($command),
-            'name' => $command->getName()
+            'name' => $command->getName(),
         ];
     }
 }

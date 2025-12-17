@@ -2,13 +2,12 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\Operaciones\OperVenta;
-use App\Models\Operaciones\OperCompra;
-use App\Models\Inventario\InvProducto;
 use App\Models\Comercial\ComCliente;
+use App\Models\Inventario\InvProducto;
+use App\Models\Operaciones\OperVenta;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class DashboardControllerTest extends TestCase
 {
@@ -25,12 +24,11 @@ class DashboardControllerTest extends TestCase
 
         // Assert: Check response
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => 
-            $page->component('Dashboard')
-                ->has('stats')
-                ->has('stats.resumen')
-                ->has('stats.graficaVentas')
-                ->has('stats.topProductos')
+        $response->assertInertia(fn ($page) => $page->component('Dashboard')
+            ->has('stats')
+            ->has('stats.resumen')
+            ->has('stats.graficaVentas')
+            ->has('stats.topProductos')
         );
     }
 
@@ -42,7 +40,7 @@ class DashboardControllerTest extends TestCase
         $this->createSalesForLastMonth(3000);
 
         // Act
-        $controller = new DashboardController();
+        $controller = new DashboardController;
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('getResumenFInanciero');
         $method->setAccessible(true);
@@ -61,7 +59,7 @@ class DashboardControllerTest extends TestCase
         $this->createSalesForLast7Days();
 
         // Act
-        $controller = new DashboardController();
+        $controller = new DashboardController;
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('getSparklineData');
         $method->setAccessible(true);
@@ -81,7 +79,7 @@ class DashboardControllerTest extends TestCase
         $this->createProductWithNormalStock('Producto Normal', 50, 10);
 
         // Act
-        $controller = new DashboardController();
+        $controller = new DashboardController;
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('getProductosCriticos');
         $method->setAccessible(true);
@@ -97,7 +95,7 @@ class DashboardControllerTest extends TestCase
     public function calcular_tendencia_returns_correct_percentage()
     {
         // Act
-        $controller = new DashboardController();
+        $controller = new DashboardController;
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('calcularTendencia');
         $method->setAccessible(true);
@@ -126,7 +124,7 @@ class DashboardControllerTest extends TestCase
         OperVenta::factory()->count(3)->create([
             'cliente_id' => $cliente->id,
             'total_venta' => 1000,
-            'estado' => 'COMPLETADO'
+            'estado' => 'COMPLETADO',
         ]);
     }
 
@@ -137,7 +135,7 @@ class DashboardControllerTest extends TestCase
             'cliente_id' => $cliente->id,
             'fecha_emision' => now(),
             'total_venta' => $total,
-            'estado' => 'COMPLETADO'
+            'estado' => 'COMPLETADO',
         ]);
     }
 
@@ -148,7 +146,7 @@ class DashboardControllerTest extends TestCase
             'cliente_id' => $cliente->id,
             'fecha_emision' => now()->subMonth(),
             'total_venta' => $total,
-            'estado' => 'COMPLETADO'
+            'estado' => 'COMPLETADO',
         ]);
     }
 
@@ -160,7 +158,7 @@ class DashboardControllerTest extends TestCase
                 'cliente_id' => $cliente->id,
                 'fecha_emision' => now()->subDays($i),
                 'total_venta' => 100 * ($i + 1),
-                'estado' => 'COMPLETADO'
+                'estado' => 'COMPLETADO',
             ]);
         }
     }
@@ -169,14 +167,14 @@ class DashboardControllerTest extends TestCase
     {
         $producto = InvProducto::factory()->create([
             'nombre' => $nombre,
-            'stock_minimo' => $stockMinimo
+            'stock_minimo' => $stockMinimo,
         ]);
-        
+
         // Create stock in bodega
         \DB::table('inv_bodega_producto')->insert([
             'bodega_id' => 1,
             'producto_id' => $producto->id,
-            'existencia' => $stockActual
+            'existencia' => $stockActual,
         ]);
     }
 
@@ -184,13 +182,13 @@ class DashboardControllerTest extends TestCase
     {
         $producto = InvProducto::factory()->create([
             'nombre' => $nombre,
-            'stock_minimo' => $stockMinimo
+            'stock_minimo' => $stockMinimo,
         ]);
-        
+
         \DB::table('inv_bodega_producto')->insert([
             'bodega_id' => 1,
             'producto_id' => $producto->id,
-            'existencia' => $stockActual
+            'existencia' => $stockActual,
         ]);
     }
 }

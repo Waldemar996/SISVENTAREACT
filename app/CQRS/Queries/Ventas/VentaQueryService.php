@@ -2,15 +2,15 @@
 
 namespace App\CQRS\Queries\Ventas;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Query Service - Solo LECTURAS desde Read Model
- * 
+ *
  * CQRS: Separación de Commands (escrituras) y Queries (lecturas)
- * 
+ *
  * Ventajas:
  * - Queries ultra-rápidas (read model optimizado)
  * - Cache agresivo (no afecta escrituras)
@@ -23,9 +23,9 @@ class VentaQueryService
      */
     public function getVentas(array $filters = []): array
     {
-        $cacheKey = 'ventas:query:' . md5(json_encode($filters));
+        $cacheKey = 'ventas:query:'.md5(json_encode($filters));
 
-        return Cache::remember($cacheKey, 300, function() use ($filters) {
+        return Cache::remember($cacheKey, 300, function () use ($filters) {
             $query = DB::table('ventas_read_model');
 
             // Filtros
@@ -76,7 +76,7 @@ class VentaQueryService
      */
     public function getVentaById(int $ventaId): ?object
     {
-        return Cache::remember("venta:{$ventaId}", 3600, function() use ($ventaId) {
+        return Cache::remember("venta:{$ventaId}", 3600, function () use ($ventaId) {
             return DB::table('ventas_read_model')
                 ->where('venta_id', $ventaId)
                 ->first();
@@ -110,7 +110,7 @@ class VentaQueryService
     {
         $cacheKey = "ventas:stats:{$desde}:{$hasta}";
 
-        return Cache::remember($cacheKey, 600, function() use ($desde, $hasta) {
+        return Cache::remember($cacheKey, 600, function () use ($desde, $hasta) {
             $query = DB::table('ventas_read_model')
                 ->where('estado', '!=', 'ANULADO');
 
@@ -133,11 +133,11 @@ class VentaQueryService
                 'por_forma_pago' => DB::table('ventas_read_model')
                     ->select('forma_pago', DB::raw('COUNT(*) as cantidad'), DB::raw('SUM(total) as monto'))
                     ->where('estado', '!=', 'ANULADO')
-                    ->when($desde, fn($q) => $q->where('fecha_venta', '>=', $desde->toDateString()))
-                    ->when($hasta, fn($q) => $q->where('fecha_venta', '<=', $hasta->toDateString()))
+                    ->when($desde, fn ($q) => $q->where('fecha_venta', '>=', $desde->toDateString()))
+                    ->when($hasta, fn ($q) => $q->where('fecha_venta', '<=', $hasta->toDateString()))
                     ->groupBy('forma_pago')
                     ->get()
-                    ->toArray()
+                    ->toArray(),
             ];
         });
     }
@@ -176,11 +176,11 @@ class VentaQueryService
     {
         // Esta query es más compleja porque los productos están en JSON
         // En producción, considera tener una tabla separada para esto
-        
+
         $ventas = DB::table('ventas_read_model')
             ->select('productos')
             ->where('estado', '!=', 'ANULADO')
-            ->when($desde, fn($q) => $q->where('fecha_venta', '>=', $desde->toDateString()))
+            ->when($desde, fn ($q) => $q->where('fecha_venta', '>=', $desde->toDateString()))
             ->get();
 
         $productosCount = [];
@@ -189,13 +189,13 @@ class VentaQueryService
             $productos = json_decode($venta->productos, true);
             foreach ($productos as $producto) {
                 $id = $producto['id'];
-                if (!isset($productosCount[$id])) {
+                if (! isset($productosCount[$id])) {
                     $productosCount[$id] = [
                         'producto_id' => $id,
                         'nombre' => $producto['nombre'],
                         'codigo_sku' => $producto['codigo_sku'],
                         'cantidad_vendida' => 0,
-                        'total_vendido' => 0
+                        'total_vendido' => 0,
                     ];
                 }
                 $productosCount[$id]['cantidad_vendida'] += $producto['cantidad'];
@@ -204,7 +204,7 @@ class VentaQueryService
         }
 
         // Ordenar y limitar
-        usort($productosCount, fn($a, $b) => $b['cantidad_vendida'] <=> $a['cantidad_vendida']);
+        usort($productosCount, fn ($a, $b) => $b['cantidad_vendida'] <=> $a['cantidad_vendida']);
 
         return array_slice($productosCount, 0, $limit);
     }

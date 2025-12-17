@@ -4,7 +4,7 @@ namespace App\DTOs\Ventas;
 
 /**
  * DTO para crear una nueva venta
- * 
+ *
  * Ventajas de usar DTOs:
  * - Type safety
  * - Validación centralizada
@@ -74,7 +74,7 @@ class CrearVentaDTO
         }
 
         foreach ($this->detalles as $index => $detalle) {
-            if (!isset($detalle['producto_id']) || !isset($detalle['cantidad']) || !isset($detalle['precio_unitario'])) {
+            if (! isset($detalle['producto_id']) || ! isset($detalle['cantidad']) || ! isset($detalle['precio_unitario'])) {
                 throw new \InvalidArgumentException("El detalle {$index} está incompleto");
             }
 
@@ -105,7 +105,7 @@ class CrearVentaDTO
             'sesion_caja_id' => $this->sesionCajaId,
             'usuario_id' => $this->usuarioId,
             'descuento_global' => $this->descuentoGlobal,
-            'impuesto_total' => $this->impuestoTotal
+            'impuesto_total' => $this->impuestoTotal,
         ];
     }
 
@@ -120,10 +120,10 @@ class CrearVentaDTO
             $cantidad = $detalle['cantidad'];
             $precioUnitario = $detalle['precio_unitario'];
             $descuento = $detalle['descuento'] ?? 0;
-            
+
             $subtotalDetalle = $cantidad * $precioUnitario;
             $descuentoDetalle = $subtotalDetalle * ($descuento / 100);
-            
+
             $subtotal += ($subtotalDetalle - $descuentoDetalle);
         }
 

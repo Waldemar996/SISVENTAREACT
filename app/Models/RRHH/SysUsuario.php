@@ -3,14 +3,19 @@
 namespace App\Models\RRHH;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SysUsuario extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\SysUsuarioFactory::new();
+    }
 
     protected $table = 'sys_usuarios';
 

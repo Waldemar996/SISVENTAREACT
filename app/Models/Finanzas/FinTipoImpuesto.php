@@ -10,6 +10,7 @@ class FinTipoImpuesto extends Model
     use HasFactory;
 
     protected $table = 'fin_tipos_impuestos';
+
     public $timestamps = false;
 
     protected $fillable = ['nombre', 'porcentaje', 'codigo_sat'];
